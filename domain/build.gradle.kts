@@ -1,0 +1,12 @@
+plugins {
+    alias(libs.plugins.jetbrains.kotlin.jvm)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
+}
+
+
+
+
+dependencies {
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.javax.inject)
+}
