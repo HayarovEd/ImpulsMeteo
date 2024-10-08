@@ -1,0 +1,111 @@
+package com.edurda77.impulsmeteo.di
+
+
+import com.edurda77.domain.repository.DataStoreRepository
+import com.edurda77.domain.usecase.AuthCheckUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object UseCaseModule {
+
+    @Provides
+    @Singleton
+    fun providesAuthCheckUseCase(dataStoreRepository: DataStoreRepository): AuthCheckUseCase {
+        return AuthCheckUseCase(dataStoreRepository)
+    }
+    /*@Provides
+    @Singleton
+    fun providesLoginUseCase(
+        remoteRepository: RemoteRepository,
+        dataStoreRepository: DataStoreRepository
+    ): LoginUseCase {
+        return LoginUseCase(
+            remoteRepository = remoteRepository,
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesMonitorsUseCase(remoteRepository: RemoteRepository): MonitorsUseCase {
+        return MonitorsUseCase(remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesLocalSessionUseCase(
+        dataStoreRepository: DataStoreRepository
+    ): LocalSessionUseCase {
+        return LocalSessionUseCase(
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesMonitorVideoUseCase(
+        remoteRepository: RemoteRepository
+    ): MonitorVideoUseCase {
+        return MonitorVideoUseCase(
+            remoteRepository = remoteRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesLogoffUseCase(
+        dataStoreRepository: DataStoreRepository
+    ): LogoffUseCase {
+        return LogoffUseCase(
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesLocalAuthorizationUseCase(
+        dataStoreRepository: DataStoreRepository,
+        remoteRepository: RemoteRepository,
+    ): LocalAuthorizationUseCase {
+        return LocalAuthorizationUseCase(
+            dataStoreRepository = dataStoreRepository,
+            remoteRepository = remoteRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesReadLocalAuthorizationUseCase(
+        dataStoreRepository: DataStoreRepository
+    ): ReadLocalAuthorizationUseCase {
+        return ReadLocalAuthorizationUseCase(
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesSaveLocalAuthorizationUseCase(
+        dataStoreRepository: DataStoreRepository
+    ): SaveLocalAuthorizationUseCase {
+        return SaveLocalAuthorizationUseCase(
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesRecordVideoUseCase(
+        storageRepository: StorageRepository
+    ): RecordVideoUseCase {
+        return RecordVideoUseCase(
+            storageRepository = storageRepository
+        )
+    }*/
+
+}

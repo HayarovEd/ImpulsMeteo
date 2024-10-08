@@ -10,4 +10,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.javax.inject)
     api(libs.kotlinx.datetime)
+    implementation(libs.ktor.serialization.kotlinx.json)
 }
