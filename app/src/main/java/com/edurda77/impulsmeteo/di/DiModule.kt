@@ -1,7 +1,9 @@
 package com.edurda77.impulsmeteo.di
 
 
+import com.edurda77.data.repository.DataStoreRepositoryImpl
 import com.edurda77.data.repository.RemoteRepositoryImpl
+import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
 import dagger.Binds
 import dagger.Module
@@ -17,5 +19,9 @@ abstract class DiModule {
     @Binds
     @Singleton
     abstract fun bindRemote(remoteRepositoryImpl: RemoteRepositoryImpl): RemoteRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDataStore(dataStoreRepositoryImpl: DataStoreRepositoryImpl): DataStoreRepository
 
 }
