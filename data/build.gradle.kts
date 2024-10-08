@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":domain"))
-
+    implementation(libs.javax.inject)
     //datastore
     api(libs.androidx.datastore.preferences)
 
