@@ -2,7 +2,6 @@ package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.LocalAuthResult
 import com.edurda77.domain.repository.DataStoreRepository
-import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

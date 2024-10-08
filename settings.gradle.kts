@@ -23,3 +23,5 @@ rootProject.name = "ImpulsMeteo"
 include(":app")
 include(":domain")
 include(":data")
+include(":resources")
+include(":splash")

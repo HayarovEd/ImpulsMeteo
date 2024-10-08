@@ -37,7 +37,7 @@ namespaceCamera = "com.edurda77.camera_screen"
 namespaceListCameras = "com.edurda77.list_camers_screen"
 namespaceLogin = "com.edurda77.login_screen"
 namespaceResources = "com.edurda77.resources"
-namespaceData = "com.edurda77.data"
+namespaceSplash = "com.edurda77.splash"
 appcompat = "1.7.0"
 material = "1.12.0"
 
