@@ -1,0 +1,25 @@
+package com.edurda77.data.remote.auth_user
+
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Permission(
+    @SerialName("created_at")
+    val createdAt: String,
+    @SerialName("description")
+    val description: String,
+    @SerialName("display_name")
+    val displayName: String,
+    @SerialName("id")
+    val id: Int,
+    @SerialName("name")
+    val name: String,
+    @SerialName("parent")
+    val parent: Int,
+    @SerialName("pivot")
+    val pivot: Pivot,
+    @SerialName("updated_at")
+    val updatedAt: String
+)
