@@ -2,7 +2,11 @@ package com.edurda77.impulsmeteo.di
 
 
 import com.edurda77.domain.repository.DataStoreRepository
+import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.usecase.AuthCheckUseCase
+import com.edurda77.domain.usecase.LoginUseCase
+import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
+import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +22,7 @@ object UseCaseModule {
     fun providesAuthCheckUseCase(dataStoreRepository: DataStoreRepository): AuthCheckUseCase {
         return AuthCheckUseCase(dataStoreRepository)
     }
-    /*@Provides
+    @Provides
     @Singleton
     fun providesLoginUseCase(
         remoteRepository: RemoteRepository,
@@ -31,6 +35,26 @@ object UseCaseModule {
     }
 
     @Provides
+    @Singleton
+    fun providesReadLocalAuthorizationUseCase(
+        dataStoreRepository: DataStoreRepository
+    ): ReadLocalAuthorizationUseCase {
+        return ReadLocalAuthorizationUseCase(
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesSaveLocalAuthorizationUseCase(
+        dataStoreRepository: DataStoreRepository
+    ): SaveLocalAuthorizationUseCase {
+        return SaveLocalAuthorizationUseCase(
+            dataStoreRepository = dataStoreRepository
+        )
+    }
+
+    /*@Provides
     @Singleton
     fun providesMonitorsUseCase(remoteRepository: RemoteRepository): MonitorsUseCase {
         return MonitorsUseCase(remoteRepository)
@@ -78,25 +102,7 @@ object UseCaseModule {
         )
     }
 
-    @Provides
-    @Singleton
-    fun providesReadLocalAuthorizationUseCase(
-        dataStoreRepository: DataStoreRepository
-    ): ReadLocalAuthorizationUseCase {
-        return ReadLocalAuthorizationUseCase(
-            dataStoreRepository = dataStoreRepository
-        )
-    }
 
-    @Provides
-    @Singleton
-    fun providesSaveLocalAuthorizationUseCase(
-        dataStoreRepository: DataStoreRepository
-    ): SaveLocalAuthorizationUseCase {
-        return SaveLocalAuthorizationUseCase(
-            dataStoreRepository = dataStoreRepository
-        )
-    }
 
     @Provides
     @Singleton

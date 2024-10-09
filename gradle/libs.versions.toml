@@ -33,8 +33,6 @@ kotlinCompilerExtensionVersion = "1.5.10"
 excludes = "/META-INF/{AL2.0,LGPL2.1}"
 
 namespaceApp = "com.edurda77.impulsmeteo"
-namespaceCamera = "com.edurda77.camera_screen"
-namespaceListCameras = "com.edurda77.list_camers_screen"
 namespaceLogin = "com.edurda77.login_screen"
 namespaceResources = "com.edurda77.resources"
 namespaceSplash = "com.edurda77.splash"

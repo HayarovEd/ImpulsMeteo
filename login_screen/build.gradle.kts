@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = libs.versions.namespaceSplash.get()
+    namespace = libs.versions.namespaceLogin.get()
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -31,9 +31,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
+        jvmTarget = "17"
     }
-
     buildFeatures {
         compose = true
     }
@@ -55,6 +54,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
 
     //hilt
     implementation (libs.hilt.android)

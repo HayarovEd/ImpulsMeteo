@@ -25,6 +25,7 @@ sealed interface DataError : RootError {
 
     enum class NameError: DataError {
         NAME_BLANK,
+        ID_ERROR
     }
 
     enum class IniqueIdError: DataError {

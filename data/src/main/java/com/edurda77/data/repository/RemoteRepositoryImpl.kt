@@ -13,15 +13,8 @@ import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.ResultWork
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.plugins.ClientRequestException
-import io.ktor.client.plugins.ServerResponseException
-import io.ktor.client.request.forms.FormDataContent
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.Parameters
-import io.ktor.http.contentType
+import io.ktor.client.request.forms.submitForm
+import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -36,16 +29,13 @@ class RemoteRepositoryImpl @Inject constructor(
     ): ResultWork<Auth, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
-                val result = httpClient.post(BASE_URL + AUTH_POSTFIX) {
-                    contentType(ContentType.Application.Json)
-                    setBody {
-                        FormDataContent(Parameters.build {
-                            append(EMAIL, email)
-                            append(PASSWORD, password)
-                        })
+                val result = httpClient.submitForm(
+                    url = BASE_URL + AUTH_POSTFIX,
+                    formParameters = parameters {
+                        append(EMAIL, email)
+                        append(PASSWORD, password)
                     }
-                }
-                    .call
+                ).call
                     .body<AuthDto>()
                 result.convertToAuth()
             }

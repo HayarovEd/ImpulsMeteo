@@ -58,6 +58,8 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":resources"))
     implementation(project(":splash"))
+    implementation(project(":login_screen"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
