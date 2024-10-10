@@ -25,7 +25,7 @@ class LoginUseCase @Inject constructor(
         }
         if (password.isBlank()) return ResultWork.Error(DataError.PasswordError.PASSWORD_BLANK)
 
-        return when (val result = remoteRepository.autorization(
+        return when (val result = remoteRepository.authorization(
             email = email,
             password = password
         )) {

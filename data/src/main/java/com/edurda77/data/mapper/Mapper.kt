@@ -2,8 +2,13 @@ package com.edurda77.data.mapper
 
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
+import com.edurda77.data.remote.devices.DevicesDto
+import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.domain.model.Auth
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.NEGATIVE_USER_ID
@@ -31,5 +36,39 @@ fun AuthUserDto.convertToLoggedUser(): LoggedUser {
         email = this.email,
         permissions = this.permissions.map { it.id }
     )
+}
+
+fun DevicesGropusDto.convertToGroups(): List<GroupDevices> {
+    return this.groupsDto.map {
+        GroupDevices(
+            id = it.id,
+            name = it.name
+        )
+    }
+}
+
+fun DevicesDto.convertToDevices(): List<Device> {
+    return this.deviceDto.map {
+        Device(
+            id = it.id,
+            name = it.name,
+            key = it.key,
+            status = it.status,
+            video = it.video,
+            groups = it.groups.map { group ->
+                GroupDevices(
+                    id = group.id,
+                    name = group.name
+                )
+            },
+            params = it.paramDtos.map { param ->
+                Param(
+                    name = param.name,
+                    label = param.label,
+                    value = param.value
+                )
+            }
+        )
+    }
 }
 

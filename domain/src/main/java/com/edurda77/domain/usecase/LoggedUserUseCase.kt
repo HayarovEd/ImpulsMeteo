@@ -12,7 +12,7 @@ class LoggedUserUseCase @Inject constructor(
     suspend operator fun invoke(
         token: String,
     ): ResultWork<LoggedUser, DataError> {
-        return remoteRepository.autorizedUser(
+        return remoteRepository.authorizedUser(
             token = token
         )
     }

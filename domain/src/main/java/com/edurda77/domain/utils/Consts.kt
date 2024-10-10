@@ -2,9 +2,13 @@ package com.edurda77.domain.utils
 
 const val BASE_URL = "https://meteo.i-perm.ru:8001/api/"
 const val AUTH_POSTFIX = "auth/login"
-const val AUTH_LOGGEED_USER_POSTFIX = "auth/user"
+const val AUTH_LOGGED_USER_POSTFIX = "auth/user"
+const val DEVICES_POSTFIX = "devices"
+const val DEVICES_GROUPS_POSTFIX = "devicesgroups"
 const val EMAIL = "email"
 const val PASSWORD = "password"
+
+const val PARAMETER_GROUP = "groups"
 
 
 const val APP_PREFERENCES = "auth_settings"

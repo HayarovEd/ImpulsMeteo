@@ -1,5 +1,8 @@
 package com.edurda77.domain.utils
 
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevices
+
 
 fun isValidEmail(email: String): Boolean {
     val emailRegex = Regex("^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,3})+$")
@@ -22,3 +25,35 @@ fun decodeToken(jwt: String): String {
         "Error parsing JWT: $e"
     }
 }*/
+
+
+fun convertToMapGroupedDevices(
+    groups: List<GroupDevices>,
+    devices: List<Device>
+): Map<GroupDevices, List<Device>> {
+    val groupedDevices = mutableMapOf<GroupDevices, List<Device>>()
+    groups.forEach { group->
+        val enteredDevices = devices.filter { it.groups.contains(group) }
+        if (enteredDevices.isNotEmpty()) {
+            groupedDevices[group] = enteredDevices
+        }
+    }
+    return groupedDevices
+}
+
+fun filterGroupedDevices(
+    devices: Map<GroupDevices, List<Device>>,
+    query: String,
+): Map<GroupDevices, List<Device>> {
+    return devices
+        .mapValues { (_, current) ->
+            current.filter {
+                it.name
+                    .contains(
+                        other = query,
+                        ignoreCase = true
+                    )
+            }
+        }
+}
+
