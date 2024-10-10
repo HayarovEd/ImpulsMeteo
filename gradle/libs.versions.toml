@@ -34,6 +34,7 @@ excludes = "/META-INF/{AL2.0,LGPL2.1}"
 
 namespaceApp = "com.edurda77.impulsmeteo"
 namespaceLogin = "com.edurda77.login_screen"
+namespaceDevicesScreen = "com.edurda77.devices_list"
 namespaceResources = "com.edurda77.resources"
 namespaceSplash = "com.edurda77.splash"
 appcompat = "1.7.0"

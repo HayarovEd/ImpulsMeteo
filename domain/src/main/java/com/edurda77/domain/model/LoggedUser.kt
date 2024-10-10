@@ -1,6 +1,6 @@
 package com.edurda77.domain.model
 
-data class User(
+data class LoggedUser(
     val id: Int,
     val name: String,
     val email: String,

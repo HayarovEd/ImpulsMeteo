@@ -6,7 +6,7 @@ import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.domain.model.Auth
-import com.edurda77.domain.model.User
+import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGEED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
@@ -50,7 +50,7 @@ class RemoteRepositoryImpl @Inject constructor(
 
     override suspend fun autorizedUser(
         token: String,
-    ): ResultWork<User, DataError> {
+    ): ResultWork<LoggedUser, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val result = httpClient.get(BASE_URL+AUTH_LOGGEED_USER_POSTFIX) {

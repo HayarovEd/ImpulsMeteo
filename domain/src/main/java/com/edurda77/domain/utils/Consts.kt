@@ -15,3 +15,19 @@ const val LAST_EMAIL = "last_email"
 const val LAST_PASSWORD = "last_password"
 
 const val NEGATIVE_USER_ID = -1
+
+//permissions
+const val USERS_LIST = 1
+const val USERS_CREATE = 2
+const val USERS_EDIT = 3
+const val USERS_DELETE = 4
+const val DEVICES_LIST = 5
+const val DEVICES_CREATE = 6
+const val DEVICES_EDIT = 7
+const val DEVICES_DELETE = 8
+const val DIRECTORY_LIST = 9
+const val DIRECTORY_EDIT = 10
+const val CAMERA_LIST = 11
+const val CAMERA_CREATE = 12
+const val CAMERA_EDIT = 13
+const val CAMERA_DELETE = 14
