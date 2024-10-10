@@ -21,5 +21,8 @@
     <string name="email_required">Email *</string>
     <string name="password_required">Пароль *</string>
     <string name="enter">ВХОД</string>
+    <string name="devices">Устройства</string>
+    <string name="users">Пользователи</string>
+    <string name="directory">Справочники</string>
 
 </resources>

@@ -9,15 +9,15 @@ import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
 import com.edurda77.splash.SplashScreen
 
+
 @Composable
 fun NavController(
     startDestination: NavigationRoute = NavigationRoute.Splash,
 ) {
-
     val navController = rememberNavController()
     val configuration = LocalConfiguration.current
-
     NavHost(navController = navController, startDestination = startDestination) {
+
         composable<NavigationRoute.Splash> {
             SplashScreen(
                 onGoToListCameras = {
