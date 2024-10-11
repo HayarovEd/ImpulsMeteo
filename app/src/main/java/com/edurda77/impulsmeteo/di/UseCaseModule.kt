@@ -5,6 +5,8 @@ import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
+import com.edurda77.domain.usecase.LocalTokenUseCase
+import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.LoginUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
@@ -67,6 +69,18 @@ object UseCaseModule {
     @Singleton
     fun providesGrouppedDevicesUseCase(remoteRepository: RemoteRepository): GrouppedDevicesUseCase {
         return GrouppedDevicesUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesLocalTokenUseCase(dataStoreRepository: DataStoreRepository): LocalTokenUseCase {
+        return LocalTokenUseCase(dataStoreRepository = dataStoreRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesLocalLogOffUseCase(dataStoreRepository: DataStoreRepository): LogOffUseCase {
+        return LogOffUseCase(dataStoreRepository = dataStoreRepository)
     }
 
     /*
