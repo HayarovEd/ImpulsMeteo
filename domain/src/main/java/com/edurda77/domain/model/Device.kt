@@ -6,6 +6,7 @@ data class Device(
     val key: String,
     val status: String,
     val video: String?,
+    val updatedAt: String,
     val groups: List<GroupDevices>,
     val params: List<Param>
 )

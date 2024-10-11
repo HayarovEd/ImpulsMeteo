@@ -63,11 +63,13 @@ fun DevicesDto.convertToDevices(): List<Device> {
             },
             params = it.paramDtos.map { param ->
                 Param(
+                    classIcon = param.classIcon,
                     name = param.name,
                     label = param.label,
                     value = param.value
                 )
-            }
+            },
+            updatedAt = it.lastUpdate
         )
     }
 }

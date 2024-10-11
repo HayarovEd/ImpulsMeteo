@@ -35,3 +35,16 @@ const val CAMERA_LIST = 11
 const val CAMERA_CREATE = 12
 const val CAMERA_EDIT = 13
 const val CAMERA_DELETE = 14
+
+//icon classes
+/*
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_HUMIDITI = "wi wi-humidity"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"
+const val WI_WI_THERMOMETER = "wi wi-thermometer"*/

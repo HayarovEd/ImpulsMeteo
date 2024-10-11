@@ -24,5 +24,6 @@
     <string name="devices">Устройства</string>
     <string name="users">Пользователи</string>
     <string name="directory">Справочники</string>
+    <string name="unit_temperature">°C</string>
 
 </resources>
