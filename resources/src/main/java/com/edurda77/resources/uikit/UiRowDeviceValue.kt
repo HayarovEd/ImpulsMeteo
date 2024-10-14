@@ -42,7 +42,7 @@ fun UiRowDeviceValue(
                 modifier = modifier
                     .basicMarquee(),
                 text = "$value $unit",
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = Typography.bodyLarge,
             )
             Spacer(modifier = modifier.width(5.dp))
@@ -50,7 +50,7 @@ fun UiRowDeviceValue(
                 modifier = modifier
                     .basicMarquee(),
                 text = name,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = Typography.labelSmall,
             )
         }

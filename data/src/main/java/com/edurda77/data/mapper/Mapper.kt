@@ -12,6 +12,7 @@ import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.NEGATIVE_USER_ID
+import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.domain.utils.convertToLocalDateTime
 
@@ -53,7 +54,7 @@ fun DevicesDto.convertToDevices(): List<Device> {
             id = it.id,
             name = it.name,
             key = it.key,
-            status = it.status,
+            status = it.status == STATUS_ON,
             video = it.video,
             groups = it.groups.map { group ->
                 GroupDevices(
@@ -66,7 +67,8 @@ fun DevicesDto.convertToDevices(): List<Device> {
                     classIcon = param.classIcon,
                     name = param.name,
                     label = param.label,
-                    value = param.value
+                    value = param.value.toDoubleOrNull()?: 0.0,
+                    idUnit = param.idUnit
                 )
             },
             updatedAt = it.lastUpdate

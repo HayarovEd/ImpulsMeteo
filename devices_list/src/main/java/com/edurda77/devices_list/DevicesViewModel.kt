@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DevicesViewModel @Inject constructor(
-    private val grouppedDevicesUseCase: GrouppedDevicesUseCase,
+    private val groupedDevicesUseCase: GrouppedDevicesUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase
@@ -31,13 +31,13 @@ class DevicesViewModel @Inject constructor(
         loadLocalData()
     }
 
-    fun onEvent(event: DevocesEvent) {
+    fun onEvent(event: DevicesEvent) {
         when (event) {
-            DevocesEvent.Logoff -> {
+            DevicesEvent.Logoff -> {
                 viewModelScope.launch { logoffUseCase.invoke() }
             }
 
-            is DevocesEvent.OnSearch -> {
+            is DevicesEvent.OnSearch -> {
                 viewModelScope.launch {
                     _state.value.copy(
                         query = event.query
@@ -47,7 +47,7 @@ class DevicesViewModel @Inject constructor(
                 }
             }
 
-            DevocesEvent.Refresh -> {
+            DevicesEvent.Refresh -> {
                 _state.value.copy(
                     isLoading = true,
                 )
@@ -58,7 +58,7 @@ class DevicesViewModel @Inject constructor(
                 }
             }
 
-            is DevocesEvent.SelectGroup -> {
+            is DevicesEvent.SelectGroup -> {
                 viewModelScope.launch {
                     _state.value.copy(
                         selectedGroup = event.name
@@ -116,7 +116,7 @@ class DevicesViewModel @Inject constructor(
     }
 
     private suspend fun loadDevices(isRefresh: Boolean) {
-        when (val result = grouppedDevicesUseCase.invoke(
+        when (val result = groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = state.value.query,
             isRefresh = isRefresh

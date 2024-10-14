@@ -25,5 +25,13 @@
     <string name="users">Пользователи</string>
     <string name="directory">Справочники</string>
     <string name="unit_temperature">°C</string>
+    <string name="unit_unknown">ед.</string>
+    <string name="unit_humidity">%</string>
+    <string name="unit_pressure">мм.рт.ст.</string>
+    <string name="unit_length">м</string>
+    <string name="online">Онлайн</string>
+    <string name="offline">Офлайн</string>
+    <string name="search">Поиск</string>
+    <string name="loading">Загрузка</string>
 
 </resources>

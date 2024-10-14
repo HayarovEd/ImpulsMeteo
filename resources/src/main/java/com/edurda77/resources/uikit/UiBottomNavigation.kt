@@ -30,7 +30,7 @@ import com.edurda77.resources.model.TopLevelRoute
 import com.edurda77.resources.theme.Typography
 
 @Composable
-fun UiBottomNavigationItem(
+fun UiBottomNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
@@ -92,7 +92,7 @@ fun UiBottomNavigationItem(
 @Preview
 @Composable
 private fun Sample() {
-    UiBottomNavigationItem(
+    UiBottomNavigation(
         navController = rememberNavController()
     )
 }
