@@ -1,9 +1,8 @@
 package com.edurda77.list_camers_screen
 
-import android.app.Activity
-import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Configuration.NAVIGATIONHIDDEN_YES
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -27,10 +26,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -50,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -63,7 +61,6 @@ import com.edurda77.devices_list.DevicesEvent
 import com.edurda77.devices_list.DevicesViewModel
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
-import com.edurda77.domain.utils.MULTIPLE_SIZE
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
@@ -87,38 +84,32 @@ fun DevicesScreen(
     val onEvent = viewModel::onEvent
     val localDensity = LocalDensity.current
     val hiddenNavigationBar = configuration.navigationHidden == NAVIGATIONHIDDEN_YES
-    val context = LocalContext.current
     val screenWidth = configuration.screenWidthDp.dp
-    val activity = context as Activity
     val listState = rememberLazyListState()
     val pagerState =
-        rememberPagerState(pageCount = { state.value.devices.size * MULTIPLE_SIZE })
+        rememberPagerState(pageCount = { state.value.devices.size})
     val scope = rememberCoroutineScope()
     LaunchedEffect(state.value.devices.size) {
         if (state.value.devices.isNotEmpty()) {
-            listState.animateScrollToItem(state.value.devices.size * MULTIPLE_SIZE / 2 - 1)
-            pagerState.animateScrollToPage(state.value.devices.size * MULTIPLE_SIZE / 2)
+            listState.animateScrollToItem(state.value.devices.size  / 2 - 1)
+            pagerState.animateScrollToPage(state.value.devices.size  / 2)
         }
     }
     val offsetCell =  1
     LaunchedEffect(pagerState.currentPage) {
-        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (pagerState.currentPage > 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
-                listState.animateScrollToItem(pagerState.currentPage - offsetCell)
-                val index = (pagerState.currentPage) % state.value.devices.size
-                onEvent(DevicesEvent.SelectGroup(state.value.devices.keys.toList()[index].name))
-            }
-        } else {
-            if (pagerState.currentPage != 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
-                listState.animateScrollToItem(pagerState.currentPage - offsetCell)
-                val index = (pagerState.currentPage) % state.value.devices.size
-                onEvent(DevicesEvent.SelectGroup(state.value.devices.keys.toList()[index].name))
+        if (state.value.devices.isNotEmpty()) {
+            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                if (pagerState.currentPage > 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
+                    listState.animateScrollToItem(pagerState.currentPage - offsetCell)
+                }
+                onEvent(DevicesEvent.SelectGroup(state.value.devices.keys.toList()[pagerState.currentPage].name))
+            } else {
+                if (pagerState.currentPage != 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
+                    listState.animateScrollToItem(pagerState.currentPage - offsetCell)
+                }
+                onEvent(DevicesEvent.SelectGroup(state.value.devices.keys.toList()[pagerState.currentPage].name))
             }
         }
-    }
-    LaunchedEffect(true) {
-        activity.requestedOrientation =
-            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
     val isShowDialogLogOff = remember { mutableStateOf(false) }
     val isShowSearch = remember { mutableStateOf(false) }
@@ -168,7 +159,7 @@ fun DevicesScreen(
                         DevicesSelectorGroup(
                             modifier = modifier.weight(5f),
                             listState = listState,
-                            monitors = state.value.devices,
+                            devices = state.value.devices,
                             selectedGroup = state.value.selectedGroup,
                             pagerState = pagerState,
                             scope = scope,
@@ -229,7 +220,7 @@ fun DevicesScreen(
                     Spacer(modifier = modifier.height(10.dp))
                     DevicesSelectorGroup(
                         listState = listState,
-                        monitors = state.value.devices,
+                        devices = state.value.devices,
                         selectedGroup = state.value.selectedGroup,
                         onClick = {
                             DevicesEvent.SelectGroup(state.value.devices.keys.toList()[it].name)
@@ -277,20 +268,22 @@ fun DevicesScreen(
                         state = pagerState,
                         verticalAlignment = Alignment.Top
                     ) { page ->
-                        val index = page % state.value.devices.size
-                        val currentDevices = state.value.devices.values.toList()[index]
+                      //  val index = page % state.value.devices.size
+                        val currentDevices = state.value.devices.values.toList()[page]
                         val cellsCount =
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        LazyVerticalGrid(
+                        LazyVerticalStaggeredGrid (
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            columns = GridCells.Fixed(cellsCount),
-                            verticalArrangement = Arrangement.spacedBy(2.dp),
+                            columns = StaggeredGridCells.Fixed(cellsCount),
+                            verticalItemSpacing = 5.dp,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
                             items(currentDevices) { device ->
                                 ItemDevice(
                                     modifier = modifier,
                                     device = device,
+                                    configuration = configuration,
                                     /* authToken = state.value.user?.authToken ?: "",
                                      onClick = {
                                          onGoToCamera(device.mid)
@@ -309,13 +302,14 @@ fun DevicesScreen(
 private fun DevicesSelectorGroup(
     modifier: Modifier = Modifier,
     listState: LazyListState,
-    monitors: Map<GroupDevices, List<Device>>,
+    devices: Map<GroupDevices, List<Device>>,
     selectedGroup: String,
     onClick: (Int) -> Unit,
     scope: CoroutineScope,
     pagerState: PagerState,
     screenWidth: Dp,
 ) {
+    Log.d("TEST DEVICES SCREEN", "selectedGroup $selectedGroup")
     LazyRow(
         modifier = modifier
             .fillMaxWidth(),
@@ -323,25 +317,25 @@ private fun DevicesSelectorGroup(
         state = listState,
     ) {
         items(
-            count = monitors.size * MULTIPLE_SIZE
+            count = devices.size
         ) {
-            val index = it % monitors.size
+            //val index = it % monitors.size
             Box(
                 modifier = modifier
-                    .shadow(elevation = if (monitors.keys.toList()[index].name == selectedGroup) 10.dp else 0.dp)
-                    .width(screenWidth/3)
+                    .shadow(elevation = if (devices.keys.toList()[it].name == selectedGroup) 10.dp else 0.dp)
+                    .width(screenWidth / 3)
                     .clip(shape = RoundedCornerShape(3.dp))
                     .background(
-                        color = if (monitors.keys.toList()[index].name == selectedGroup) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(
+                        color = if (devices.keys.toList()[it].name == selectedGroup) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(
                             alpha = 0.3f
                         )
                     )
                     .clickable {
-                        onClick(index)
+                        onClick(it)
                         scope.launch {
-                            if (index != 0 && index != listState.layoutInfo.totalItemsCount - 1)
-                                listState.scrollToItem(index - 1)
-                            pagerState.animateScrollToPage(index)
+                            if (it != 0 && it != listState.layoutInfo.totalItemsCount - 1)
+                                listState.scrollToItem(it - 1)
+                            pagerState.animateScrollToPage(it)
                         }
                     }
                     .padding(vertical = 3.dp),
@@ -350,7 +344,7 @@ private fun DevicesSelectorGroup(
                 Text(
                     modifier = modifier
                         .basicMarquee(),
-                    text = monitors.keys.toList()[index].name,
+                    text = devices.keys.toList()[it].name,
                     style = Typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.primary

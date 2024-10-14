@@ -58,7 +58,7 @@ fun UiBottomNavigation(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 15.dp, end = 15.dp, top = 10.dp, bottom = 55.dp),
+            .padding(start = 15.dp, end = 15.dp, bottom = 35.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
     ) {

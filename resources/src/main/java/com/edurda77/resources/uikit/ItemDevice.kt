@@ -1,12 +1,15 @@
 package com.edurda77.resources.uikit
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,7 +28,8 @@ import com.edurda77.resources.theme.Typography
 @Composable
 fun ItemDevice(
     modifier: Modifier = Modifier,
-    device: Device
+    device: Device,
+    configuration: Configuration
 ) {
     Card(
         modifier = modifier
@@ -68,14 +72,72 @@ fun ItemDevice(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = modifier.height(5.dp))
-                device.params.forEach { param ->
-                    UiRowDeviceValue(
-                        icon = param.idUnit.asUiIconParam(),
-                        value = param.value,
-                        unit = param.idUnit.asUiTextParam(),
-                        name = param.label
-                    )
-                    Spacer(modifier = modifier.height(3.dp))
+                val steps = if (device.params.size<=6) device.params.size else 6
+                Row (
+                    modifier = modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        Column {
+                            for (i in 0..<steps step 3) {
+                                UiRowDeviceValue(
+                                    icon = device.params[i].idUnit.asUiIconParam(),
+                                    value = device.params[i].value,
+                                    unit = device.params[i].idUnit.asUiTextParam(),
+                                    name = device.params[i].label
+                                )
+                                Spacer(modifier = modifier.height(3.dp))
+                            }
+                        }
+                        Spacer(modifier = modifier.width(5.dp))
+                        Column {
+                            for (i in 1..<steps step 3) {
+                                UiRowDeviceValue(
+                                    icon = device.params[i].idUnit.asUiIconParam(),
+                                    value = device.params[i].value,
+                                    unit = device.params[i].idUnit.asUiTextParam(),
+                                    name = device.params[i].label
+                                )
+                                Spacer(modifier = modifier.height(3.dp))
+                            }
+                        }
+                        Spacer(modifier = modifier.width(5.dp))
+                        Column {
+                            for (i in 2..<steps step 3) {
+                                UiRowDeviceValue(
+                                    icon = device.params[i].idUnit.asUiIconParam(),
+                                    value = device.params[i].value,
+                                    unit = device.params[i].idUnit.asUiTextParam(),
+                                    name = device.params[i].label
+                                )
+                                Spacer(modifier = modifier.height(3.dp))
+                            }
+                        }
+                    } else {
+                        Column {
+                            for (i in 0..<steps step 2) {
+                                UiRowDeviceValue(
+                                    icon = device.params[i].idUnit.asUiIconParam(),
+                                    value = device.params[i].value,
+                                    unit = device.params[i].idUnit.asUiTextParam(),
+                                    name = device.params[i].label
+                                )
+                                Spacer(modifier = modifier.height(3.dp))
+                            }
+                        }
+                        Spacer(modifier = modifier.width(10.dp))
+                        Column {
+                            for (i in 1..<steps step 2) {
+                                UiRowDeviceValue(
+                                    icon = device.params[i].idUnit.asUiIconParam(),
+                                    value = device.params[i].value,
+                                    unit = device.params[i].idUnit.asUiTextParam(),
+                                    name = device.params[i].label
+                                )
+                                Spacer(modifier = modifier.height(3.dp))
+                            }
+                        }
+                    }
                 }
             }
         }

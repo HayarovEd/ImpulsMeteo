@@ -35,7 +35,7 @@ fun UiBaseScaffold(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snakeBarHostState) },
         topBar = topBarContent,
         bottomBar = bottomBarContent

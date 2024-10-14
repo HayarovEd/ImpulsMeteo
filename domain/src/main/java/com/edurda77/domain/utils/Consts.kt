@@ -38,4 +38,4 @@ const val CAMERA_DELETE = 14
 
 
 const val STATUS_ON = "on"
-const val MULTIPLE_SIZE = 10
+//const val MULTIPLE_SIZE = 10
