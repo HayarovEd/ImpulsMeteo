@@ -67,6 +67,13 @@ class DevicesViewModel @Inject constructor(
                     //loadDevices(false)
                 }
             }
+
+            DevicesEvent.ShowSearchField -> {
+                _state.value.copy(
+                    isShowSearch = !state.value.isShowSearch
+                )
+                    .updateState()
+            }
         }
     }
 

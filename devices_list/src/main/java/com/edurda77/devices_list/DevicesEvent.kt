@@ -5,4 +5,5 @@ sealed class DevicesEvent {
     data object Logoff: DevicesEvent()
     class OnSearch(val query: String) : DevicesEvent()
     class SelectGroup(val index: Int) : DevicesEvent()
+    data object ShowSearchField : DevicesEvent()
 }

@@ -1,7 +1,6 @@
 package com.edurda77.list_camers_screen
 
 import android.content.res.Configuration
-import android.content.res.Configuration.NAVIGATIONHIDDEN_YES
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -83,7 +82,6 @@ fun DevicesScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val localDensity = LocalDensity.current
-    val hiddenNavigationBar = configuration.navigationHidden == NAVIGATIONHIDDEN_YES
     val screenWidth = configuration.screenWidthDp.dp
     val listState = rememberLazyListState()
     val pagerState =
@@ -108,7 +106,6 @@ fun DevicesScreen(
         }
     }
     val isShowDialogLogOff = remember { mutableStateOf(false) }
-    val isShowSearch = remember { mutableStateOf(false) }
     BackHandler {}
     /* if (isShowDialogLogOff.value) {
          UiAlertDialog(
@@ -132,23 +129,22 @@ fun DevicesScreen(
                     .padding(top = 50.dp, start = 15.dp, end = 15.dp)
                     .fillMaxWidth(),
             ) {
-                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && !isShowSearch.value) {
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && !state.value.isShowSearch) {
                     Row(
                         modifier = modifier
-                            .fillMaxWidth()
-                            .padding(end = if (isShowSearch.value) 0.dp else if (hiddenNavigationBar) 0.dp else 55.dp),
+                            .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = if (isShowSearch.value) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
+                        horizontalArrangement = if (state.value.isShowSearch) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
                     ) {
                         val modifierByVisibilitySearch =
-                            if (isShowSearch.value) modifier.weight(1f) else modifier
+                            if (state.value.isShowSearch) modifier.weight(1f) else modifier
                         UiIconButton(
                             modifier = modifierByVisibilitySearch,
-                            icon = if (isShowSearch.value) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
+                            icon = if (state.value.isShowSearch) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
                                 id = R.drawable.baseline_search_24
                             ),
                             onClick = {
-                                isShowSearch.value = !isShowSearch.value
+                                onEvent(DevicesEvent.ShowSearchField)
                                 onEvent(DevicesEvent.OnSearch(""))
                             }
                         )
@@ -174,23 +170,23 @@ fun DevicesScreen(
                     Row(
                         modifier = modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = if (isShowSearch.value) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
+                        horizontalArrangement = if (state.value.isShowSearch) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
                     ) {
                         val modifierByVisibilitySearch =
-                            if (isShowSearch.value) modifier.weight(1f) else modifier
+                            if (state.value.isShowSearch) modifier.weight(1f) else modifier
                         UiIconButton(
                             modifier = modifierByVisibilitySearch,
-                            icon = if (isShowSearch.value) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
+                            icon = if (state.value.isShowSearch) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
                                 id = R.drawable.baseline_search_24
                             ),
                             onClick = {
-                                isShowSearch.value = !isShowSearch.value
+                                onEvent(DevicesEvent.ShowSearchField)
                                 onEvent(DevicesEvent.OnSearch(""))
                             }
                         )
                         AnimatedVisibility(
                             modifier = modifier.weight(7f),
-                            visible = isShowSearch.value,
+                            visible = state.value.isShowSearch,
                             enter = slideInVertically {
                                 with(localDensity) { -40.dp.roundToPx() }
                             } + expandVertically(
