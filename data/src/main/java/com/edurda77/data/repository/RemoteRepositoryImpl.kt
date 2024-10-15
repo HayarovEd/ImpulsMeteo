@@ -5,6 +5,7 @@ import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
+import com.edurda77.data.remote.add_device.AddDeviceDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
@@ -31,6 +32,8 @@ import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -100,6 +103,33 @@ class RemoteRepositoryImpl @Inject constructor(
                     groups = groups,
                     devices = devices
                 )
+            }
+        }
+    }
+
+    override suspend fun addDevice(
+        token: String,
+        groups: List<Int>,
+        key: String,
+        name: String,
+        update: String
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post(BASE_URL + DEVICES_POSTFIX) {
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            AddDeviceDto(
+                                groups = groups,
+                                key = key,
+                                name = name,
+                                update = update
+                            )
+                        )
+                    }
+                }.call
+                Unit
             }
         }
     }

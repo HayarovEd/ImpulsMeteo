@@ -3,6 +3,7 @@ package com.edurda77.impulsmeteo.di
 
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -83,60 +84,9 @@ object UseCaseModule {
         return LogOffUseCase(dataStoreRepository = dataStoreRepository)
     }
 
-    /*
-
     @Provides
     @Singleton
-    fun providesLocalSessionUseCase(
-        dataStoreRepository: DataStoreRepository
-    ): LocalSessionUseCase {
-        return LocalSessionUseCase(
-            dataStoreRepository = dataStoreRepository
-        )
+    fun providesAddDeviceUseCase(remoteRepository: RemoteRepository): AddDeviceUseCase {
+        return AddDeviceUseCase(remoteRepository = remoteRepository)
     }
-
-    @Provides
-    @Singleton
-    fun providesMonitorVideoUseCase(
-        remoteRepository: RemoteRepository
-    ): MonitorVideoUseCase {
-        return MonitorVideoUseCase(
-            remoteRepository = remoteRepository
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun providesLogoffUseCase(
-        dataStoreRepository: DataStoreRepository
-    ): LogoffUseCase {
-        return LogoffUseCase(
-            dataStoreRepository = dataStoreRepository
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun providesLocalAuthorizationUseCase(
-        dataStoreRepository: DataStoreRepository,
-        remoteRepository: RemoteRepository,
-    ): LocalAuthorizationUseCase {
-        return LocalAuthorizationUseCase(
-            dataStoreRepository = dataStoreRepository,
-            remoteRepository = remoteRepository
-        )
-    }
-
-
-
-    @Provides
-    @Singleton
-    fun providesRecordVideoUseCase(
-        storageRepository: StorageRepository
-    ): RecordVideoUseCase {
-        return RecordVideoUseCase(
-            storageRepository = storageRepository
-        )
-    }*/
-
 }

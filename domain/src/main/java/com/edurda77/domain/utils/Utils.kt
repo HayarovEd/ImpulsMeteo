@@ -34,9 +34,7 @@ fun convertToMapGroupedDevices(
     val groupedDevices = mutableMapOf<GroupDevices, List<Device>>()
     groups.forEach { group->
         val enteredDevices = devices.filter { it.groups.contains(group) }
-        if (enteredDevices.isNotEmpty()) {
-            groupedDevices[group] = enteredDevices
-        }
+        groupedDevices[group] = enteredDevices
     }
     return groupedDevices
 }

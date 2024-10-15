@@ -14,4 +14,12 @@ interface RemoteRepository {
         token: String,
         parameterGroup: Int = 0
     ): ResultWork<Map<GroupDevices, List<Device>>, DataError>
+
+    suspend fun addDevice(
+        token: String,
+        groups: List<Int>,
+        key: String,
+        name: String,
+        update: String
+    ): ResultWork<Unit, DataError>
 }

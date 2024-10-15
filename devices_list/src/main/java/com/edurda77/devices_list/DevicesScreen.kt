@@ -1,4 +1,4 @@
-package com.edurda77.list_camers_screen
+package com.edurda77.devices_list
 
 import android.content.res.Configuration
 import android.util.Log
@@ -56,8 +56,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.edurda77.devices_list.DevicesEvent
-import com.edurda77.devices_list.DevicesViewModel
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.resources.R
