@@ -2,6 +2,7 @@ package com.edurda77.devices_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -21,7 +22,8 @@ class DevicesViewModel @Inject constructor(
     private val groupedDevicesUseCase: GrouppedDevicesUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
-    private val logoffUseCase: LogOffUseCase
+    private val logoffUseCase: LogOffUseCase,
+    private val addDeviceUseCase: AddDeviceUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state.asStateFlow()
@@ -74,8 +76,40 @@ class DevicesViewModel @Inject constructor(
                 )
                     .updateState()
             }
+
+            is DevicesEvent.OnInsertDevice -> {
+                viewModelScope.launch {
+                    insertDevice(
+                        name = event.name,
+                        key = event.key,
+                        frequency = event.frequency,
+                        groups = event.groups.map { it.id }
+                    )
+                }
+            }
+
+            is DevicesEvent.UpdateSelectedGroups -> {
+                val updatedGroups = state.value.selectedGroups.toMutableList()
+                if (state.value.selectedGroups.contains(event.groupDevices)) {
+                    updatedGroups.remove(event.groupDevices)
+                } else {
+                    updatedGroups.add(event.groupDevices)
+                }
+                _state.value.copy(
+                    selectedGroups = updatedGroups
+                )
+                    .updateState()
+            }
+
+            DevicesEvent.ClearSelectedGroups -> {
+                _state.value.copy(
+                    selectedGroups = emptyList()
+                )
+                    .updateState()
+            }
         }
     }
+
 
     private fun loadLocalData() {
         viewModelScope.launch {
@@ -142,6 +176,32 @@ class DevicesViewModel @Inject constructor(
                     devices = result.data
                 )
                     .updateState()
+            }
+        }
+    }
+
+    private suspend fun insertDevice(
+        name: String,
+        key: String,
+        frequency: String,
+        groups: List<Int>
+    ) {
+        when (val result = addDeviceUseCase.invoke(
+            name = name,
+            key = key,
+            update = frequency,
+            groups = groups,
+            token = state.value.token
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadDevices(true)
             }
         }
     }

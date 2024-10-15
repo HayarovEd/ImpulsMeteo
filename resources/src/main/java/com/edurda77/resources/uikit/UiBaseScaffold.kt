@@ -19,6 +19,7 @@ fun UiBaseScaffold(
     message: UiText?,
     topBarContent: @Composable () -> Unit = {},
     bottomBarContent: @Composable () -> Unit = {},
+    fabContent: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val snakeBarHostState = remember { SnackbarHostState() }
@@ -38,7 +39,8 @@ fun UiBaseScaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snakeBarHostState) },
         topBar = topBarContent,
-        bottomBar = bottomBarContent
+        bottomBar = bottomBarContent,
+        floatingActionButton = fabContent
     ) { paddings->
         content(paddings)
     }

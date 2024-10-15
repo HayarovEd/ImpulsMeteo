@@ -32,6 +32,8 @@ fun UiTextField(
     imeAction: ImeAction = ImeAction.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isOnlyDigit: Boolean = false,
+    maxLines: Int = 1,
     onClickContent: (String) -> Unit,
     onClickTrailingIcon: () -> Unit = {},
 ) {
@@ -39,20 +41,26 @@ fun UiTextField(
     BasicTextField(
         value = content,
         modifier = modifier.fillMaxWidth(),
-        onValueChange =  {
-            onClickContent(it)
+        onValueChange = { text ->
+            if (isOnlyDigit) {
+                if (text.all { it.isDigit() }) {
+                    onClickContent(text)
+                }
+            } else {
+                onClickContent(text)
+            }
         },
         enabled = enabled,
         readOnly = readOnly,
         textStyle = Typography.bodyLarge,
-       // cursorBrush = SolidColor(colors.cursorColor(isError).value),
+        // cursorBrush = SolidColor(colors.cursorColor(isError).value),
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = imeAction
         ),
         keyboardActions = keyboardActions,
-        maxLines = 1,
+        maxLines = maxLines,
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.DecorationBox(
                 enabled = enabled,
@@ -61,7 +69,7 @@ fun UiTextField(
                 singleLine = true,
                 value = content,
                 visualTransformation = visualTransformation,
-                placeholder = {
+                label = {
                     Text(
                         text = label,
                         style = Typography.labelSmall

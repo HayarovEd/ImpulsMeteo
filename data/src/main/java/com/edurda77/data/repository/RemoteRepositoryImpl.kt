@@ -34,6 +34,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -117,6 +120,7 @@ class RemoteRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) {
             handleResponse {
                 httpClient.post(BASE_URL + DEVICES_POSTFIX) {
+                    contentType(ContentType.Application.Json)
                     url {
                         bearerAuth(token)
                         setBody(
@@ -128,7 +132,7 @@ class RemoteRepositoryImpl @Inject constructor(
                             )
                         )
                     }
-                }.call
+                }.bodyAsText()
                 Unit
             }
         }

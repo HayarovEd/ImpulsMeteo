@@ -15,4 +15,5 @@ data class DevicesState(
     val loggedUser: LoggedUser? = null,
     val devices: Map<GroupDevices, List<Device>> = emptyMap(),
     val isShowSearch: Boolean = false,
+    val selectedGroups: List<GroupDevices> = emptyList()
 )

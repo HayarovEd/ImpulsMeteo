@@ -71,7 +71,7 @@ fun DevicesDto.convertToDevices(): List<Device> {
                     idUnit = param.idUnit
                 )
             },
-            updatedAt = it.lastUpdate
+            updatedAt = it.lastUpdate ?: ""
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.edurda77.devices_list
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -33,8 +32,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -54,10 +57,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.utils.DEVICES_CREATE
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
@@ -88,6 +93,7 @@ fun DevicesScreen(
             pageCount = { state.value.devices.size }
         )
     val scope = rememberCoroutineScope()
+    val expandedAddDialog = remember { mutableStateOf(false) }
     /*LaunchedEffect(state.value.devices.size) {
         if (state.value.devices.isNotEmpty()) {
               listState.animateScrollToItem(state.value.devices.size  / 2 - 1)
@@ -96,7 +102,6 @@ fun DevicesScreen(
     }*/
 
     LaunchedEffect(pagerState.currentPage) {
-        Log.d("TEST DEVICES SCREEN", "currentPage ${pagerState.currentPage}")
         if (state.value.devices.isNotEmpty()) {
             onEvent(DevicesEvent.SelectGroup(pagerState.currentPage))
             if (pagerState.currentPage > 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
@@ -107,19 +112,44 @@ fun DevicesScreen(
     val isShowDialogLogOff = remember { mutableStateOf(false) }
     BackHandler {}
     if (isShowDialogLogOff.value) {
-         UiAlertDialog(
-             title = stringResource(id = R.string.sure_exit),
-             onClickConfirm = {
-                 isShowDialogLogOff.value = false
-                 onEvent(DevicesEvent.Logoff)
-                 onGoToLogin()
-             },
-             onClickCancel = {
-                 isShowDialogLogOff.value = false
-             }
-         )
+        UiAlertDialog(
+            title = stringResource(id = R.string.sure_exit),
+            onClickConfirm = {
+                isShowDialogLogOff.value = false
+                onEvent(DevicesEvent.Logoff)
+                onGoToLogin()
+            },
+            onClickCancel = {
+                isShowDialogLogOff.value = false
+            }
+        )
     }
 
+    if (expandedAddDialog.value) {
+        Dialog(onDismissRequest = { expandedAddDialog.value = false }) {
+            AddDeviceDialog(
+                groups = state.value.devices.keys.toList(),
+                selectedGroups = state.value.selectedGroups,
+                onCloseClick = {
+                    expandedAddDialog.value = false
+                    onEvent(DevicesEvent.ClearSelectedGroups)
+                },
+                onAddClick = { name, key, frequency, groups ->
+                    onEvent(
+                        DevicesEvent.OnInsertDevice(
+                            name = name,
+                            key = key,
+                            frequency = frequency,
+                            groups = groups
+                        )
+                    )
+                },
+                onUpdateGroups = {
+                    onEvent(DevicesEvent.UpdateSelectedGroups(it))
+                }
+            )
+        }
+    }
     UiBaseScaffold(
         message = state.value.message,
         topBarContent = {
@@ -224,6 +254,18 @@ fun DevicesScreen(
             }
         },
         bottomBarContent = bottomBarContent,
+        fabContent = {
+            if (state.value.loggedUser?.permissions?.contains(DEVICES_CREATE) == true) {
+                FloatingActionButton(
+                    onClick = { expandedAddDialog.value = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = ""
+                    )
+                }
+            }
+        },
         content = { paddings ->
             PullToRefreshBox(
                 modifier = modifier.padding(paddings),
