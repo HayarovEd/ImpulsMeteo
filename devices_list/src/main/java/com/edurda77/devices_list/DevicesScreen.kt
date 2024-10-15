@@ -63,6 +63,7 @@ import com.edurda77.domain.model.GroupDevices
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
+import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
@@ -107,19 +108,19 @@ fun DevicesScreen(
     }
     val isShowDialogLogOff = remember { mutableStateOf(false) }
     BackHandler {}
-    /* if (isShowDialogLogOff.value) {
+    if (isShowDialogLogOff.value) {
          UiAlertDialog(
              title = stringResource(id = R.string.sure_exit),
              onClickConfirm = {
                  isShowDialogLogOff.value = false
-                 onEvent(MonitorsEvent.Logoff)
+                 onEvent(DevicesEvent.Logoff)
                  onGoToLogin()
              },
              onClickCancel = {
                  isShowDialogLogOff.value = false
              }
          )
-     }*/
+    }
 
     UiBaseScaffold(
         message = state.value.message,
