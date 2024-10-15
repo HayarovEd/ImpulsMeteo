@@ -61,7 +61,7 @@ class DevicesViewModel @Inject constructor(
             is DevicesEvent.SelectGroup -> {
                 viewModelScope.launch {
                     _state.value.copy(
-                        selectedGroup = event.name
+                        numberSelectedGroup = event.index
                     )
                         .updateState()
                     //loadDevices(false)

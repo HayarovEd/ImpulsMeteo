@@ -87,27 +87,23 @@ fun DevicesScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val listState = rememberLazyListState()
     val pagerState =
-        rememberPagerState(pageCount = { state.value.devices.size})
+        rememberPagerState(
+            pageCount = { state.value.devices.size }
+        )
     val scope = rememberCoroutineScope()
-    LaunchedEffect(state.value.devices.size) {
+    /*LaunchedEffect(state.value.devices.size) {
         if (state.value.devices.isNotEmpty()) {
-            listState.animateScrollToItem(state.value.devices.size  / 2 - 1)
-            pagerState.animateScrollToPage(state.value.devices.size  / 2)
+              listState.animateScrollToItem(state.value.devices.size  / 2 - 1)
+              pagerState.animateScrollToPage(state.value.devices.size  / 2)
         }
-    }
-    val offsetCell =  1
+    }*/
+
     LaunchedEffect(pagerState.currentPage) {
+        Log.d("TEST DEVICES SCREEN", "currentPage ${pagerState.currentPage}")
         if (state.value.devices.isNotEmpty()) {
-            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                if (pagerState.currentPage > 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
-                    listState.animateScrollToItem(pagerState.currentPage - offsetCell)
-                }
-                onEvent(DevicesEvent.SelectGroup(state.value.devices.keys.toList()[pagerState.currentPage].name))
-            } else {
-                if (pagerState.currentPage != 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
-                    listState.animateScrollToItem(pagerState.currentPage - offsetCell)
-                }
-                onEvent(DevicesEvent.SelectGroup(state.value.devices.keys.toList()[pagerState.currentPage].name))
+            onEvent(DevicesEvent.SelectGroup(pagerState.currentPage))
+            if (pagerState.currentPage > 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
+                listState.animateScrollToItem(pagerState.currentPage - 1)
             }
         }
     }
@@ -160,12 +156,12 @@ fun DevicesScreen(
                             modifier = modifier.weight(5f),
                             listState = listState,
                             devices = state.value.devices,
-                            selectedGroup = state.value.selectedGroup,
+                            numberSelectedGroup = state.value.numberSelectedGroup,
                             pagerState = pagerState,
                             scope = scope,
                             screenWidth = screenWidth,
                             onClick = {
-                                DevicesEvent.SelectGroup(state.value.devices.keys.toList()[it].name)
+                                DevicesEvent.SelectGroup(it)
                             }
                         )
                         UiIconButton(
@@ -221,9 +217,9 @@ fun DevicesScreen(
                     DevicesSelectorGroup(
                         listState = listState,
                         devices = state.value.devices,
-                        selectedGroup = state.value.selectedGroup,
+                        numberSelectedGroup = state.value.numberSelectedGroup,
                         onClick = {
-                            DevicesEvent.SelectGroup(state.value.devices.keys.toList()[it].name)
+                            DevicesEvent.SelectGroup(it)
                         },
                         scope = scope,
                         pagerState = pagerState,
@@ -268,11 +264,11 @@ fun DevicesScreen(
                         state = pagerState,
                         verticalAlignment = Alignment.Top
                     ) { page ->
-                      //  val index = page % state.value.devices.size
+                        //  val index = page % state.value.devices.size
                         val currentDevices = state.value.devices.values.toList()[page]
                         val cellsCount =
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        LazyVerticalStaggeredGrid (
+                        LazyVerticalStaggeredGrid(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             columns = StaggeredGridCells.Fixed(cellsCount),
@@ -303,13 +299,12 @@ private fun DevicesSelectorGroup(
     modifier: Modifier = Modifier,
     listState: LazyListState,
     devices: Map<GroupDevices, List<Device>>,
-    selectedGroup: String,
+    numberSelectedGroup: Int,
     onClick: (Int) -> Unit,
     scope: CoroutineScope,
     pagerState: PagerState,
     screenWidth: Dp,
 ) {
-    Log.d("TEST DEVICES SCREEN", "selectedGroup $selectedGroup")
     LazyRow(
         modifier = modifier
             .fillMaxWidth(),
@@ -322,11 +317,11 @@ private fun DevicesSelectorGroup(
             //val index = it % monitors.size
             Box(
                 modifier = modifier
-                    .shadow(elevation = if (devices.keys.toList()[it].name == selectedGroup) 10.dp else 0.dp)
+                    .shadow(elevation = if (it == numberSelectedGroup) 10.dp else 0.dp)
                     .width(screenWidth / 3)
                     .clip(shape = RoundedCornerShape(3.dp))
                     .background(
-                        color = if (devices.keys.toList()[it].name == selectedGroup) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(
+                        color = if (it == numberSelectedGroup) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(
                             alpha = 0.3f
                         )
                     )

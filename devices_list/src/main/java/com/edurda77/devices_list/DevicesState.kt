@@ -11,7 +11,7 @@ data class DevicesState(
     val isLoading: Boolean = true,
     val token: String = "",
     val query: String = "",
-    val selectedGroup: String = "",
+    val numberSelectedGroup: Int = 0,
     val loggedUser: LoggedUser? = null,
     val devices: Map<GroupDevices, List<Device>> = emptyMap(),
 )

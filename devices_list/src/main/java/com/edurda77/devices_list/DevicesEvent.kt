@@ -4,5 +4,5 @@ sealed class DevicesEvent {
     data object Refresh: DevicesEvent()
     data object Logoff: DevicesEvent()
     class OnSearch(val query: String) : DevicesEvent()
-    class SelectGroup(val name: String): DevicesEvent()
+    class SelectGroup(val index: Int) : DevicesEvent()
 }
