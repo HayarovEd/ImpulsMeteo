@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginScreen(
-    onGoToListCameras: () -> Unit,
+    onGoToListDevices: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
     configuration: Configuration
 ) {
@@ -35,7 +35,7 @@ fun LoginScreen(
                 }
 
                 is UiLoginEvents.NavigateEvent -> {
-                    onGoToListCameras()
+                    onGoToListDevices()
                 }
             }
         }

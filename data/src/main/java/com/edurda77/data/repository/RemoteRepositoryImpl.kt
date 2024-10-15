@@ -5,15 +5,18 @@ import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
+import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.remote.add_device.AddDeviceDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
+import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.Permissions
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
@@ -24,6 +27,7 @@ import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
 import com.edurda77.domain.utils.PARAMETER_GROUP
 import com.edurda77.domain.utils.PASSWORD
+import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.convertToMapGroupedDevices
 import io.ktor.client.HttpClient
@@ -134,6 +138,22 @@ class RemoteRepositoryImpl @Inject constructor(
                     }
                 }.bodyAsText()
                 Unit
+            }
+        }
+    }
+
+    override suspend fun getPermissions(
+        token: String,
+    ): ResultWork<Permissions, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.get(BASE_URL + PERMISSIONS_POSTFIX) {
+                    url {
+                        bearerAuth(token)
+                    }
+                }.call
+                    .body<PermissionsDto>()
+                result.convertToPermissions()
             }
         }
     }

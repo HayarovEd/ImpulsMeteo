@@ -32,8 +32,8 @@ fun NavController(
         }
         composable<NavigationRoute.Login> {
             LoginScreen(
-                onGoToListCameras = {
-                    //navController.navigate(NavigationRoute.ListCameras)
+                onGoToListDevices = {
+                    navController.navigate(NavigationRoute.Devices)
                 },
                 configuration = configuration
             )
@@ -45,7 +45,7 @@ fun NavController(
 
                 },
                 onGoToLogin = {
-
+                    navController.navigate(NavigationRoute.Login)
                 },
                 bottomBarContent = {
                     UiBottomNavigation(

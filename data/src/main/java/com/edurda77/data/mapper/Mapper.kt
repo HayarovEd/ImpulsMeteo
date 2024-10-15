@@ -4,11 +4,15 @@ import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
+import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DevicePermission
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.Permission
+import com.edurda77.domain.model.Permissions
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.NEGATIVE_USER_ID
@@ -67,12 +71,29 @@ fun DevicesDto.convertToDevices(): List<Device> {
                     classIcon = param.classIcon,
                     name = param.name,
                     label = param.label,
-                    value = param.value.toDoubleOrNull()?: 0.0,
+                    value = param.value.toDoubleOrNull() ?: 0.0,
                     idUnit = param.idUnit
                 )
             },
             updatedAt = it.lastUpdate ?: ""
         )
     }
+}
+
+fun PermissionsDto.convertToPermissions(): Permissions {
+    return Permissions(
+        permissions = this.permissionsDto.map {
+            Permission(
+                displayName = it.displayName,
+                id = it.id
+            )
+        },
+        devicesPermission = this.devicePermissionsDto.map {
+            DevicePermission(
+                id = it.id,
+                name = it.name
+            )
+        }
+    )
 }
 
