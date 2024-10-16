@@ -1,7 +1,9 @@
 package com.edurda77.splash
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.edurda77.resources.R
@@ -26,6 +27,7 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     onGoToLogin: () -> Unit,
     onGoToListCameras: () -> Unit,
+    configuration: Configuration,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsState()
@@ -43,31 +45,34 @@ fun SplashScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val imageModifier =
+            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) modifier.fillMaxWidth() else modifier.fillMaxHeight()
         Image(
-            modifier = modifier
-                .fillMaxHeight(0.4f),
-            painter = painterResource(id = R.drawable.favicon_3),
+            modifier = imageModifier,
+            painter = if (isSystemInDarkTheme()) painterResource(R.drawable.night_cloud) else painterResource(
+                R.drawable.cloud
+            ),
             contentDescription = "",
-            contentScale = ContentScale.FillWidth
+            contentScale = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) ContentScale.FillWidth else ContentScale.FillHeight
         )
-        Spacer(modifier = modifier.height(10.dp))
-        LinearProgressIndicator(
-            modifier = modifier
-                .fillMaxWidth(0.6f)
-        )
+        Column(
+            modifier = modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = modifier,
+                painter = painterResource(id = R.drawable.favicon_3),
+                contentDescription = "",
+                contentScale = ContentScale.FillWidth
+            )
+            Spacer(modifier = modifier.height(10.dp))
+            LinearProgressIndicator(
+                modifier = modifier
+                    .fillMaxWidth(0.6f)
+            )
+        }
     }
-}
-
-@Preview
-@Composable
-private fun Sample() {
-    SplashScreen(
-        onGoToLogin = {},
-        onGoToListCameras = {}
-    )
 }

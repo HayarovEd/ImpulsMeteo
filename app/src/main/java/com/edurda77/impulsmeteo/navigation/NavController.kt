@@ -22,6 +22,7 @@ fun NavController(
 
         composable<NavigationRoute.Splash> {
             SplashScreen(
+                configuration = configuration,
                 onGoToListCameras = {
                     navController.navigate(NavigationRoute.Devices)
                 },
