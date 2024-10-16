@@ -56,7 +56,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.Device
@@ -67,6 +66,7 @@ import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
+import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 import kotlinx.coroutines.CoroutineScope
@@ -125,29 +125,34 @@ fun DevicesScreen(
     }
 
     if (expandedAddDialog.value) {
-        Dialog(onDismissRequest = { expandedAddDialog.value = false }) {
-            AddDeviceDialog(
-                groups = state.value.devices.keys.toList(),
-                selectedGroups = state.value.selectedGroups,
-                onCloseClick = {
-                    expandedAddDialog.value = false
-                    onEvent(DevicesEvent.ClearSelectedGroups)
-                },
-                onAddClick = { name, key, frequency, groups ->
-                    onEvent(
-                        DevicesEvent.OnInsertDevice(
-                            name = name,
-                            key = key,
-                            frequency = frequency,
-                            groups = groups
+        UiDialog(
+            onCloseDialog = {
+                expandedAddDialog.value = false
+            },
+            content = {
+                AddDeviceDialog(
+                    groups = state.value.devices.keys.toList(),
+                    selectedGroups = state.value.selectedGroups,
+                    onCloseClick = {
+                        expandedAddDialog.value = false
+                        onEvent(DevicesEvent.ClearSelectedGroups)
+                    },
+                    onAddClick = { name, key, frequency, groups ->
+                        onEvent(
+                            DevicesEvent.OnInsertDevice(
+                                name = name,
+                                key = key,
+                                frequency = frequency,
+                                groups = groups
+                            )
                         )
-                    )
-                },
-                onUpdateGroups = {
-                    onEvent(DevicesEvent.UpdateSelectedGroups(it))
-                }
-            )
-        }
+                    },
+                    onUpdateGroups = {
+                        onEvent(DevicesEvent.UpdateSelectedGroups(it))
+                    }
+                )
+            }
+        )
     }
     UiBaseScaffold(
         message = state.value.message,

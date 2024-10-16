@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -23,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -53,13 +51,7 @@ fun AddDeviceDialog(
         selectedGroupsText.value = selectedGroups.joinToString { it.name }
     }
 
-    Column(
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(10.dp))
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f))
-            .padding(10.dp)
-    ) {
+    Column {
         Text(
             modifier = modifier,
             text = stringResource(id = R.string.add),
