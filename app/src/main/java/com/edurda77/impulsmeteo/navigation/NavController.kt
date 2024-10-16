@@ -10,6 +10,7 @@ import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
 import com.edurda77.resources.uikit.UiBottomNavigation
 import com.edurda77.splash.SplashScreen
+import com.edurda77.users_list.UsersListScreen
 
 
 @Composable
@@ -45,6 +46,22 @@ fun NavController(
                 onGoToDevice = {
 
                 },
+                onGoToLogin = {
+                    navController.navigate(NavigationRoute.Login)
+                },
+                bottomBarContent = {
+                    UiBottomNavigation(
+                        navController = navController
+                    )
+                }
+            )
+        }
+        composable<NavigationRoute.Users> {
+            UsersListScreen(
+                configuration = configuration,
+                /* onGoToDevice = {
+
+                 },*/
                 onGoToLogin = {
                     navController.navigate(NavigationRoute.Login)
                 },

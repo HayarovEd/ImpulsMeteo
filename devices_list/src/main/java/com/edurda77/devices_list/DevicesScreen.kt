@@ -1,7 +1,6 @@
 package com.edurda77.devices_list
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -110,7 +109,7 @@ fun DevicesScreen(
         }
     }
     val isShowDialogLogOff = remember { mutableStateOf(false) }
-    BackHandler {}
+
     if (isShowDialogLogOff.value) {
         UiAlertDialog(
             title = stringResource(id = R.string.sure_exit),

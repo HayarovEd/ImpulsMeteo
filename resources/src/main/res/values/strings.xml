@@ -43,4 +43,7 @@
     <string name="add">Добавить</string>
     <string name="group">Группы</string>
 
+    <string name="no_access_this">Нет доступа</string>
+    <string name="access">Права</string>
+
 </resources>

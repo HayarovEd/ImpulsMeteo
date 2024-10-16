@@ -182,7 +182,6 @@ class RemoteRepositoryImpl @Inject constructor(
                     val nextResult = httpClient.get(nextUrl) {
                         url {
                             bearerAuth(token)
-                            parameter(PAGE_PARAMETR, 1)
                         }
                     }.call
                         .body<UsersDto>()
