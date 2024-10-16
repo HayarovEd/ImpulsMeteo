@@ -60,7 +60,7 @@ dependencies {
     implementation(project(":splash"))
     implementation(project(":login_screen"))
     implementation(project(":devices_list"))
-
+    implementation(project(":users_list"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

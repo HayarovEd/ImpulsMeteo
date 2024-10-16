@@ -5,14 +5,18 @@ import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
+import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.DevicePermission
+import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.Permission
+import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.NEGATIVE_USER_ID
@@ -95,5 +99,27 @@ fun PermissionsDto.convertToPermissions(): Permissions {
             )
         }
     )
+}
+
+fun UsersDto.convertToUsers(): List<User> {
+    return this.userDto.map { user ->
+        User(
+            email = user.email,
+            id = user.id,
+            name = user.name,
+            devices = user.devicesUserDto.map {
+                DeviceUser(
+                    id = it.id,
+                    name = it.name
+                )
+            },
+            permissions = user.permissionsUserDto.map {
+                PermissionUser(
+                    displayName = it.displayName,
+                    id = it.id
+                )
+            }
+        )
+    }
 }
 

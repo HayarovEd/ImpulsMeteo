@@ -6,8 +6,10 @@ const val AUTH_LOGGED_USER_POSTFIX = "auth/user"
 const val DEVICES_POSTFIX = "devices"
 const val DEVICES_GROUPS_POSTFIX = "devicesgroups"
 const val PERMISSIONS_POSTFIX = "permissions"
+const val USERS_POSTFIX = "users"
 const val EMAIL = "email"
 const val PASSWORD = "password"
+const val PAGE_PARAMETR = "page"
 
 const val PARAMETER_GROUP = "groups"
 

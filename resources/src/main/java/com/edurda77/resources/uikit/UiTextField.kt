@@ -54,7 +54,7 @@ fun UiTextField(
         },
         enabled = enabled,
         readOnly = readOnly,
-        textStyle = Typography.bodyLarge,
+        textStyle = Typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimaryContainer),
         // cursorBrush = SolidColor(colors.cursorColor(isError).value),
         visualTransformation = visualTransformation,
         keyboardOptions = KeyboardOptions(
@@ -88,7 +88,8 @@ fun UiTextField(
                 contentPadding = PaddingValues(vertical = 4.dp, horizontal = 10.dp),
                 colors = colors(
                     focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
+                    cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             )
         }

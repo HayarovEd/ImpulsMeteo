@@ -5,6 +5,7 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
@@ -25,4 +26,5 @@ interface RemoteRepository {
     ): ResultWork<Unit, DataError>
 
     suspend fun getPermissions(token: String): ResultWork<Permissions, DataError>
+    suspend fun getUsers(token: String): ResultWork<List<User>, DataError>
 }

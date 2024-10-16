@@ -10,8 +10,10 @@ import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.LoginUseCase
+import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
+import com.edurda77.domain.usecase.UsersUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -88,5 +90,17 @@ object UseCaseModule {
     @Singleton
     fun providesAddDeviceUseCase(remoteRepository: RemoteRepository): AddDeviceUseCase {
         return AddDeviceUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesUsersUseCase(remoteRepository: RemoteRepository): UsersUseCase {
+        return UsersUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesPermissionsUseCase(remoteRepository: RemoteRepository): PermissionsUseCase {
+        return PermissionsUseCase(remoteRepository = remoteRepository)
     }
 }
