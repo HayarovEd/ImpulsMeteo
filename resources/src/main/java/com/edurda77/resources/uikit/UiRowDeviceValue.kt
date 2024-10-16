@@ -34,7 +34,8 @@ fun UiRowDeviceValue(
         Icon(
             imageVector = icon,
             contentDescription = "",
-            tint = MaterialTheme.colorScheme.onSecondary)
+            tint = MaterialTheme.colorScheme.tertiary
+        )
         Spacer(modifier = modifier.width(10.dp))
         Column {
             Text(
@@ -56,7 +57,7 @@ fun UiRowDeviceValue(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF8F4C33)
+@Preview(showBackground = true, backgroundColor = 0xF0F5E388)
 @Composable
 private fun Sample() {
     UiRowDeviceValue(

@@ -257,15 +257,18 @@ fun DevicesScreen(
         fabContent = {
             if (state.value.loggedUser?.permissions?.contains(DEVICES_CREATE) == true) {
                 FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     onClick = { expandedAddDialog.value = true }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = ""
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }
         },
+        configuration = configuration,
         content = { paddings ->
             PullToRefreshBox(
                 modifier = modifier.padding(paddings),

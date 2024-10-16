@@ -1,7 +1,7 @@
 package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,111 +29,96 @@ fun ItemDevice(
     device: Device,
     configuration: Configuration
 ) {
-    Card(
+    Box(
         modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        border = BorderStroke(
-            width = 2.dp,
-            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-        )
+            .fillMaxWidth()
+            .background(Color.Transparent)
+            // .clickable(onClick = onClick)
+            .padding(10.dp),
     ) {
-        Box(
+        Text(
+            modifier = modifier.align(alignment = Alignment.TopEnd),
+            text = if (device.status) stringResource(R.string.online) else stringResource(R.string.offline),
+            color = if (device.status) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+            style = Typography.bodyLarge,
+        )
+        Column(
             modifier = modifier
                 .fillMaxWidth()
-                // .clickable(onClick = onClick)
-                .padding(10.dp),
+            // .clickable(onClick = onClick)
+            //.padding(10.dp),
         ) {
             Text(
-                modifier = modifier.align(alignment = Alignment.TopEnd),
-                text = if (device.status) stringResource(R.string.online) else stringResource(R.string.offline),
-                color = if (device.status) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-                style = Typography.bodyLarge,
+                modifier = modifier.fillMaxWidth(),
+                text = device.name,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = Typography.titleLarge,
+                textAlign = TextAlign.Center
             )
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    // .clickable(onClick = onClick)
-                    .padding(10.dp),
+            Spacer(modifier = modifier.height(5.dp))
+            val steps = if (device.params.size <= 6) device.params.size else 6
+            Row(
+                modifier = modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    modifier = modifier.fillMaxWidth(),
-                    text = device.name,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = Typography.titleLarge,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = modifier.height(5.dp))
-                val steps = if (device.params.size<=6) device.params.size else 6
-                Row (
-                    modifier = modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        Column {
-                            for (i in 0..<steps step 3) {
-                                UiRowDeviceValue(
-                                    icon = device.params[i].idUnit.asUiIconParam(),
-                                    value = device.params[i].value,
-                                    unit = device.params[i].idUnit.asUiTextParam(),
-                                    name = device.params[i].label
-                                )
-                                Spacer(modifier = modifier.height(3.dp))
-                            }
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    Column {
+                        for (i in 0..<steps step 3) {
+                            UiRowDeviceValue(
+                                icon = device.params[i].idUnit.asUiIconParam(),
+                                value = device.params[i].value,
+                                unit = device.params[i].idUnit.asUiTextParam(),
+                                name = device.params[i].label
+                            )
+                            Spacer(modifier = modifier.height(3.dp))
                         }
-                        Spacer(modifier = modifier.width(5.dp))
-                        Column {
-                            for (i in 1..<steps step 3) {
-                                UiRowDeviceValue(
-                                    icon = device.params[i].idUnit.asUiIconParam(),
-                                    value = device.params[i].value,
-                                    unit = device.params[i].idUnit.asUiTextParam(),
-                                    name = device.params[i].label
-                                )
-                                Spacer(modifier = modifier.height(3.dp))
-                            }
+                    }
+                    Spacer(modifier = modifier.width(5.dp))
+                    Column {
+                        for (i in 1..<steps step 3) {
+                            UiRowDeviceValue(
+                                icon = device.params[i].idUnit.asUiIconParam(),
+                                value = device.params[i].value,
+                                unit = device.params[i].idUnit.asUiTextParam(),
+                                name = device.params[i].label
+                            )
+                            Spacer(modifier = modifier.height(3.dp))
                         }
-                        Spacer(modifier = modifier.width(5.dp))
-                        Column {
-                            for (i in 2..<steps step 3) {
-                                UiRowDeviceValue(
-                                    icon = device.params[i].idUnit.asUiIconParam(),
-                                    value = device.params[i].value,
-                                    unit = device.params[i].idUnit.asUiTextParam(),
-                                    name = device.params[i].label
-                                )
-                                Spacer(modifier = modifier.height(3.dp))
-                            }
+                    }
+                    Spacer(modifier = modifier.width(5.dp))
+                    Column {
+                        for (i in 2..<steps step 3) {
+                            UiRowDeviceValue(
+                                icon = device.params[i].idUnit.asUiIconParam(),
+                                value = device.params[i].value,
+                                unit = device.params[i].idUnit.asUiTextParam(),
+                                name = device.params[i].label
+                            )
+                            Spacer(modifier = modifier.height(3.dp))
                         }
-                    } else {
-                        Column {
-                            for (i in 0..<steps step 2) {
-                                UiRowDeviceValue(
-                                    icon = device.params[i].idUnit.asUiIconParam(),
-                                    value = device.params[i].value,
-                                    unit = device.params[i].idUnit.asUiTextParam(),
-                                    name = device.params[i].label
-                                )
-                                Spacer(modifier = modifier.height(3.dp))
-                            }
+                    }
+                } else {
+                    Column {
+                        for (i in 0..<steps step 2) {
+                            UiRowDeviceValue(
+                                icon = device.params[i].idUnit.asUiIconParam(),
+                                value = device.params[i].value,
+                                unit = device.params[i].idUnit.asUiTextParam(),
+                                name = device.params[i].label
+                            )
+                            Spacer(modifier = modifier.height(3.dp))
                         }
-                        Spacer(modifier = modifier.width(10.dp))
-                        Column {
-                            for (i in 1..<steps step 2) {
-                                UiRowDeviceValue(
-                                    icon = device.params[i].idUnit.asUiIconParam(),
-                                    value = device.params[i].value,
-                                    unit = device.params[i].idUnit.asUiTextParam(),
-                                    name = device.params[i].label
-                                )
-                                Spacer(modifier = modifier.height(3.dp))
-                            }
+                    }
+                    Spacer(modifier = modifier.width(10.dp))
+                    Column {
+                        for (i in 1..<steps step 2) {
+                            UiRowDeviceValue(
+                                icon = device.params[i].idUnit.asUiIconParam(),
+                                value = device.params[i].value,
+                                unit = device.params[i].idUnit.asUiTextParam(),
+                                name = device.params[i].label
+                            )
+                            Spacer(modifier = modifier.height(3.dp))
                         }
                     }
                 }
