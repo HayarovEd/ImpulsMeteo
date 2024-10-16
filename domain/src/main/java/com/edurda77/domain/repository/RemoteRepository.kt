@@ -27,4 +27,12 @@ interface RemoteRepository {
 
     suspend fun getPermissions(token: String): ResultWork<Permissions, DataError>
     suspend fun getUsers(token: String): ResultWork<List<User>, DataError>
+    suspend fun addUser(
+        token: String,
+        devices: List<String>,
+        permissions: List<String>,
+        email: String,
+        name: String,
+        password: String
+    ): ResultWork<Unit, DataError>
 }

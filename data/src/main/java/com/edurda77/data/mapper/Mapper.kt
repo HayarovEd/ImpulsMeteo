@@ -8,12 +8,10 @@ import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
-import com.edurda77.domain.model.DevicePermission
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.Permission
 import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.model.Permissions
 import com.edurda77.domain.model.User
@@ -87,13 +85,13 @@ fun DevicesDto.convertToDevices(): List<Device> {
 fun PermissionsDto.convertToPermissions(): Permissions {
     return Permissions(
         permissions = this.permissionsDto.map {
-            Permission(
+            PermissionUser(
                 displayName = it.displayName,
                 id = it.id
             )
         },
         devicesPermission = this.devicePermissionsDto.map {
-            DevicePermission(
+            DeviceUser(
                 id = it.id,
                 name = it.name
             )

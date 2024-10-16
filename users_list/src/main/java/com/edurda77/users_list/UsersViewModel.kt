@@ -2,6 +2,7 @@ package com.edurda77.users_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -23,7 +24,8 @@ class UsersViewModel @Inject constructor(
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
     private val permissionsUseCase: PermissionsUseCase,
-    private val usersUseCase: UsersUseCase
+    private val usersUseCase: UsersUseCase,
+    private val addUserUseCase: AddUserUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(UsersState())
     val state = _state.asStateFlow()
@@ -47,6 +49,76 @@ class UsersViewModel @Inject constructor(
                     delay(1000)
                     loadUsers()
                 }
+            }
+
+            UsersEvent.ClearSelected -> {
+                _state.value.copy(
+                    selectedPermissions = emptyList(),
+                    selectedDevices = emptyList()
+                )
+                    .updateState()
+            }
+
+            is UsersEvent.InsertNewUser -> {
+                viewModelScope.launch {
+                    insertUser(
+                        name = event.name,
+                        password = event.password,
+                        email = event.email,
+                    )
+                }
+            }
+
+            is UsersEvent.UpdateSelectedDevice -> {
+                val updatedDevices = state.value.selectedDevices.toMutableList()
+                if (state.value.selectedDevices.contains(event.deviceUser)) {
+                    updatedDevices.remove(event.deviceUser)
+                } else {
+                    updatedDevices.add(event.deviceUser)
+                }
+                _state.value.copy(
+                    selectedDevices = updatedDevices
+                )
+                    .updateState()
+            }
+
+            is UsersEvent.UpdateSelectedPermission -> {
+                val updatedPermissions = state.value.selectedPermissions.toMutableList()
+                if (state.value.selectedPermissions.contains(event.permissionUser)) {
+                    updatedPermissions.remove(event.permissionUser)
+                } else {
+                    updatedPermissions.add(event.permissionUser)
+                }
+                _state.value.copy(
+                    selectedPermissions = updatedPermissions
+                )
+                    .updateState()
+            }
+        }
+    }
+
+    private suspend fun insertUser(
+        name: String,
+        password: String,
+        email: String
+    ) {
+        when (val result = addUserUseCase.invoke(
+            token = state.value.token,
+            devices = state.value.selectedDevices.map { it.id.toString() },
+            permissions = state.value.selectedPermissions.map { it.id.toString() },
+            email = email,
+            name = name,
+            password = password
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadUsers()
             }
         }
     }
@@ -98,6 +170,10 @@ class UsersViewModel @Inject constructor(
     }
 
     private suspend fun loadUsers() {
+        _state.value.copy(
+            isLoading = true
+        )
+            .updateState()
         when (val result = usersUseCase.invoke(state.value.token)) {
             is ResultWork.Error -> {
                 _state.value.copy(

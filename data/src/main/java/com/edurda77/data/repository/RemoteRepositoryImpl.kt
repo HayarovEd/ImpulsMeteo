@@ -8,6 +8,7 @@ import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.mapper.convertToUsers
 import com.edurda77.data.remote.add_device.AddDeviceDto
+import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
@@ -189,6 +190,36 @@ class RemoteRepositoryImpl @Inject constructor(
                     nextUrl = nextResult.nextPageUrl
                 }
                 users
+            }
+        }
+    }
+
+    override suspend fun addUser(
+        token: String,
+        devices: List<String>,
+        permissions: List<String>,
+        email: String,
+        name: String,
+        password: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post(BASE_URL + USERS_POSTFIX) {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            AddUserDto(
+                                devices = devices,
+                                permissions = permissions,
+                                name = name,
+                                email = email,
+                                password = password
+                            )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
             }
         }
     }

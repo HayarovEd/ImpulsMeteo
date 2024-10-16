@@ -4,6 +4,7 @@ package com.edurda77.impulsmeteo.di
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
+import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -102,5 +103,11 @@ object UseCaseModule {
     @Singleton
     fun providesPermissionsUseCase(remoteRepository: RemoteRepository): PermissionsUseCase {
         return PermissionsUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAddUserUseCase(remoteRepository: RemoteRepository): AddUserUseCase {
+        return AddUserUseCase(remoteRepository = remoteRepository)
     }
 }
