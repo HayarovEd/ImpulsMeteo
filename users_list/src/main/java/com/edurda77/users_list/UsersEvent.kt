@@ -13,6 +13,8 @@ sealed class UsersEvent {
         val email: String,
         val name: String,
         val password: String,
+        val devices: List<DeviceUser>,
+        val permissions: List<PermissionUser>,
     ) : UsersEvent()
 
     data object ClearSelected : UsersEvent()

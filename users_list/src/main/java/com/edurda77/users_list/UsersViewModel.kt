@@ -2,6 +2,8 @@ package com.edurda77.users_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -65,6 +67,8 @@ class UsersViewModel @Inject constructor(
                         name = event.name,
                         password = event.password,
                         email = event.email,
+                        devices = event.devices,
+                        permissions = event.permissions
                     )
                 }
             }
@@ -100,12 +104,14 @@ class UsersViewModel @Inject constructor(
     private suspend fun insertUser(
         name: String,
         password: String,
-        email: String
+        email: String,
+        devices: List<DeviceUser>,
+        permissions: List<PermissionUser>
     ) {
         when (val result = addUserUseCase.invoke(
             token = state.value.token,
-            devices = state.value.selectedDevices.map { it.id.toString() },
-            permissions = state.value.selectedPermissions.map { it.id.toString() },
+            devices = devices.map { it.id.toString() },
+            permissions = permissions.map { it.id.toString() },
             email = email,
             name = name,
             password = password

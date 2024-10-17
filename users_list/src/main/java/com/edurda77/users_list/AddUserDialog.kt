@@ -43,7 +43,7 @@ fun AddUserDialog(
     onCloseClick: () -> Unit,
     onUpdatePermissions: (PermissionUser) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onAddClick: (String, String, String) -> Unit,
+    onAddClick: (String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
@@ -202,6 +202,8 @@ fun AddUserDialog(
                         name.value,
                         email.value,
                         password.value,
+                        selectedDevices,
+                        selectedPermissions
                     )
                 }
             ) {

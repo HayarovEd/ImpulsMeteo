@@ -86,12 +86,14 @@ fun UsersListScreen(
                         expandedAddDialog.value = false
                         onEvent(UsersEvent.ClearSelected)
                     },
-                    onAddClick = { name, email, password ->
+                    onAddClick = { name, email, password, devices, permissions ->
                         onEvent(
                             UsersEvent.InsertNewUser(
                                 name = name,
                                 email = email,
-                                password = password
+                                password = password,
+                                devices = devices,
+                                permissions = permissions
                             )
                         )
                     },
