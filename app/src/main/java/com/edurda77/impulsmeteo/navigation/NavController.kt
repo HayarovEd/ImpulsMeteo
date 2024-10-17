@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.edurda77.devices_list.DevicesScreen
+import com.edurda77.directories.DirectoriesScreen
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
 import com.edurda77.resources.uikit.UiBottomNavigation
@@ -59,9 +60,19 @@ fun NavController(
         composable<NavigationRoute.Users> {
             UsersListScreen(
                 configuration = configuration,
-                /* onGoToDevice = {
-
-                 },*/
+                onGoToLogin = {
+                    navController.navigate(NavigationRoute.Login)
+                },
+                bottomBarContent = {
+                    UiBottomNavigation(
+                        navController = navController
+                    )
+                }
+            )
+        }
+        composable<NavigationRoute.Directory> {
+            DirectoriesScreen(
+                configuration = configuration,
                 onGoToLogin = {
                     navController.navigate(NavigationRoute.Login)
                 },

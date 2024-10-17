@@ -53,5 +53,7 @@
     <string name="access_rights_empty">Должен быть хотя бы один доступ</string>
 
     <string name="sure_delete_user">Действительно удалить пользователя</string>
+    <string name="group_devices">ГРУППЫ УСТРОЙСТВ</string>
+    <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
 
 </resources>

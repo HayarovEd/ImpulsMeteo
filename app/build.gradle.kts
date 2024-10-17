@@ -61,6 +61,8 @@ dependencies {
     implementation(project(":login_screen"))
     implementation(project(":devices_list"))
     implementation(project(":users_list"))
+    implementation(project(":directories"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
