@@ -37,7 +37,7 @@ class UsersViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-        loadLocalData()
+        loadInitialData()
     }
 
     fun onEvent(event: UsersEvent) {
@@ -205,7 +205,7 @@ class UsersViewModel @Inject constructor(
         }
     }
 
-    private fun loadLocalData() {
+    private fun loadInitialData() {
         viewModelScope.launch {
             localTokenUseCase.invoke().collect { collectedToken ->
                 when (collectedToken) {

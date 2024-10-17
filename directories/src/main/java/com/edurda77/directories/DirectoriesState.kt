@@ -1,0 +1,22 @@
+package com.edurda77.directories
+
+import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.resources.uikit.UiText
+
+data class DirectoriesState(
+    val message: UiText? = null,
+    val isLoading: Boolean = true,
+    val token: String = "",
+    val loggedUser: LoggedUser? = null,
+    val directoriesType: DirectoriesType = DirectoriesType.GROUPS,
+    val groups: List<GroupDevices> = emptyList(),
+    val units: List<UnitMeteo> = emptyList(),
+)
+
+
+enum class DirectoriesType {
+    GROUPS,
+    UNITS
+}
