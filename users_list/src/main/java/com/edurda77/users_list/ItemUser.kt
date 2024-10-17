@@ -1,4 +1,4 @@
-package com.edurda77.resources.uikit
+package com.edurda77.users_list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,17 +23,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.model.User
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.UiAlertDialog
+import com.edurda77.resources.uikit.UiDialog
+import com.edurda77.resources.uikit.UiIconButton
 
 @Composable
 fun ItemUser(
     modifier: Modifier = Modifier,
+    isEnabledDelete: Boolean,
+    isEnabledUpdate: Boolean,
     user: User,
     onDeleteClick: (Int) -> Unit,
+    onClearSelected: () -> Unit,
+    onUpdateSelected: (Int) -> Unit,
+    devices: List<DeviceUser>,
+    permissions: List<PermissionUser>,
+    selectedDevices: List<DeviceUser>,
+    selectedPermissions: List<PermissionUser>,
+    onUpdatePermissions: (PermissionUser) -> Unit,
+    onUpdateDevices: (DeviceUser) -> Unit,
+    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
 ) {
     val expandedDeleteDialog = remember { mutableStateOf(false) }
+    val expandedUpdateDialog = remember { mutableStateOf(false) }
     if (expandedDeleteDialog.value) {
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_user),
@@ -42,6 +60,43 @@ fun ItemUser(
             },
             onClickCancel = {
                 expandedDeleteDialog.value = false
+            }
+        )
+    }
+    if (expandedUpdateDialog.value) {
+        UiDialog(
+            onCloseDialog = {
+                expandedUpdateDialog.value = false
+                onClearSelected()
+            },
+            content = {
+                UpdateUserDialog(
+                    devices = devices,
+                    permissions = permissions,
+                    selectedDevices = selectedDevices,
+                    selectedPermissions = selectedPermissions,
+                    onCloseClick = {
+                        expandedUpdateDialog.value = false
+                        onClearSelected()
+                    },
+                    onUpdateClick = { id, name, email, password, devices, permissions ->
+                        onUpdateClick(
+                            id,
+                            name,
+                            email,
+                            password,
+                            devices,
+                            permissions
+                        )
+                    },
+                    onUpdatePermissions = {
+                        onUpdatePermissions(it)
+                    },
+                    onUpdateDevices = {
+                        onUpdateDevices(it)
+                    },
+                    user = user
+                )
             }
         )
     }
@@ -72,12 +127,25 @@ fun ItemUser(
                     style = Typography.bodyLarge,
                 )
             }
-            UiIconButton(
-                icon = Icons.Default.Delete,
-                onClick = {
-                    expandedDeleteDialog.value = true
+            Row {
+                if (isEnabledUpdate) {
+                    UiIconButton(
+                        icon = Icons.Default.Edit,
+                        onClick = {
+                            expandedUpdateDialog.value = true
+                            onUpdateSelected(user.id)
+                        }
+                    )
                 }
-            )
+                if (isEnabledDelete) {
+                    UiIconButton(
+                        icon = Icons.Default.Delete,
+                        onClick = {
+                            expandedDeleteDialog.value = true
+                        }
+                    )
+                }
+            }
         }
         Spacer(modifier = modifier.height(2.dp))
         HorizontalDivider(

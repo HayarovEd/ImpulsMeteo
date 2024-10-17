@@ -37,4 +37,13 @@ interface RemoteRepository {
     ): ResultWork<Unit, DataError>
 
     suspend fun deleteUser(token: String, id: Int): ResultWork<Unit, DataError>
+    suspend fun updateUser(
+        token: String,
+        id: Int,
+        devices: List<String>,
+        permissions: List<String>,
+        name: String,
+        email: String,
+        password: String
+    ): ResultWork<Unit, DataError>
 }

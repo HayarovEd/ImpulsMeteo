@@ -12,6 +12,7 @@ import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.permission.PermissionsDto
+import com.edurda77.data.remote.update_user.UpdateUserDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
@@ -41,6 +42,7 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -231,6 +233,38 @@ class RemoteRepositoryImpl @Inject constructor(
                     contentType(ContentType.Application.Json)
                     url {
                         bearerAuth(token)
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun updateUser(
+        token: String,
+        id: Int,
+        devices: List<String>,
+        permissions: List<String>,
+        name: String,
+        email: String,
+        password: String
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$USERS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            UpdateUserDto(
+                                id = id,
+                                devices = devices,
+                                permissions = permissions,
+                                name = name,
+                                email = email,
+                                password = password
+                            )
+                        )
                     }
                 }.bodyAsText()
                 Unit

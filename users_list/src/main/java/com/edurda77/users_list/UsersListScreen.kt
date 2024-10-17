@@ -35,10 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.USERS_CREATE
+import com.edurda77.domain.utils.USERS_DELETE
+import com.edurda77.domain.utils.USERS_EDIT
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
-import com.edurda77.resources.uikit.ItemUser
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
@@ -75,6 +76,7 @@ fun UsersListScreen(
         UiDialog(
             onCloseDialog = {
                 expandedAddDialog.value = false
+                onEvent(UsersEvent.ClearSelected)
             },
             content = {
                 AddUserDialog(
@@ -183,7 +185,41 @@ fun UsersListScreen(
                                     user = user,
                                     onDeleteClick = {
                                         onEvent(UsersEvent.DeleteUser(it))
-                                    }
+                                    },
+                                    isEnabledDelete = state.value.loggedUser?.permissions?.contains(
+                                        USERS_DELETE
+                                    ) == true,
+                                    isEnabledUpdate = state.value.loggedUser?.permissions?.contains(
+                                        USERS_EDIT
+                                    ) == true,
+                                    onClearSelected = {
+                                        onEvent(UsersEvent.ClearSelected)
+                                    },
+                                    onUpdateSelected = {
+                                        onEvent(UsersEvent.UpdateSelected(user))
+                                    },
+                                    devices = state.value.devices,
+                                    permissions = state.value.permissions,
+                                    selectedDevices = state.value.selectedDevices,
+                                    selectedPermissions = state.value.selectedPermissions,
+                                    onUpdatePermissions = {
+                                        onEvent(UsersEvent.UpdateSelectedPermission(it))
+                                    },
+                                    onUpdateDevices = {
+                                        onEvent(UsersEvent.UpdateSelectedDevice(it))
+                                    },
+                                    onUpdateClick = { id, name, email, password, devices, permissions ->
+                                        onEvent(
+                                            UsersEvent.UpdateUser(
+                                                id = id,
+                                                name = name,
+                                                email = email,
+                                                password = password,
+                                                devices = devices,
+                                                permissions = permissions
+                                            )
+                                        )
+                                    },
                                 )
                             }
                         }

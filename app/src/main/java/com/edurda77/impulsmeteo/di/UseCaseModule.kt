@@ -15,6 +15,7 @@ import com.edurda77.domain.usecase.LoginUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
+import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import dagger.Module
 import dagger.Provides
@@ -118,4 +119,9 @@ object UseCaseModule {
         return DeleteUserUseCase(remoteRepository = remoteRepository)
     }
 
+    @Provides
+    @Singleton
+    fun providesUpdateUserUseCase(remoteRepository: RemoteRepository): UpdateUserUseCase {
+        return UpdateUserUseCase(remoteRepository = remoteRepository)
+    }
 }

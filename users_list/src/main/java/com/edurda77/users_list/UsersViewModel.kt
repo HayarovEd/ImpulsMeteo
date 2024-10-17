@@ -10,6 +10,7 @@ import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
+import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
@@ -30,6 +31,7 @@ class UsersViewModel @Inject constructor(
     private val usersUseCase: UsersUseCase,
     private val addUserUseCase: AddUserUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
+    private val updateUserUseCase: UpdateUserUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(UsersState())
     val state = _state.asStateFlow()
@@ -120,8 +122,30 @@ class UsersViewModel @Inject constructor(
                     }
                 }
             }
+
+            is UsersEvent.UpdateUser -> {
+                viewModelScope.launch {
+                    updateUser(
+                        id = event.id,
+                        name = event.name,
+                        password = event.password,
+                        email = event.email,
+                        devices = event.devices,
+                        permissions = event.permissions
+                    )
+                }
+            }
+
+            is UsersEvent.UpdateSelected -> {
+                _state.value.copy(
+                    selectedDevices = event.user.devices,
+                    selectedPermissions = event.user.permissions
+                )
+                    .updateState()
+            }
         }
     }
+
 
     private suspend fun insertUser(
         name: String,
@@ -131,6 +155,36 @@ class UsersViewModel @Inject constructor(
         permissions: List<PermissionUser>
     ) {
         when (val result = addUserUseCase.invoke(
+            token = state.value.token,
+            devices = devices.map { it.id.toString() },
+            permissions = permissions.map { it.id.toString() },
+            email = email,
+            name = name,
+            password = password
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadUsers()
+            }
+        }
+    }
+
+    private suspend fun updateUser(
+        id: Int,
+        name: String,
+        password: String,
+        email: String,
+        devices: List<DeviceUser>,
+        permissions: List<PermissionUser>
+    ) {
+        when (val result = updateUserUseCase.invoke(
+            id = id,
             token = state.value.token,
             devices = devices.map { it.id.toString() },
             permissions = permissions.map { it.id.toString() },
