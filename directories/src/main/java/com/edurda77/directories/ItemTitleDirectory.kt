@@ -19,6 +19,7 @@ fun ItemTitleDirectory(
     modifier: Modifier = Modifier,
     title: String,
     color: Color,
+    colorDivider: Color,
     onClick: () -> Unit
 ) {
     Column(
@@ -38,7 +39,7 @@ fun ItemTitleDirectory(
         HorizontalDivider(
             modifier = Modifier,
             thickness = 2.dp,
-            color = color
+            color = colorDivider
         )
     }
 }

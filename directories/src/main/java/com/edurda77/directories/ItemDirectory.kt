@@ -38,7 +38,7 @@ fun ItemDirectory(
                 modifier = modifier,
                 text = title,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = Typography.bodyLarge,
+                style = Typography.labelSmall,
             )
             Spacer(modifier = modifier.weight(1f))
             if (isEnabledUpdate) {

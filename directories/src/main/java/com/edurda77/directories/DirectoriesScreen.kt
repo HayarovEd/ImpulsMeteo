@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -111,6 +112,7 @@ fun DirectoriesScreen(
                         modifier = modifier.weight(1f),
                         title = stringResource(R.string.group_devices),
                         color = if (state.value.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
+                        colorDivider = if (state.value.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
                         onClick = {
                             onEvent(DirectoriesEvent.SwitshDirectoriesType(DirectoriesType.GROUPS))
                         }
@@ -119,6 +121,7 @@ fun DirectoriesScreen(
                         modifier = modifier.weight(1f),
                         title = stringResource(R.string.units),
                         color = if (state.value.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
+                        colorDivider = if (state.value.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
                         onClick = {
                             onEvent(DirectoriesEvent.SwitshDirectoriesType(DirectoriesType.UNITS))
                         }
