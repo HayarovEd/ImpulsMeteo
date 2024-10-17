@@ -5,6 +5,7 @@ import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
+import com.edurda77.data.remote.units.UnitsDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
@@ -14,6 +15,7 @@ import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
@@ -117,6 +119,16 @@ fun UsersDto.convertToUsers(): List<User> {
                     id = it.id
                 )
             }
+        )
+    }
+}
+
+fun UnitsDto.convertToUnits(): List<UnitMeteo> {
+    return this.units.map {
+        UnitMeteo(
+            id = it.id,
+            name = it.name,
+            short = it.short
         )
     }
 }

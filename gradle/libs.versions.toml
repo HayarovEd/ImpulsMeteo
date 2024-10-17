@@ -39,6 +39,8 @@ namespaceDevicesScreen = "com.edurda77.devices_list"
 namespaceResources = "com.edurda77.resources"
 namespaceSplash = "com.edurda77.splash"
 namespaceUsersScreen = "com.edurda77.users_list"
+namespaceDirectoriesScreen = "com.edurda77.directories"
+
 appcompat = "1.7.0"
 material = "1.12.0"
 uiTooling = "1.7.3"

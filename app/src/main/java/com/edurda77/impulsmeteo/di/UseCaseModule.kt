@@ -7,6 +7,7 @@ import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
+import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -15,6 +16,7 @@ import com.edurda77.domain.usecase.LoginUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
+import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import dagger.Module
@@ -123,5 +125,17 @@ object UseCaseModule {
     @Singleton
     fun providesUpdateUserUseCase(remoteRepository: RemoteRepository): UpdateUserUseCase {
         return UpdateUserUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDevicesGroupsUseCase(remoteRepository: RemoteRepository): DevicesGroupsUseCase {
+        return DevicesGroupsUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesUnitsUseCase(remoteRepository: RemoteRepository): UnitsUseCase {
+        return UnitsUseCase(remoteRepository = remoteRepository)
     }
 }

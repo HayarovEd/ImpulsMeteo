@@ -5,6 +5,7 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -46,4 +47,10 @@ interface RemoteRepository {
         email: String,
         password: String
     ): ResultWork<Unit, DataError>
+
+    suspend fun getDevicesGroups(
+        token: String,
+    ): ResultWork<List<GroupDevices>, DataError>
+
+    suspend fun getUnits(token: String): ResultWork<List<UnitMeteo>, DataError>
 }

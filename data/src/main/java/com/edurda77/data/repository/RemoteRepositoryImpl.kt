@@ -3,15 +3,19 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
+import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToPermissions
+import com.edurda77.data.mapper.convertToUnits
 import com.edurda77.data.mapper.convertToUsers
 import com.edurda77.data.remote.add_device.AddDeviceDto
 import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
+import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
+import com.edurda77.data.remote.units.UnitsDto
 import com.edurda77.data.remote.update_user.UpdateUserDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
@@ -19,11 +23,13 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
 import com.edurda77.domain.utils.BASE_URL
+import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
@@ -32,6 +38,7 @@ import com.edurda77.domain.utils.PARAMETER_GROUP
 import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.UNITS_POSTFIX
 import com.edurda77.domain.utils.USERS_POSTFIX
 import com.edurda77.domain.utils.convertToMapGroupedDevices
 import io.ktor.client.HttpClient
@@ -268,6 +275,38 @@ class RemoteRepositoryImpl @Inject constructor(
                     }
                 }.bodyAsText()
                 Unit
+            }
+        }
+    }
+
+    override suspend fun getDevicesGroups(
+        token: String,
+    ): ResultWork<List<GroupDevices>, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val responseGroups = httpClient.get(BASE_URL + DEVICES_GROUPS_POSTFIX) {
+                    url {
+                        bearerAuth(token)
+                    }
+                }.call
+                    .body<DevicesGropusDto>()
+                responseGroups.convertToGroups()
+            }
+        }
+    }
+
+    override suspend fun getUnits(
+        token: String,
+    ): ResultWork<List<UnitMeteo>, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val responseGroups = httpClient.get(BASE_URL + UNITS_POSTFIX) {
+                    url {
+                        bearerAuth(token)
+                    }
+                }.call
+                    .body<UnitsDto>()
+                responseGroups.convertToUnits()
             }
         }
     }
