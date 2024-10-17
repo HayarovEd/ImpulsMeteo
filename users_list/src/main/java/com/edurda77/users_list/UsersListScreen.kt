@@ -13,8 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -30,12 +34,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.edurda77.domain.utils.USERS_CREATE
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemUser
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
+import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +56,7 @@ fun UsersListScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val isShowDialogLogOff = remember { mutableStateOf(false) }
-
+    val expandedAddDialog = remember { mutableStateOf(false) }
     if (isShowDialogLogOff.value) {
         UiAlertDialog(
             title = stringResource(id = R.string.sure_exit),
@@ -61,6 +67,41 @@ fun UsersListScreen(
             },
             onClickCancel = {
                 isShowDialogLogOff.value = false
+            }
+        )
+    }
+
+    if (expandedAddDialog.value) {
+        UiDialog(
+            onCloseDialog = {
+                expandedAddDialog.value = false
+            },
+            content = {
+                AddUserDialog(
+                    devices = state.value.devices,
+                    permissions = state.value.permissions,
+                    selectedDevices = state.value.selectedDevices,
+                    selectedPermissions = state.value.selectedPermissions,
+                    onCloseClick = {
+                        expandedAddDialog.value = false
+                        onEvent(UsersEvent.ClearSelected)
+                    },
+                    onAddClick = { name, email, password ->
+                        onEvent(
+                            UsersEvent.InsertNewUser(
+                                name = name,
+                                email = email,
+                                password = password
+                            )
+                        )
+                    },
+                    onUpdatePermissions = {
+                        onEvent(UsersEvent.UpdateSelectedPermission(it))
+                    },
+                    onUpdateDevices = {
+                        onEvent(UsersEvent.UpdateSelectedDevice(it))
+                    }
+                )
             }
         )
     }
@@ -82,6 +123,20 @@ fun UsersListScreen(
             }
         },
         bottomBarContent = bottomBarContent,
+        fabContent = {
+            if (state.value.loggedUser?.permissions?.contains(USERS_CREATE) == true) {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    onClick = { expandedAddDialog.value = true }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+        },
         content = { paddings ->
             PullToRefreshBox(
                 modifier = modifier.padding(paddings),
