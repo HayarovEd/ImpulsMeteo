@@ -3,7 +3,6 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
-import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.mapper.convertToUsers
@@ -12,7 +11,6 @@ import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.devices.DevicesDto
-import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
@@ -25,7 +23,6 @@ import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
 import com.edurda77.domain.utils.BASE_URL
-import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
@@ -105,15 +102,14 @@ class RemoteRepositoryImpl @Inject constructor(
                 }.call
                     .body<DevicesDto>()
                 val devices = responseDevices.convertToDevices()
-                val responseGroups = httpClient.get(BASE_URL + DEVICES_GROUPS_POSTFIX) {
-                    url {
-                        bearerAuth(token)
-                    }
-                }.call
-                    .body<DevicesGropusDto>()
-                val groups = responseGroups.convertToGroups()
+                /* val responseGroups = httpClient.get(BASE_URL + DEVICES_GROUPS_POSTFIX) {
+                     url {
+                         bearerAuth(token)
+                     }
+                 }.call
+                     .body<DevicesGropusDto>()
+                 val groups = responseGroups.convertToGroups()*/
                 convertToMapGroupedDevices(
-                    groups = groups,
                     devices = devices
                 )
             }

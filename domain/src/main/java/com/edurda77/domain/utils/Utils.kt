@@ -28,14 +28,19 @@ fun decodeToken(jwt: String): String {
 
 
 fun convertToMapGroupedDevices(
-    groups: List<GroupDevices>,
     devices: List<Device>
 ): Map<GroupDevices, List<Device>> {
     val groupedDevices = mutableMapOf<GroupDevices, List<Device>>()
-    groups.forEach { group->
-        val enteredDevices = devices.filter { it.groups.contains(group) }
-        groupedDevices[group] = enteredDevices
+    val groups = mutableListOf<GroupDevices>()
+    devices.forEach { device ->
+        groups.addAll(device.groups.filterNot { it in groups })
     }
+    groups
+        .sortedBy { it.id }
+        .forEach { group ->
+            val enteredDevices = devices.filter { it.groups.contains(group) }
+            groupedDevices[group] = enteredDevices
+        }
     return groupedDevices
 }
 
