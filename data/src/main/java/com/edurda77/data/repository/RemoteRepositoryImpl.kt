@@ -36,6 +36,7 @@ import com.edurda77.domain.utils.convertToMapGroupedDevices
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -213,6 +214,23 @@ class RemoteRepositoryImpl @Inject constructor(
                                 password = password
                             )
                         )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun deleteUser(
+        token: String,
+        id: Int
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete("$BASE_URL$USERS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
                     }
                 }.bodyAsText()
                 Unit

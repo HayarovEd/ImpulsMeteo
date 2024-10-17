@@ -180,7 +180,10 @@ fun UsersListScreen(
                         ) {
                             items(state.value.users) { user ->
                                 ItemUser(
-                                    user = user
+                                    user = user,
+                                    onDeleteClick = {
+                                        onEvent(UsersEvent.DeleteUser(it))
+                                    }
                                 )
                             }
                         }

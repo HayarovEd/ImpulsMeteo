@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.usecase.AddUserUseCase
+import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -28,6 +29,7 @@ class UsersViewModel @Inject constructor(
     private val permissionsUseCase: PermissionsUseCase,
     private val usersUseCase: UsersUseCase,
     private val addUserUseCase: AddUserUseCase,
+    private val deleteUserUseCase: DeleteUserUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(UsersState())
     val state = _state.asStateFlow()
@@ -97,6 +99,26 @@ class UsersViewModel @Inject constructor(
                     selectedPermissions = updatedPermissions
                 )
                     .updateState()
+            }
+
+            is UsersEvent.DeleteUser -> {
+                viewModelScope.launch {
+                    when (val result = deleteUserUseCase.invoke(
+                        token = state.value.token,
+                        id = event.id
+                    )) {
+                        is ResultWork.Error -> {
+                            _state.value.copy(
+                                message = result.error.asUiText()
+                            )
+                                .updateState()
+                        }
+
+                        is ResultWork.Success -> {
+                            loadUsers()
+                        }
+                    }
+                }
             }
         }
     }

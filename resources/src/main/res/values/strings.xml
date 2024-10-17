@@ -52,4 +52,6 @@
     <string name="access_rights">Права</string>
     <string name="access_rights_empty">Должен быть хотя бы один доступ</string>
 
+    <string name="sure_delete_user">Действительно удалить пользователя</string>
+
 </resources>

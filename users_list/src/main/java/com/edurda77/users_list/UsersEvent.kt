@@ -18,4 +18,5 @@ sealed class UsersEvent {
     ) : UsersEvent()
 
     data object ClearSelected : UsersEvent()
+    class DeleteUser(val id: Int) : UsersEvent()
 }

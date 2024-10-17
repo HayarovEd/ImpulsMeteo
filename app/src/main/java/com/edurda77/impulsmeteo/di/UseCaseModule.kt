@@ -6,6 +6,7 @@ import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
+import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -110,4 +111,11 @@ object UseCaseModule {
     fun providesAddUserUseCase(remoteRepository: RemoteRepository): AddUserUseCase {
         return AddUserUseCase(remoteRepository = remoteRepository)
     }
+
+    @Provides
+    @Singleton
+    fun providesDeleteUserUseCase(remoteRepository: RemoteRepository): DeleteUserUseCase {
+        return DeleteUserUseCase(remoteRepository = remoteRepository)
+    }
+
 }
