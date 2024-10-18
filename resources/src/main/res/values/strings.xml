@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_internet">Отсутствует интернет</string>
+    <string name="server_error">Ошибка сервера</string>
+    <string name="unknown_error">Незивестная ошибка</string>
+    <string name="email_empty">Email не может быть пустым</string>
+    <string name="email_unvalid">Неправильный email</string>
+    <string name="error_autorization">Ошибка авторизации</string>
+    <string name="not_data">Нет данных</string>
+    <string name="password_blank">Пароль не может быть пустым</string>
+    <string name="user_disabled">Пользователь неактивен</string>
+    <string name="not_unique_id">Неверный запрос</string>
+    <string name="name_is_blank">Имя не может быть пустым</string>
+    <string name="unique_id_is_blank">Идентификатор не может быть пустым</string>
+    <string name="read_error_data">Ошибка чтения локальных данных</string>
+    <string name="write_error_data">Ошибка записи локальных данных</string>
+    <string name="not_found">Не найдены данные</string>
+    <string name="error_take_data">Ошибка получения данных</string>
+    <string name="no_access">Пользователю не назначены доступы</string>
+
+    <string name="email_required">Email *</string>
+    <string name="password_required">Пароль *</string>
+    <string name="enter">ВХОД</string>
+    <string name="devices">Устройства</string>
+    <string name="users">Пользователи</string>
+    <string name="directory">Справочники</string>
+    <string name="unit_temperature">°C</string>
+    <string name="unit_unknown">ед.</string>
+    <string name="unit_humidity">%</string>
+    <string name="unit_pressure">мм.рт.ст.</string>
+    <string name="unit_length">м</string>
+    <string name="online">Онлайн</string>
+    <string name="offline">Офлайн</string>
+    <string name="search">Поиск</string>
+    <string name="loading">Загрузка</string>
+
+    <string name="cancel">Отмена</string>
+    <string name="ok">Ладушки</string>
+    <string name="sure_exit">Действительно выйти?</string>
+    <string name="title">Название</string>
+    <string name="key">Ключ</string>
+    <string name="update_frequency">Частота обновления</string>
+    <string name="add">Добавить</string>
+    <string name="add_user">Добавить пользователя</string>
+    <string name="group">Группы</string>
+    <string name="name">Имя</string>
+
+    <string name="no_access_this">Нет доступа</string>
+    <string name="access">Права</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="access_rights">Права</string>
+    <string name="access_rights_empty">Должен быть хотя бы один доступ</string>
+
+    <string name="sure_delete_user">Действительно удалить пользователя</string>
+    <string name="sure_delete_unit">Действительно удалить единицу измерения?</string>
+    <string name="sure_delete_group">Действительно удалить группу?</string>
+    <string name="group_devices">ГРУППЫ УСТРОЙСТВ</string>
+    <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
+    <string name="short_title">Сокращенное название</string>
+
+</resources>
