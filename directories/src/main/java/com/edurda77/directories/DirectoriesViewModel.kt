@@ -2,6 +2,10 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.usecase.AddDevicesGroupUseCase
+import com.edurda77.domain.usecase.AddUnitUseCase
+import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
+import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -23,7 +27,11 @@ class DirectoriesViewModel @Inject constructor(
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
-    private val unitsUseCase: UnitsUseCase
+    private val unitsUseCase: UnitsUseCase,
+    private val addDevicesGroupUseCase: AddDevicesGroupUseCase,
+    private val addUnitUseCase: AddUnitUseCase,
+    private val deleteDevicesGroupUseCase: DeleteDevicesGroupUseCase,
+    private val deleteUnitUseCase: DeleteUnitUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DirectoriesState())
     val state = _state.asStateFlow()
@@ -51,11 +59,44 @@ class DirectoriesViewModel @Inject constructor(
                 }
             }
 
-            is DirectoriesEvent.SwitshDirectoriesType -> {
+            is DirectoriesEvent.SwitchDirectoriesType -> {
                 _state.value.copy(
                     directoriesType = event.directoriesType,
                 )
                     .updateState()
+            }
+
+            is DirectoriesEvent.AddDevicesGroup -> {
+                viewModelScope.launch {
+                    insertDevicesGroup(
+                        name = event.name,
+                    )
+                }
+            }
+
+            is DirectoriesEvent.AddUnit -> {
+                viewModelScope.launch {
+                    insertUnit(
+                        name = event.name,
+                        short = event.short
+                    )
+                }
+            }
+
+            is DirectoriesEvent.DeleteDevicesGroup -> {
+                viewModelScope.launch {
+                    deleteDevicesGroup(
+                        id = event.id
+                    )
+                }
+            }
+
+            is DirectoriesEvent.DeleteUnit -> {
+                viewModelScope.launch {
+                    deleteUnit(
+                        id = event.id
+                    )
+                }
             }
         }
     }
@@ -151,6 +192,82 @@ class DirectoriesViewModel @Inject constructor(
                     groups = result.data
                 )
                     .updateState()
+            }
+        }
+    }
+
+    private suspend fun insertDevicesGroup(name: String) {
+        when (val result = addDevicesGroupUseCase.invoke(
+            token = state.value.token,
+            name = name,
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadGroups()
+            }
+        }
+    }
+
+    private suspend fun insertUnit(
+        name: String,
+        short: String
+    ) {
+        when (val result = addUnitUseCase.invoke(
+            token = state.value.token,
+            name = name,
+            short = short
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadUnits()
+            }
+        }
+    }
+
+    private suspend fun deleteDevicesGroup(id: Int) {
+        when (val result = deleteDevicesGroupUseCase.invoke(
+            token = state.value.token,
+            id = id
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadGroups()
+            }
+        }
+    }
+
+    private suspend fun deleteUnit(id: Int) {
+        when (val result = deleteUnitUseCase.invoke(
+            token = state.value.token,
+            id = id
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadUnits()
             }
         }
     }

@@ -10,7 +10,7 @@ const val USERS_POSTFIX = "users"
 const val UNITS_POSTFIX = "units"
 const val EMAIL = "email"
 const val PASSWORD = "password"
-const val PAGE_PARAMETR = "page"
+const val PAGE_PARAMETER = "page"
 
 const val PARAMETER_GROUP = "groups"
 

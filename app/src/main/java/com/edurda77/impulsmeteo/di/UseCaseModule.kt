@@ -4,8 +4,12 @@ package com.edurda77.impulsmeteo.di
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
+import com.edurda77.domain.usecase.AddDevicesGroupUseCase
+import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
+import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
+import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
@@ -137,5 +141,29 @@ object UseCaseModule {
     @Singleton
     fun providesUnitsUseCase(remoteRepository: RemoteRepository): UnitsUseCase {
         return UnitsUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAddDevicesGroupUseCase(remoteRepository: RemoteRepository): AddDevicesGroupUseCase {
+        return AddDevicesGroupUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAddUnitUseCase(remoteRepository: RemoteRepository): AddUnitUseCase {
+        return AddUnitUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeleteDevicesGroupUseCase(remoteRepository: RemoteRepository): DeleteDevicesGroupUseCase {
+        return DeleteDevicesGroupUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeleteUnitUseCase(remoteRepository: RemoteRepository): DeleteUnitUseCase {
+        return DeleteUnitUseCase(remoteRepository = remoteRepository)
     }
 }

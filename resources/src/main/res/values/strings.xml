@@ -53,7 +53,10 @@
     <string name="access_rights_empty">Должен быть хотя бы один доступ</string>
 
     <string name="sure_delete_user">Действительно удалить пользователя</string>
+    <string name="sure_delete_unit">Действительно удалить единицу измерения?</string>
+    <string name="sure_delete_group">Действительно удалить группу?</string>
     <string name="group_devices">ГРУППЫ УСТРОЙСТВ</string>
     <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
+    <string name="short_title">Сокращенное название</string>
 
 </resources>

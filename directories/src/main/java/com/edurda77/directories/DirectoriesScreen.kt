@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -34,6 +38,7 @@ import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
+import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +53,8 @@ fun DirectoriesScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val isShowDialogLogOff = remember { mutableStateOf(false) }
+    val expandedAddDialog = remember { mutableStateOf(false) }
+
 
     if (isShowDialogLogOff.value) {
         UiAlertDialog(
@@ -59,6 +66,34 @@ fun DirectoriesScreen(
             },
             onClickCancel = {
                 isShowDialogLogOff.value = false
+            }
+        )
+    }
+    if (expandedAddDialog.value) {
+        UiDialog(
+            onCloseDialog = {
+                expandedAddDialog.value = false
+            },
+            content = {
+                when (state.value.directoriesType) {
+                    DirectoriesType.GROUPS -> {
+                        AddDevicesGroupDialog(
+                            onCloseClick = { expandedAddDialog.value = false },
+                            onAddClick = { name ->
+                                onEvent(DirectoriesEvent.AddDevicesGroup(name))
+                            }
+                        )
+                    }
+
+                    DirectoriesType.UNITS -> {
+                        AddUnitDialog(
+                            onCloseClick = { expandedAddDialog.value = false },
+                            onAddClick = { name, short ->
+                                onEvent(DirectoriesEvent.AddUnit(name = name, short = short))
+                            }
+                        )
+                    }
+                }
             }
         )
     }
@@ -83,7 +118,7 @@ fun DirectoriesScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            /*if (state.value.loggedUser?.permissions?.contains(USERS_CREATE) == true) {
+            if (state.value.loggedUser?.permissions?.contains(DIRECTORY_EDIT) == true) {
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     onClick = { expandedAddDialog.value = true }
@@ -94,7 +129,7 @@ fun DirectoriesScreen(
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
-            }*/
+            }
         },
         content = { paddings ->
             Column(
@@ -114,7 +149,7 @@ fun DirectoriesScreen(
                         color = if (state.value.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
                         colorDivider = if (state.value.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
                         onClick = {
-                            onEvent(DirectoriesEvent.SwitshDirectoriesType(DirectoriesType.GROUPS))
+                            onEvent(DirectoriesEvent.SwitchDirectoriesType(DirectoriesType.GROUPS))
                         }
                     )
                     ItemTitleDirectory(
@@ -123,7 +158,7 @@ fun DirectoriesScreen(
                         color = if (state.value.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
                         colorDivider = if (state.value.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
                         onClick = {
-                            onEvent(DirectoriesEvent.SwitshDirectoriesType(DirectoriesType.UNITS))
+                            onEvent(DirectoriesEvent.SwitchDirectoriesType(DirectoriesType.UNITS))
                         }
                     )
                 }
@@ -164,7 +199,11 @@ fun DirectoriesScreen(
                                         DIRECTORY_EDIT
                                     ) == true,
                                     groups = state.value.groups,
-                                    cellsCount = cellsCount
+                                    cellsCount = cellsCount,
+                                    onDeleteClick = {
+                                        onEvent(DirectoriesEvent.DeleteDevicesGroup(it))
+                                    },
+                                    titleDelete = stringResource(R.string.sure_delete_group)
                                 )
                             }
 
@@ -175,7 +214,11 @@ fun DirectoriesScreen(
                                         DIRECTORY_EDIT
                                     ) == true,
                                     units = state.value.units,
-                                    cellsCount = cellsCount
+                                    cellsCount = cellsCount,
+                                    onDeleteClick = {
+                                        onEvent(DirectoriesEvent.DeleteUnit(it))
+                                    },
+                                    titleDelete = stringResource(R.string.sure_delete_unit)
                                 )
                             }
                         }

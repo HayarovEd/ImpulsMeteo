@@ -76,7 +76,8 @@ fun DevicesDto.convertToDevices(): List<Device> {
                     name = param.name,
                     label = param.label,
                     value = param.value.toDoubleOrNull() ?: 0.0,
-                    idUnit = param.idUnit
+                    idUnit = param.idUnit,
+                    id = param.id
                 )
             },
             updatedAt = it.lastUpdate ?: ""

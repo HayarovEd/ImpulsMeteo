@@ -19,6 +19,8 @@ fun DirectoryScreenUnits(
     isEnableUpdate: Boolean,
     units: List<UnitMeteo>,
     cellsCount: Int,
+    onDeleteClick: (Int) -> Unit,
+    titleDelete: String
 ) {
     if (units.isNotEmpty() && !isLoading) {
         LazyVerticalStaggeredGrid(
@@ -33,6 +35,8 @@ fun DirectoryScreenUnits(
                 ItemDirectory(
                     title = "${unit.name} ${unit.short}",
                     isEnabledUpdate = isEnableUpdate,
+                    onDeleteClick = { onDeleteClick(unit.id) },
+                    titleDelete = titleDelete
                 )
             }
         }

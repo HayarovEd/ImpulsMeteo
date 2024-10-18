@@ -53,4 +53,8 @@ interface RemoteRepository {
     ): ResultWork<List<GroupDevices>, DataError>
 
     suspend fun getUnits(token: String): ResultWork<List<UnitMeteo>, DataError>
+    suspend fun addDevicesGroup(token: String, name: String): ResultWork<Unit, DataError>
+    suspend fun addUnit(token: String, name: String, short: String): ResultWork<Unit, DataError>
+    suspend fun deleteUnit(token: String, id: Int): ResultWork<Unit, DataError>
+    suspend fun deleteDevicesGroup(token: String, id: Int): ResultWork<Unit, DataError>
 }

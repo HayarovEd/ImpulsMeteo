@@ -9,6 +9,8 @@ import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.mapper.convertToUnits
 import com.edurda77.data.mapper.convertToUsers
 import com.edurda77.data.remote.add_device.AddDeviceDto
+import com.edurda77.data.remote.add_devices_group.AddDevicesGroupDto
+import com.edurda77.data.remote.add_unit.AddUnitDto
 import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
@@ -33,7 +35,7 @@ import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
-import com.edurda77.domain.utils.PAGE_PARAMETR
+import com.edurda77.domain.utils.PAGE_PARAMETER
 import com.edurda77.domain.utils.PARAMETER_GROUP
 import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
@@ -179,7 +181,7 @@ class RemoteRepositoryImpl @Inject constructor(
                 val resultFirst = httpClient.get(BASE_URL + USERS_POSTFIX) {
                     url {
                         bearerAuth(token)
-                        parameter(PAGE_PARAMETR, 1)
+                        parameter(PAGE_PARAMETER, 1)
                     }
                 }.call
                     .body<UsersDto>()
@@ -295,6 +297,45 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun addDevicesGroup(
+        token: String,
+        name: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post(BASE_URL + DEVICES_GROUPS_POSTFIX) {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            AddDevicesGroupDto(
+                                name = name,
+                            )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun deleteDevicesGroup(
+        token: String,
+        id: Int
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete("$BASE_URL$DEVICES_GROUPS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
     override suspend fun getUnits(
         token: String,
     ): ResultWork<List<UnitMeteo>, DataError> {
@@ -307,6 +348,48 @@ class RemoteRepositoryImpl @Inject constructor(
                 }.call
                     .body<UnitsDto>()
                 responseGroups.convertToUnits()
+            }
+        }
+    }
+
+
+    override suspend fun addUnit(
+        token: String,
+        name: String,
+        short: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post(BASE_URL + UNITS_POSTFIX) {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            AddUnitDto(
+                                name = name,
+                                short = short
+                            )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun deleteUnit(
+        token: String,
+        id: Int
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete("$BASE_URL$UNITS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                    }
+                }.bodyAsText()
+                Unit
             }
         }
     }

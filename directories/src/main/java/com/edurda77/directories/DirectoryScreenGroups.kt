@@ -19,6 +19,8 @@ fun DirectoryScreenGroups(
     isEnableUpdate: Boolean,
     groups: List<GroupDevices>,
     cellsCount: Int,
+    onDeleteClick: (Int) -> Unit,
+    titleDelete: String
 ) {
     if (groups.isNotEmpty() && !isLoading) {
         LazyVerticalStaggeredGrid(
@@ -33,6 +35,8 @@ fun DirectoryScreenGroups(
                 ItemDirectory(
                     title = group.name,
                     isEnabledUpdate = isEnableUpdate,
+                    onDeleteClick = { onDeleteClick(group.id) },
+                    titleDelete = titleDelete
                 )
             }
         }

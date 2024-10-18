@@ -13,18 +13,36 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiIconButton
 
 @Composable
 fun ItemDirectory(
     modifier: Modifier = Modifier,
     title: String,
-    isEnabledUpdate: Boolean
+    titleDelete: String,
+    isEnabledUpdate: Boolean,
+    onDeleteClick: () -> Unit
 ) {
+    val isShowDeleteDialog = remember { mutableStateOf(false) }
+    if (isShowDeleteDialog.value) {
+        UiAlertDialog(
+            title = titleDelete,
+            onClickCancel = {
+                isShowDeleteDialog.value = false
+            },
+            onClickConfirm = {
+                isShowDeleteDialog.value = false
+                onDeleteClick()
+            }
+        )
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -51,9 +69,7 @@ fun ItemDirectory(
                 )
                 UiIconButton(
                     icon = Icons.Default.Delete,
-                    onClick = {
-                        // expandedDeleteDialog.value = true
-                    }
+                    onClick = { isShowDeleteDialog.value = true }
                 )
             }
         }
