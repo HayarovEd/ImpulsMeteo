@@ -21,4 +21,11 @@ dependencyResolutionManagement {
 
 rootProject.name = "ImpulsMeteo"
 include(":app")
- 
+include(":domain")
+include(":data")
+include(":resources")
+include(":splash")
+include(":login_screen")
+include(":devices_list")
+include(":users_list")
+include(":directories")

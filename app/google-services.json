@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "135993585852",
+    "project_id": "impulsmeteo",
+    "storage_bucket": "impulsmeteo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135993585852:android:9370e75101ccd98c2ce0b9",
+        "android_client_info": {
+          "package_name": "com.edurda77.impulsmeteo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCefgt6Ld29FjsjAjoFnWJajux_V9Qc7Rs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
