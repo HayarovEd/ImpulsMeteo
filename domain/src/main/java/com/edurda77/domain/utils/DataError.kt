@@ -10,6 +10,11 @@ sealed interface DataError : RootError {
         UNKNOWN
     }
 
+    enum class WebSocketError : DataError {
+        NOT_CONNECT,
+        PUSHER_ERROR,
+    }
+
     enum class SerializationError: DataError {
        FORMAT_ERROR,
     }

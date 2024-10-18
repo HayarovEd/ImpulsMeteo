@@ -3,6 +3,7 @@ package com.edurda77.impulsmeteo.di
 
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
@@ -81,8 +82,14 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGrouppedDevicesUseCase(remoteRepository: RemoteRepository): GrouppedDevicesUseCase {
-        return GrouppedDevicesUseCase(remoteRepository = remoteRepository)
+    fun providesGrouppedDevicesUseCase(
+        remoteRepository: RemoteRepository,
+        webSocketRepository: WebSocketRepository,
+    ): GrouppedDevicesUseCase {
+        return GrouppedDevicesUseCase(
+            remoteRepository = remoteRepository,
+            webSocketRepository = webSocketRepository
+        )
     }
 
     @Provides
