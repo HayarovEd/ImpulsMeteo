@@ -11,6 +11,8 @@ import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
+import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
+import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +33,9 @@ class DirectoriesViewModel @Inject constructor(
     private val addDevicesGroupUseCase: AddDevicesGroupUseCase,
     private val addUnitUseCase: AddUnitUseCase,
     private val deleteDevicesGroupUseCase: DeleteDevicesGroupUseCase,
-    private val deleteUnitUseCase: DeleteUnitUseCase
+    private val deleteUnitUseCase: DeleteUnitUseCase,
+    private val updateDevicesGroupUseCase: UpdateDevicesGroupUseCase,
+    private val updateUnitUseCase: UpdateUnitUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DirectoriesState())
     val state = _state.asStateFlow()
@@ -95,6 +99,25 @@ class DirectoriesViewModel @Inject constructor(
                 viewModelScope.launch {
                     deleteUnit(
                         id = event.id
+                    )
+                }
+            }
+
+            is DirectoriesEvent.UpdateDevicesGroup -> {
+                viewModelScope.launch {
+                    updateDevicesGroup(
+                        id = event.id,
+                        name = event.name
+                    )
+                }
+            }
+
+            is DirectoriesEvent.UpdateUnit -> {
+                viewModelScope.launch {
+                    updateUnit(
+                        id = event.id,
+                        name = event.name,
+                        short = event.short
                     )
                 }
             }
@@ -258,6 +281,49 @@ class DirectoriesViewModel @Inject constructor(
         when (val result = deleteUnitUseCase.invoke(
             token = state.value.token,
             id = id
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadUnits()
+            }
+        }
+    }
+
+    private suspend fun updateDevicesGroup(id: Int, name: String) {
+        when (val result = updateDevicesGroupUseCase.invoke(
+            token = state.value.token,
+            id = id,
+            name = name
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                loadGroups()
+            }
+        }
+    }
+
+    private suspend fun updateUnit(
+        id: Int,
+        name: String,
+        short: String
+    ) {
+        when (val result = updateUnitUseCase.invoke(
+            token = state.value.token,
+            id = id,
+            name = name,
+            short = short
         )) {
             is ResultWork.Error -> {
                 _state.value.copy(

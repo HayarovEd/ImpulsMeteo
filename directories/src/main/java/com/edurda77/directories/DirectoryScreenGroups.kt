@@ -20,6 +20,7 @@ fun DirectoryScreenGroups(
     groups: List<GroupDevices>,
     cellsCount: Int,
     onDeleteClick: (Int) -> Unit,
+    onUpdateClick: (Int, String) -> Unit,
     titleDelete: String
 ) {
     if (groups.isNotEmpty() && !isLoading) {
@@ -32,11 +33,14 @@ fun DirectoryScreenGroups(
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(groups) { group ->
-                ItemDirectory(
+                ItemDevicesGroupDirectory(
                     title = group.name,
                     isEnabledUpdate = isEnableUpdate,
                     onDeleteClick = { onDeleteClick(group.id) },
-                    titleDelete = titleDelete
+                    titleDelete = titleDelete,
+                    onUpdateClick = { name ->
+                        onUpdateClick(group.id, name)
+                    }
                 )
             }
         }

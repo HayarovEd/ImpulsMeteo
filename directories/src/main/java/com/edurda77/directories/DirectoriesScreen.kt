@@ -203,7 +203,15 @@ fun DirectoriesScreen(
                                     onDeleteClick = {
                                         onEvent(DirectoriesEvent.DeleteDevicesGroup(it))
                                     },
-                                    titleDelete = stringResource(R.string.sure_delete_group)
+                                    titleDelete = stringResource(R.string.sure_delete_group),
+                                    onUpdateClick = { id, name ->
+                                        onEvent(
+                                            DirectoriesEvent.UpdateDevicesGroup(
+                                                id = id,
+                                                name = name
+                                            )
+                                        )
+                                    }
                                 )
                             }
 
@@ -218,7 +226,16 @@ fun DirectoriesScreen(
                                     onDeleteClick = {
                                         onEvent(DirectoriesEvent.DeleteUnit(it))
                                     },
-                                    titleDelete = stringResource(R.string.sure_delete_unit)
+                                    titleDelete = stringResource(R.string.sure_delete_unit),
+                                    onUpdateClick = { id, name, short ->
+                                        onEvent(
+                                            DirectoriesEvent.UpdateUnit(
+                                                id = id,
+                                                name = name,
+                                                short = short
+                                            )
+                                        )
+                                    }
                                 )
                             }
                         }

@@ -20,17 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiAlertDialog
+import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 
 @Composable
-fun ItemDirectory(
+fun ItemUnitDirectory(
     modifier: Modifier = Modifier,
-    title: String,
+    currentName: String,
+    currentShort: String,
     titleDelete: String,
     isEnabledUpdate: Boolean,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    onUpdateClick: (String, String) -> Unit,
 ) {
     val isShowDeleteDialog = remember { mutableStateOf(false) }
+    val isShowUpdateDialog = remember { mutableStateOf(false) }
     if (isShowDeleteDialog.value) {
         UiAlertDialog(
             title = titleDelete,
@@ -40,6 +44,21 @@ fun ItemDirectory(
             onClickConfirm = {
                 isShowDeleteDialog.value = false
                 onDeleteClick()
+            }
+        )
+    }
+    if (isShowUpdateDialog.value) {
+        UiDialog(
+            onCloseDialog = { isShowUpdateDialog.value = false },
+            content = {
+                UpdateUnitDialog(
+                    currentName = currentName,
+                    currentShort = currentShort,
+                    onCloseClick = { isShowUpdateDialog.value = false },
+                    onUpdateClick = { name, short ->
+                        onUpdateClick(name, short)
+                    }
+                )
             }
         )
     }
@@ -54,7 +73,7 @@ fun ItemDirectory(
         ) {
             Text(
                 modifier = modifier,
-                text = title,
+                text = "$currentName ($currentShort)",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = Typography.labelSmall,
             )
@@ -62,10 +81,7 @@ fun ItemDirectory(
             if (isEnabledUpdate) {
                 UiIconButton(
                     icon = Icons.Default.Edit,
-                    onClick = {
-                        /*expandedUpdateDialog.value = true
-                        onUpdateSelected(user.id)*/
-                    }
+                    onClick = { isShowUpdateDialog.value = true }
                 )
                 UiIconButton(
                     icon = Icons.Default.Delete,

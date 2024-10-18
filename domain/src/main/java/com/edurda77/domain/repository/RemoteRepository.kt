@@ -57,4 +57,16 @@ interface RemoteRepository {
     suspend fun addUnit(token: String, name: String, short: String): ResultWork<Unit, DataError>
     suspend fun deleteUnit(token: String, id: Int): ResultWork<Unit, DataError>
     suspend fun deleteDevicesGroup(token: String, id: Int): ResultWork<Unit, DataError>
+    suspend fun updateDevicesGroup(
+        token: String,
+        id: Int,
+        name: String
+    ): ResultWork<Unit, DataError>
+
+    suspend fun updateUnit(
+        token: String,
+        id: Int,
+        name: String,
+        short: String
+    ): ResultWork<Unit, DataError>
 }

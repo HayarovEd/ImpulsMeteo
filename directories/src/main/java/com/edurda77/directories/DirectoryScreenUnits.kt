@@ -20,6 +20,7 @@ fun DirectoryScreenUnits(
     units: List<UnitMeteo>,
     cellsCount: Int,
     onDeleteClick: (Int) -> Unit,
+    onUpdateClick: (Int, String, String) -> Unit,
     titleDelete: String
 ) {
     if (units.isNotEmpty() && !isLoading) {
@@ -32,11 +33,19 @@ fun DirectoryScreenUnits(
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(units) { unit ->
-                ItemDirectory(
-                    title = "${unit.name} ${unit.short}",
+                ItemUnitDirectory(
+                    currentName = unit.name,
+                    currentShort = unit.short,
                     isEnabledUpdate = isEnableUpdate,
                     onDeleteClick = { onDeleteClick(unit.id) },
-                    titleDelete = titleDelete
+                    titleDelete = titleDelete,
+                    onUpdateClick = { name, short ->
+                        onUpdateClick(
+                            unit.id,
+                            name,
+                            short
+                        )
+                    }
                 )
             }
         }

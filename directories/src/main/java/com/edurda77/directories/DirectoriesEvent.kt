@@ -12,4 +12,14 @@ sealed class DirectoriesEvent {
 
     class DeleteDevicesGroup(val id: Int) : DirectoriesEvent()
     class DeleteUnit(val id: Int) : DirectoriesEvent()
+    class UpdateDevicesGroup(
+        val id: Int,
+        val name: String,
+    ) : DirectoriesEvent()
+
+    class UpdateUnit(
+        val id: Int,
+        val name: String,
+        val short: String,
+    ) : DirectoriesEvent()
 }

@@ -18,6 +18,8 @@ import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.units.UnitsDto
+import com.edurda77.data.remote.update_devices_group.UpdateDevicesGroupDto
+import com.edurda77.data.remote.update_unit.UpdateUnitDto
 import com.edurda77.data.remote.update_user.UpdateUserDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
@@ -336,6 +338,30 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateDevicesGroup(
+        token: String,
+        id: Int,
+        name: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$DEVICES_GROUPS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            UpdateDevicesGroupDto(
+                                id = id,
+                                name = name,
+                            )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
     override suspend fun getUnits(
         token: String,
     ): ResultWork<List<UnitMeteo>, DataError> {
@@ -387,6 +413,32 @@ class RemoteRepositoryImpl @Inject constructor(
                     contentType(ContentType.Application.Json)
                     url {
                         bearerAuth(token)
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun updateUnit(
+        token: String,
+        id: Int,
+        name: String,
+        short: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$UNITS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            UpdateUnitDto(
+                                id = id,
+                                name = name,
+                                short = short
+                            )
+                        )
                     }
                 }.bodyAsText()
                 Unit
