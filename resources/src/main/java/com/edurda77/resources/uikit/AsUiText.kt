@@ -75,6 +75,17 @@ fun DataError.asUiText(): UiText {
                 R.string.no_access
             )
         }
+
+        DataError.WebSocketError.NOT_CONNECT -> {
+            UiText.StringResource(
+                R.string.no_connect
+            )
+        }
+        DataError.WebSocketError.PUSHER_ERROR -> {
+            UiText.StringResource(
+                R.string.bad_request
+            )
+        }
     }
 }
 

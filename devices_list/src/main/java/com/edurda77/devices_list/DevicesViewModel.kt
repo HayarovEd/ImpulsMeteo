@@ -3,10 +3,12 @@ package com.edurda77.devices_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
+import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +26,7 @@ class DevicesViewModel @Inject constructor(
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
     private val addDeviceUseCase: AddDeviceUseCase,
+    private val devicesGroupsUseCase: DevicesGroupsUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state.asStateFlow()
@@ -152,6 +155,9 @@ class DevicesViewModel @Inject constructor(
                 )
                     .updateState()
                 loadDevices(true)
+                if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
+                    loadGroups()
+                }
             }
         }
     }
@@ -202,6 +208,24 @@ class DevicesViewModel @Inject constructor(
 
             is ResultWork.Success -> {
                 loadDevices(true)
+            }
+        }
+    }
+
+    private suspend fun loadGroups() {
+        when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                _state.value.copy(
+                    groups = result.data
+                )
+                    .updateState()
             }
         }
     }

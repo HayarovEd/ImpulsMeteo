@@ -17,6 +17,8 @@
     <string name="not_found">Не найдены данные</string>
     <string name="error_take_data">Ошибка получения данных</string>
     <string name="no_access">Пользователю не назначены доступы</string>
+    <string name="no_connect">Нет соединения</string>
+    <string name="bad_request">Неверный запрос</string>
 
     <string name="email_required">Email *</string>
     <string name="password_required">Пароль *</string>

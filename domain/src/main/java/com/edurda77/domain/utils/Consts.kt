@@ -1,6 +1,8 @@
 package com.edurda77.domain.utils
 
 const val BASE_URL = "https://meteo.i-perm.ru:8001/api/"
+const val WEB_SOCKET_URL =
+    "wss://meteo.i-perm.ru:6001/app/meteo?protocol=7&client=js&version=5.1.1&flash=false"
 const val AUTH_POSTFIX = "auth/login"
 const val AUTH_LOGGED_USER_POSTFIX = "auth/user"
 const val DEVICES_POSTFIX = "devices"
@@ -42,4 +44,9 @@ const val CAMERA_DELETE = 14
 
 
 const val STATUS_ON = "on"
+
+
+const val PING_INTERVAL = 20_000L
+const val SUBSCRIBE = "pusher:subscribe"
+const val EVENT_CHANNEL_PREFIX = "private-device."
 //const val MULTIPLE_SIZE = 10

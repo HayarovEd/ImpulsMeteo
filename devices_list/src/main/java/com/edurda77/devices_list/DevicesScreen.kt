@@ -61,6 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.utils.DEVICES_CREATE
+import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
@@ -93,6 +94,7 @@ fun DevicesScreen(
         )
     val scope = rememberCoroutineScope()
     val expandedAddDialog = remember { mutableStateOf(false) }
+    val permissions = listOf(DEVICES_CREATE, DIRECTORY_LIST)
     /*LaunchedEffect(state.value.devices.size) {
         if (state.value.devices.isNotEmpty()) {
               listState.animateScrollToItem(state.value.devices.size  / 2 - 1)
@@ -131,7 +133,7 @@ fun DevicesScreen(
             },
             content = {
                 AddDeviceDialog(
-                    groups = state.value.devices.keys.toList(),
+                    groups = state.value.groups,
                     selectedGroups = state.value.selectedGroups,
                     onCloseClick = {
                         expandedAddDialog.value = false
@@ -259,7 +261,7 @@ fun DevicesScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.value.loggedUser?.permissions?.contains(DEVICES_CREATE) == true) {
+            if (state.value.loggedUser?.permissions?.containsAll(permissions) == true) {
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     onClick = { expandedAddDialog.value = true }
