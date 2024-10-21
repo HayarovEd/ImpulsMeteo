@@ -47,7 +47,6 @@ import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.UNITS_POSTFIX
 import com.edurda77.domain.utils.USERS_POSTFIX
-import com.edurda77.domain.utils.convertToMapGroupedDevices
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
@@ -108,7 +107,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override suspend fun getGroupedDevices(
         token: String,
         parameterGroup: Int
-    ): ResultWork<Map<GroupDevices, List<Device>>, DataError> {
+    ): ResultWork<List<Device>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val responseDevices = httpClient.get(BASE_URL + DEVICES_POSTFIX) {
@@ -118,10 +117,7 @@ class RemoteRepositoryImpl @Inject constructor(
                     }
                 }.call
                     .body<DevicesDto>()
-                val devices = responseDevices.convertToDevices()
-                convertToMapGroupedDevices(
-                    devices = devices
-                )
+                responseDevices.convertToDevices()
             }
         }
     }

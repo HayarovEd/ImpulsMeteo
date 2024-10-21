@@ -34,6 +34,7 @@ class DevicesViewModel @Inject constructor(
 
     init {
         loadLocalData()
+
     }
 
     fun onEvent(event: DevicesEvent) {
@@ -163,25 +164,27 @@ class DevicesViewModel @Inject constructor(
     }
 
     private suspend fun loadDevices(isRefresh: Boolean) {
-        when (val result = groupedDevicesUseCase.invoke(
+        groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = state.value.query,
             isRefresh = isRefresh
-        )) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
+        ).collect { collector ->
+            when (collector) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        message = collector.error.asUiText()
+                    )
+                        .updateState()
+                }
 
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    isLoading = false,
-                    devices = result.data
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        devices = collector.data
+                    )
+                        .updateState()
+                }
             }
         }
     }

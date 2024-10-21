@@ -17,7 +17,7 @@ interface RemoteRepository {
     suspend fun getGroupedDevices(
         token: String,
         parameterGroup: Int = 0
-    ): ResultWork<Map<GroupDevices, List<Device>>, DataError>
+    ): ResultWork<List<Device>, DataError>
 
     suspend fun addDevice(
         token: String,
