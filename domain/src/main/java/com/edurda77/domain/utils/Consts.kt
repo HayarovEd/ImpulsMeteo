@@ -6,6 +6,7 @@ const val WEB_SOCKET_URL =
 const val AUTH_POSTFIX = "auth/login"
 const val AUTH_LOGGED_USER_POSTFIX = "auth/user"
 const val DEVICES_POSTFIX = "devices"
+const val PARAMS_POSTFIX = "params"
 const val DEVICES_GROUPS_POSTFIX = "devicesgroups"
 const val PERMISSIONS_POSTFIX = "permissions"
 const val USERS_POSTFIX = "users"
@@ -13,6 +14,8 @@ const val UNITS_POSTFIX = "units"
 const val EMAIL = "email"
 const val PASSWORD = "password"
 const val PAGE_PARAMETER = "page"
+const val FROM_DATE_PARAMETER = "fromDate"
+const val TO_DATE_PARAMETER = "toDate"
 
 const val PARAMETER_GROUP = "groups"
 
@@ -24,7 +27,7 @@ const val USER_ID_LABEL = "user_id"
 const val LAST_EMAIL = "last_email"
 const val LAST_PASSWORD = "last_password"
 
-const val NEGATIVE_USER_ID = -1
+const val NEGATIVE_ID = -1
 
 //permissions
 const val USERS_LIST = 1

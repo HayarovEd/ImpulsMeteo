@@ -5,6 +5,7 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DataError
@@ -69,4 +70,6 @@ interface RemoteRepository {
         name: String,
         short: String
     ): ResultWork<Unit, DataError>
+
+    suspend fun getDeviceById(token: String, id: Int): ResultWork<SingleDevice, DataError>
 }

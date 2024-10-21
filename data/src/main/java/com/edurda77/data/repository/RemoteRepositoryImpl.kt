@@ -6,6 +6,7 @@ import com.edurda77.data.mapper.convertToDevices
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToPermissions
+import com.edurda77.data.mapper.convertToSingleDevice
 import com.edurda77.data.mapper.convertToUnits
 import com.edurda77.data.mapper.convertToUsers
 import com.edurda77.data.remote.add_device.AddDeviceDto
@@ -14,6 +15,7 @@ import com.edurda77.data.remote.add_unit.AddUnitDto
 import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
+import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
@@ -27,6 +29,7 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.repository.RemoteRepository
@@ -116,16 +119,28 @@ class RemoteRepositoryImpl @Inject constructor(
                 }.call
                     .body<DevicesDto>()
                 val devices = responseDevices.convertToDevices()
-                /* val responseGroups = httpClient.get(BASE_URL + DEVICES_GROUPS_POSTFIX) {
-                     url {
-                         bearerAuth(token)
-                     }
-                 }.call
-                     .body<DevicesGropusDto>()
-                 val groups = responseGroups.convertToGroups()*/
                 convertToMapGroupedDevices(
                     devices = devices
                 )
+            }
+        }
+    }
+
+    override suspend fun getDeviceById(
+        token: String,
+        id: Int,
+    ): ResultWork<SingleDevice, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val responseDevices = httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id") {
+                    url {
+                        bearerAuth(token)
+                    }
+                }.call
+
+                println("TEST DEVECE DETAIL SCREEN, ${responseDevices.response.body<String>()}")
+                responseDevices
+                    .body<BodyDeviceDto>().convertToSingleDevice()
             }
         }
     }
@@ -445,4 +460,26 @@ class RemoteRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    /* override suspend fun getHistoryDeviceById(
+         token: String,
+         id: Int,
+         fromDate: String,
+         toDate: String,
+         limit: Int,
+     ): ResultWork<SingleDevice, DataError> {
+         return withContext(Dispatchers.IO) {
+             handleResponse {
+                 val responseDevices = httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id/$PARAMS_POSTFIX") {
+                     url {
+                         bearerAuth(token)
+                         parameter(FROM_DATE_PARAMETER, fromDate)
+                         parameter(TO_DATE_PARAMETER, toDate)
+                     }
+                 }.call
+                     .body<BodyDeviceDto>()
+                 responseDevices.convertToSingleDevice()
+             }
+         }
+     }*/
 }

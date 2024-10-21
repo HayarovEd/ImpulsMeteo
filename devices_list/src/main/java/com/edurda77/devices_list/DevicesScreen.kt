@@ -326,10 +326,9 @@ fun DevicesScreen(
                                     modifier = modifier,
                                     device = device,
                                     configuration = configuration,
-                                    /* authToken = state.value.user?.authToken ?: "",
-                                     onClick = {
-                                         onGoToCamera(device.mid)
-                                     }*/
+                                    onClickDevice = {
+                                        onGoToDevice(device.id)
+                                    }
                                 )
                             }
                         }

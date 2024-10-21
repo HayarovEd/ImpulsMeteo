@@ -12,6 +12,7 @@ import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
+import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GrouppedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -187,4 +188,11 @@ object UseCaseModule {
     fun providesUpdateUnitUseCase(remoteRepository: RemoteRepository): UpdateUnitUseCase {
         return UpdateUnitUseCase(remoteRepository = remoteRepository)
     }
+
+    @Provides
+    @Singleton
+    fun providesDeviceByIdUseCase(remoteRepository: RemoteRepository): DeviceByIdUseCase {
+        return DeviceByIdUseCase(remoteRepository = remoteRepository)
+    }
+
 }

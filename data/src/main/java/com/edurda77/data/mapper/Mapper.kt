@@ -2,6 +2,8 @@ package com.edurda77.data.mapper
 
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
+import com.edurda77.data.remote.device.BodyDeviceDto
+import com.edurda77.data.remote.device.NotificationDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
@@ -12,17 +14,20 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
-import com.edurda77.domain.utils.NEGATIVE_USER_ID
+import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.domain.utils.convertToLocalDateTime
+import kotlinx.serialization.json.Json
 
 
 fun AuthDto.convertToAuth(): Auth {
@@ -33,8 +38,8 @@ fun AuthDto.convertToAuth(): Auth {
             val containsRequired =
                 this.permissions.any { it.id == USERS_LIST || it.id == DEVICES_LIST || it.id == DIRECTORY_LIST }
             if (containsRequired)
-                this.permissions.first().id else NEGATIVE_USER_ID
-        } else NEGATIVE_USER_ID
+                this.permissions.first().id else NEGATIVE_ID
+        } else NEGATIVE_ID
     )
 }
 
@@ -132,5 +137,43 @@ fun UnitsDto.convertToUnits(): List<UnitMeteo> {
             short = it.short
         )
     }
+}
+
+private val json = Json { ignoreUnknownKeys = true }
+
+fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
+    return SingleDevice(
+        id = this.deviceDto.first().id,
+        name = this.deviceDto.first().name,
+        key = this.deviceDto.first().key,
+        status = this.deviceDto.first().status == STATUS_ON,
+        video = this.deviceDto.first().video,
+        updatedAt = this.deviceDto.first().lastUpdate ?: "",
+        groups = this.deviceDto.first().groups.map {
+            GroupDevices(
+                id = it.id,
+                name = it.name
+            )
+        },
+        params = this.deviceDto.first().params.map {
+            Param(
+                classIcon = it.classIcon,
+                name = it.name,
+                label = it.label,
+                value = it.value.toDoubleOrNull() ?: 0.0,
+                idUnit = it.idUnit,
+                id = it.id
+            )
+        },
+        notifications = this.deviceDto.first().notificationsDto.params.map {
+            val notificationDto = json.decodeFromString<NotificationDto>(it)
+            NotificationDevice(
+                id = notificationDto.id,
+                condition = notificationDto.condition,
+                idParam = notificationDto.idParam,
+                value = notificationDto.value
+            )
+        }
+    )
 }
 
