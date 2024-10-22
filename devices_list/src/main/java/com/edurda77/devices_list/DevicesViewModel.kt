@@ -8,8 +8,10 @@ import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.updateDevices
 import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -27,6 +29,7 @@ class DevicesViewModel @Inject constructor(
     private val logoffUseCase: LogOffUseCase,
     private val addDeviceUseCase: AddDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
+    private val webSocketUseCase: WebSocketUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state.asStateFlow()
@@ -34,7 +37,6 @@ class DevicesViewModel @Inject constructor(
 
     init {
         loadLocalData()
-
     }
 
     fun onEvent(event: DevicesEvent) {
@@ -134,7 +136,35 @@ class DevicesViewModel @Inject constructor(
                             .updateState()
                         delay(500)
                         loadLoggedUserData(collectedToken.data.accessToken)
+                        loadUpdateData()
                     }
+                }
+            }
+        }
+    }
+
+    private suspend fun loadUpdateData() {
+
+        webSocketUseCase.invoke(
+            token = state.value.token,
+            ids = state.value.devices.values.flatten().map { it.id }.toSet().toList()
+        ).collect { collector ->
+            when (collector) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        message = collector.error.asUiText()
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        devices = updateDevices(
+                            devices = state.value.devices,
+                            newDevice = collector.data
+                        )
+                    )
+                        .updateState()
                 }
             }
         }
@@ -169,22 +199,22 @@ class DevicesViewModel @Inject constructor(
             query = state.value.query,
             isRefresh = isRefresh
         )) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        message = result.error.asUiText()
-                    )
-                        .updateState()
-                }
-
-                is ResultWork.Success -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        devices = result.data
-                    )
-                        .updateState()
-                }
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    isLoading = false,
+                    message = result.error.asUiText()
+                )
+                    .updateState()
             }
+
+            is ResultWork.Success -> {
+                _state.value.copy(
+                    isLoading = false,
+                    devices = result.data
+                )
+                    .updateState()
+            }
+        }
     }
 
     private suspend fun insertDevice(

@@ -3,6 +3,7 @@ package com.edurda77.impulsmeteo.di
 
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
@@ -26,6 +27,7 @@ import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -190,6 +192,18 @@ object UseCaseModule {
     @Singleton
     fun providesDeviceByIdUseCase(remoteRepository: RemoteRepository): DeviceByIdUseCase {
         return DeviceByIdUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesWebSocketUseCase(
+        webSocketRepository: WebSocketRepository,
+        remoteRepository: RemoteRepository
+    ): WebSocketUseCase {
+        return WebSocketUseCase(
+            webSocketRepository = webSocketRepository,
+            remoteRepository = remoteRepository
+        )
     }
 
 }

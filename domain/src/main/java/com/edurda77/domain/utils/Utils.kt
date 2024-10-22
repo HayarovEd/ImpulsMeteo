@@ -43,3 +43,14 @@ fun filterGroupedDevices(
         }
 }
 
+fun updateDevices(
+    devices: Map<GroupDevices, List<Device>>,
+    newDevice: Device
+): Map<GroupDevices, List<Device>> {
+    return devices.mapValues { (_, deviceList) ->
+        deviceList.map { device ->
+            if (device.id == newDevice.id) newDevice else device
+        }
+    }
+}
+

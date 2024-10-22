@@ -1,75 +1,80 @@
 package com.edurda77.domain.usecase
 
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.Subscriber
+import com.edurda77.domain.model.WebSocketMessage
+import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.repository.WebSocketRepository
+import com.edurda77.domain.utils.DataError
+import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.SUBSCRIBE_EVENT
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class WebSocketUseCase @Inject constructor(
     private val webSocketRepository: WebSocketRepository,
+    private val remoteRepository: RemoteRepository,
 ) {
     operator fun invoke(
         token: String,
-    ) {
-        /*webSocketRepository.getStateStream().collect { collector ->
-            when (collector) {
-                is ResultWork.Error -> {
-                    emit(ResultWork.Error(collector.error))
-                }
+        ids: List<Int>
+    ): Flow<ResultWork<Device, DataError>> {
+        return flow {
+            webSocketRepository.getStateStream().collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        emit(ResultWork.Error(collector.error))
+                    }
 
-                is ResultWork.Success -> {
-                    val broadcastingAuths = mutableListOf<Subscriber>()
+                    is ResultWork.Success -> {
+                        val broadcastingAuths = mutableListOf<Subscriber>()
 
-                    when (collector.data) {
-                        is WebSocketMessage.Connect -> {
-                            println("web socket open, success ${collector.data.messageWebSocketStart.socketId}")
-                            _devices.value.forEach { device ->
-                                val resultBroadcast = remoteRepository.getBroadcatingAuth(
-                                    socketId = collector.data.messageWebSocketStart.socketId,
-                                    token = token,
-                                    deviceId = device.id
-                                )
-                                when (resultBroadcast) {
-                                    is ResultWork.Error -> {
-                                        emit(ResultWork.Error(resultBroadcast.error))
-                                    }
+                        when (collector.data) {
+                            is WebSocketMessage.Connect -> {
+                                ids.forEach { id ->
+                                    val resultBroadcast = remoteRepository.getBroadcatingAuth(
+                                        socketId = collector.data.messageWebSocketStart.socketId,
+                                        token = token,
+                                        deviceId = id
+                                    )
+                                    when (resultBroadcast) {
+                                        is ResultWork.Error -> {
+                                            emit(ResultWork.Error(resultBroadcast.error))
+                                        }
 
-                                    is ResultWork.Success -> {
-                                        broadcastingAuths.add(
-                                            Subscriber(
-                                                deviceId = device.id,
-                                                auth = resultBroadcast.data
+                                        is ResultWork.Success -> {
+                                            broadcastingAuths.add(
+                                                Subscriber(
+                                                    deviceId = id,
+                                                    auth = resultBroadcast.data
+                                                )
                                             )
-                                        )
+                                        }
                                     }
                                 }
+                                broadcastingAuths.forEach {
+                                    webSocketRepository.sendAction(
+                                        event = SUBSCRIBE_EVENT,
+                                        deviceId = it.deviceId,
+                                        auth = it.auth
+                                    )
+                                }
                             }
-                            *//*broadcastingAuths.forEach {
-                                webSocketRepository.sendAction(
-                                    event = SUBSCRIBE_EVENT,
-                                    deviceId = it.deviceId,
-                                    auth = it.auth
-                                )
-                            }*//*
+
+                            is WebSocketMessage.SuccessSbscribe -> {
+                                println("web socket open, success subscribe ${collector.data.successSubscribe.channel}")
+                            }
+
+                            is WebSocketMessage.DeviceEvent -> {
+                                emit(ResultWork.Success(collector.data.device))
+                            }
                         }
 
-                        is WebSocketMessage.SuccessSbscribe -> {
-                            //println("web socket open, success subscribe ${collector.data.successSubscribe.event}")
-                            //println("web socket open, success subscribe ${collector.data.successSubscribe.channel}")
-                        }
-
-                        is WebSocketMessage.DeviceEvent -> {
-                            println("web socket open, success device ${collector.data.device.id}")
-                        }
                     }
-                    emit(
-                        ResultWork.Success(
-                            filterGroupedDevices(
-                                devices = _currentGroupedDevices.value,
-                                query = query
-                            )
-                        )
-                    )
                 }
             }
-        }*/
+        }
     }
+
 }
