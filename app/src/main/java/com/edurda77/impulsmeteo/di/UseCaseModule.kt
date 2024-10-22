@@ -3,7 +3,6 @@ package com.edurda77.impulsmeteo.di
 
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
-import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
@@ -14,7 +13,7 @@ import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
-import com.edurda77.domain.usecase.GrouppedDevicesUseCase
+import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -83,13 +82,11 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGrouppedDevicesUseCase(
+    fun providesGroupedDevicesUseCase(
         remoteRepository: RemoteRepository,
-        webSocketRepository: WebSocketRepository,
-    ): GrouppedDevicesUseCase {
-        return GrouppedDevicesUseCase(
+    ): GroupedDevicesUseCase {
+        return GroupedDevicesUseCase(
             remoteRepository = remoteRepository,
-            webSocketRepository = webSocketRepository
         )
     }
 

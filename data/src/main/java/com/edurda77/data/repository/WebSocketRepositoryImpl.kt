@@ -1,14 +1,18 @@
 package com.edurda77.data.repository
 
+import com.edurda77.data.mapper.convertDeviceMessageToDevice
 import com.edurda77.data.mapper.convertInitMessage
+import com.edurda77.data.mapper.convertToSuccessSubscribe
 import com.edurda77.data.remote.message_dto.Content
 import com.edurda77.data.remote.message_dto.MessageEvent
 import com.edurda77.domain.model.WebSocketMessage
 import com.edurda77.domain.repository.WebSocketRepository
+import com.edurda77.domain.utils.DEVICE_EVENT
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ESTABLISHED
 import com.edurda77.domain.utils.EVENT_CHANNEL_PREFIX
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.SUCCESSES
 import com.edurda77.domain.utils.WEB_SOCKET_URL
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.webSocketSession
@@ -45,6 +49,24 @@ class WebSocketRepositoryImpl @Inject constructor(
                     val message = it.readText()
                     if (message.contains(ESTABLISHED)) {
                         emit(ResultWork.Success(WebSocketMessage.Connect(convertInitMessage(message))))
+                    }
+                    if (message.contains(SUCCESSES)) {
+                        emit(
+                            ResultWork.Success(
+                                WebSocketMessage.SuccessSbscribe(
+                                    convertToSuccessSubscribe(message)
+                                )
+                            )
+                        )
+                    }
+                    if (message.contains(DEVICE_EVENT)) {
+                        emit(
+                            ResultWork.Success(
+                                WebSocketMessage.DeviceEvent(
+                                    convertDeviceMessageToDevice(message)
+                                )
+                            )
+                        )
                     }
                 }
         }.catch {

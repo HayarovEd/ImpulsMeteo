@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
-import com.edurda77.domain.usecase.GrouppedDevicesUseCase
+import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DevicesViewModel @Inject constructor(
-    private val groupedDevicesUseCase: GrouppedDevicesUseCase,
+    private val groupedDevicesUseCase: GroupedDevicesUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
@@ -164,16 +164,15 @@ class DevicesViewModel @Inject constructor(
     }
 
     private suspend fun loadDevices(isRefresh: Boolean) {
-        groupedDevicesUseCase.invoke(
+        when (val result = groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = state.value.query,
             isRefresh = isRefresh
-        ).collect { collector ->
-            when (collector) {
+        )) {
                 is ResultWork.Error -> {
                     _state.value.copy(
                         isLoading = false,
-                        message = collector.error.asUiText()
+                        message = result.error.asUiText()
                     )
                         .updateState()
                 }
@@ -181,12 +180,11 @@ class DevicesViewModel @Inject constructor(
                 is ResultWork.Success -> {
                     _state.value.copy(
                         isLoading = false,
-                        devices = collector.data
+                        devices = result.data
                     )
                         .updateState()
                 }
             }
-        }
     }
 
     private suspend fun insertDevice(

@@ -54,6 +54,8 @@ const val STATUS_ON = "on"
 
 const val PING_INTERVAL = 20_000L
 const val ESTABLISHED = "pusher:connection_established"
-const val SUBSCRIBE = "pusher:subscribe"
+const val SUCCESSES = "subscription_succeeded"
+const val DEVICE_EVENT = "DeviceEvent"
+const val SUBSCRIBE_EVENT = "pusher:subscribe"
 const val EVENT_CHANNEL_PREFIX = "private-device."
 //const val MULTIPLE_SIZE = 10

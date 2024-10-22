@@ -1,14 +1,13 @@
-package com.edurda77.data.remote.devices
+package com.edurda77.data.remote.websocket_device
 
 
-import com.edurda77.data.remote.group.GroupDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DeviceDto(
+data class WsDevicesDto(
     @SerialName("groups")
-    val groups: List<GroupDto>,
+    val wsGroups: List<WsGroup>,
     @SerialName("host")
     val host: String?,
     @SerialName("id")
@@ -16,11 +15,11 @@ data class DeviceDto(
     @SerialName("key")
     val key: String,
     @SerialName("lastUpdate")
-    val lastUpdate: String? = "",
+    val lastUpdate: String?,
     @SerialName("name")
     val name: String,
     @SerialName("params")
-    val paramDtos: List<ParamDto>,
+    val wsParams: List<WsParam>,
     @SerialName("port")
     val port: Int,
     @SerialName("status")
