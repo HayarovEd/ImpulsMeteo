@@ -1,6 +1,7 @@
 package com.edurda77.domain.utils
 
 const val BASE_URL = "https://meteo.i-perm.ru:8001/api/"
+const val BRADCASTING_URL = "https://meteo.i-perm.ru:8001/broadcasting/auth"
 const val WEB_SOCKET_URL =
     "wss://meteo.i-perm.ru:6001/app/meteo?protocol=7&client=js&version=5.1.1&flash=false"
 const val AUTH_POSTFIX = "auth/login"
@@ -16,7 +17,9 @@ const val PASSWORD = "password"
 const val PAGE_PARAMETER = "page"
 const val FROM_DATE_PARAMETER = "fromDate"
 const val TO_DATE_PARAMETER = "toDate"
-
+const val SOCKET_ID_PARAMETER = "socket_id"
+const val CHANNEL_NAME_PARAMETER = "channel_name"
+const val CHANNEL_NAME_PREFIX = "private-device."
 const val PARAMETER_GROUP = "groups"
 
 

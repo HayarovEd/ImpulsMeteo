@@ -20,6 +20,8 @@ class GrouppedDevicesUseCase @Inject constructor(
 ) {
     private val _currentGroupedDevices =
         MutableStateFlow<Map<GroupDevices, List<Device>>>(emptyMap())
+    private val _devices =
+        MutableStateFlow<List<Device>>(emptyList())
 
     operator fun invoke(
         token: String,
@@ -34,15 +36,7 @@ class GrouppedDevicesUseCase @Inject constructor(
                     }
 
                     is ResultWork.Success -> {
-                        when (collector.data) {
-                            is WebSocketMessage.Connect -> {
-                                println("web socket open, success ${collector.data.messageWebSocketStart.socketId}")
-                            }
-
-                            WebSocketMessage.Error -> {
-
-                            }
-                        }
+                        val broadcastingAuths = mutableListOf<String>()
                         if (_currentGroupedDevices.value.isEmpty() || isRefresh) {
                             when (val result = remoteRepository.getGroupedDevices(token)) {
                                 is ResultWork.Error -> {
@@ -53,7 +47,36 @@ class GrouppedDevicesUseCase @Inject constructor(
                                     _currentGroupedDevices.value = convertToMapGroupedDevices(
                                         devices = result.data
                                     )
+                                    _devices.value = result.data
                                 }
+                            }
+                        }
+                        when (collector.data) {
+                            is WebSocketMessage.Connect -> {
+                                println("web socket open, success ${collector.data.messageWebSocketStart.socketId}")
+                                _devices.value.forEach { device ->
+                                    val resultBroadcast = remoteRepository.getBroadcatingAuth(
+                                        socketId = collector.data.messageWebSocketStart.socketId,
+                                        token = token,
+                                        deviceId = device.id
+                                    )
+                                    when (resultBroadcast) {
+                                        is ResultWork.Error -> {
+                                            emit(ResultWork.Error(resultBroadcast.error))
+                                        }
+
+                                        is ResultWork.Success -> {
+                                            broadcastingAuths.add(resultBroadcast.data)
+                                        }
+                                    }
+                                }
+                                broadcastingAuths.forEachIndexed { index, s ->
+                                    println("web socket open, index $index, auth $s")
+                                }
+                            }
+
+                            WebSocketMessage.Error -> {
+
                             }
                         }
                         emit(

@@ -72,4 +72,9 @@ interface RemoteRepository {
     ): ResultWork<Unit, DataError>
 
     suspend fun getDeviceById(token: String, id: Int): ResultWork<SingleDevice, DataError>
+    suspend fun getBroadcatingAuth(
+        socketId: String,
+        deviceId: Int,
+        token: String
+    ): ResultWork<String, DataError>
 }

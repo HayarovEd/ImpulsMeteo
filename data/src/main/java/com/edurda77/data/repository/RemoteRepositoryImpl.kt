@@ -15,6 +15,7 @@ import com.edurda77.data.remote.add_unit.AddUnitDto
 import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
+import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
 import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
@@ -36,6 +37,9 @@ import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
 import com.edurda77.domain.utils.BASE_URL
+import com.edurda77.domain.utils.BRADCASTING_URL
+import com.edurda77.domain.utils.CHANNEL_NAME_PARAMETER
+import com.edurda77.domain.utils.CHANNEL_NAME_PREFIX
 import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
@@ -45,12 +49,14 @@ import com.edurda77.domain.utils.PARAMETER_GROUP
 import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.SOCKET_ID_PARAMETER
 import com.edurda77.domain.utils.UNITS_POSTFIX
 import com.edurda77.domain.utils.USERS_POSTFIX
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -59,6 +65,7 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
@@ -84,6 +91,27 @@ class RemoteRepositoryImpl @Inject constructor(
                 ).call
                     .body<AuthDto>()
                 result.convertToAuth()
+            }
+        }
+    }
+
+    override suspend fun getBroadcatingAuth(
+        socketId: String,
+        deviceId: Int,
+        token: String,
+    ): ResultWork<String, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.post(BRADCASTING_URL) {
+                    bearerAuth(token)
+                    FormDataContent(Parameters.build {
+                        parameter(SOCKET_ID_PARAMETER, socketId)
+                        parameter(CHANNEL_NAME_PARAMETER, "$CHANNEL_NAME_PREFIX$deviceId")
+                    }
+                    )
+                }.call
+                    .body<BroadcatingAuthDto>()
+                result.auth
             }
         }
     }
