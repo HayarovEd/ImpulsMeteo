@@ -68,5 +68,6 @@
     <string name="filter">Фильтр</string>
     <string name="date_from">Дата от:</string>
     <string name="date_to">Дата до:</string>
+    <string name="count_records">Количество записей</string>
 
 </resources>

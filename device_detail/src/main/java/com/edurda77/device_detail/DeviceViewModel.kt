@@ -36,18 +36,22 @@ class DeviceViewModel @Inject constructor(
 
     fun onEvent(event: DeviceEvent) {
         when (event) {
-            is DeviceEvent.onSetFromDate -> {
+            is DeviceEvent.OnSetFromDate -> {
                 _state.value.copy(
                     fromDate = event.dateTime
                 )
                     .updateState()
             }
 
-            is DeviceEvent.onSetToDate -> {
+            is DeviceEvent.OnSetToDate -> {
                 _state.value.copy(
                     toDate = event.dateTime
                 )
                     .updateState()
+            }
+
+            is DeviceEvent.GetHistory -> {
+                ////////
             }
         }
     }

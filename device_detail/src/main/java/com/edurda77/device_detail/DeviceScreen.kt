@@ -2,6 +2,7 @@ package com.edurda77.device_detail
 
 import android.content.res.Configuration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
@@ -23,7 +24,10 @@ fun DeviceScreen(
     val onEvent = viewModel::onEvent
     val expandedFromDateDialog = remember { mutableStateOf(false) }
     val expandedToDateDialog = remember { mutableStateOf(false) }
+    val expandedLimits = remember { mutableStateOf(false) }
     val isFilterOpen = remember { mutableStateOf(false) }
+    val limits = listOf(100, 500, 1000, 1500)
+    val currentLimit = remember { mutableIntStateOf(limits[0]) }
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
@@ -38,7 +42,7 @@ fun DeviceScreen(
         dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
         showDatePicker = expandedFromDateDialog.value,
         onDoneClick = {
-            onEvent(DeviceEvent.onSetFromDate(it))
+            onEvent(DeviceEvent.OnSetFromDate(it))
         },
         onDismiss = {
             expandedFromDateDialog.value = false
@@ -55,7 +59,7 @@ fun DeviceScreen(
         dateTimePickerView = DateTimePickerView.DIALOG_VIEW,
         showDatePicker = expandedToDateDialog.value,
         onDoneClick = {
-            onEvent(DeviceEvent.onSetToDate(it))
+            onEvent(DeviceEvent.OnSetToDate(it))
         },
         onDismiss = {
             expandedToDateDialog.value = false
@@ -75,6 +79,9 @@ fun DeviceScreen(
             dateFrom = state.value.fromDate.date.toString(),
             dateTo = state.value.toDate.date.toString(),
             isOpenFilter = isFilterOpen.value,
+            currentLimit = currentLimit,
+            expandedLimits = expandedLimits.value,
+            limits = limits,
             openFilter = {
                 isFilterOpen.value = it
             },
@@ -83,6 +90,12 @@ fun DeviceScreen(
             },
             openToDateDialog = {
                 expandedToDateDialog.value = true
+            },
+            onClickLimit = {
+                currentLimit.intValue = limits[it]
+            },
+            onClickExpandedLimit = {
+                expandedLimits.value = !expandedLimits.value
             }
         )
     }

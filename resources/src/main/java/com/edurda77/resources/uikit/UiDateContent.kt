@@ -20,30 +20,35 @@ fun UiDateContent(
     modifier: Modifier = Modifier,
     title: String,
     content: String,
+    icon: ImageVector? = ImageVector.vectorResource(R.drawable.baseline_calendar_month_24),
     onClick: () -> Unit
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         Text(
-            modifier = modifier,
+            modifier = Modifier,
             text = title,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             style = Typography.labelSmall,
         )
-        Spacer(modifier = modifier.height(3.dp))
+        Spacer(modifier = Modifier.height(3.dp))
         Row(
-            modifier = modifier,
+            modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                modifier = modifier,
+                modifier = Modifier,
                 text = content,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 style = Typography.labelSmall,
             )
-            UiIconButton(
-                icon = ImageVector.vectorResource(R.drawable.baseline_calendar_month_24),
-                onClick = onClick
-            )
+            if (icon != null) {
+                UiIconButton(
+                    icon = icon,
+                    onClick = onClick
+                )
+            }
         }
     }
 }
