@@ -3,6 +3,7 @@ package com.edurda77.resources.uikit
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -139,6 +141,23 @@ fun ItemDevice(
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
+                    }
+                }
+            }
+            if (device.params.size > 6) {
+                Spacer(modifier = modifier.height(5.dp))
+                Row(
+                    modifier = modifier.horizontalScroll(rememberScrollState()),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for (i in 6..<device.params.size) {
+                        UiRowDeviceValue(
+                            icon = device.params[i].idUnit.asUiIconParam(),
+                            value = device.params[i].value,
+                            unit = device.params[i].idUnit.asUiTextParam(),
+                            name = device.params[i].label
+                        )
+                        Spacer(modifier = modifier.width(3.dp))
                     }
                 }
             }
