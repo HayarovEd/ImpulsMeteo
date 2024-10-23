@@ -60,5 +60,13 @@
     <string name="group_devices">ГРУППЫ УСТРОЙСТВ</string>
     <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
     <string name="short_title">Сокращенное название</string>
+    <string name="updated_data">Данные получены:</string>
+    <string name="key_l">key:</string>
+    <string name="update">update:</string>
+    <string name="choose_from_date">Начало периода</string>
+    <string name="choose_to_date">Конец периода</string>
+    <string name="filter">Фильтр</string>
+    <string name="date_from">Дата от:</string>
+    <string name="date_to">Дата до:</string>
 
 </resources>

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BodyDeviceDto(
     @SerialName("data")
-    val deviceDto: List<SingleDeviceDto>,
+    val singleDeviceDto: List<SingleDeviceDto>,
     @SerialName("status")
     val status: String
 )

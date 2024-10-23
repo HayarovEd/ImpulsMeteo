@@ -86,7 +86,12 @@ fun NavController(
         }
 
         composable<NavigationRoute.Device> {
-            DeviceScreen()
+            DeviceScreen(
+                configuration = configuration,
+                onBackClick = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }

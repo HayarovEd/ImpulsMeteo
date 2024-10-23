@@ -16,4 +16,5 @@ sealed class DevicesEvent {
         val frequency: String,
         val groups: List<GroupDevices>,
     ) : DevicesEvent()
+    data object OnCloseWebSocket : DevicesEvent()
 }

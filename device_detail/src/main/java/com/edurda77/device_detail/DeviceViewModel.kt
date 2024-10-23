@@ -34,6 +34,23 @@ class DeviceViewModel @Inject constructor(
         loadLocalData()
     }
 
+    fun onEvent(event: DeviceEvent) {
+        when (event) {
+            is DeviceEvent.onSetFromDate -> {
+                _state.value.copy(
+                    fromDate = event.dateTime
+                )
+                    .updateState()
+            }
+
+            is DeviceEvent.onSetToDate -> {
+                _state.value.copy(
+                    toDate = event.dateTime
+                )
+                    .updateState()
+            }
+        }
+    }
 
     private fun loadLocalData() {
         viewModelScope.launch {

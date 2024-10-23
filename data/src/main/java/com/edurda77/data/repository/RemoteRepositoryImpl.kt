@@ -161,8 +161,7 @@ class RemoteRepositoryImpl @Inject constructor(
                         bearerAuth(token)
                     }
                 }.call
-
-                println("TEST DEVECE DETAIL SCREEN, ${responseDevices.response.body<String>()}")
+                // println("TEST DEVECE DETAIL SCREEN, ${responseDevices.response.body<String>()}")
                 responseDevices
                     .body<BodyDeviceDto>().convertToSingleDevice()
             }

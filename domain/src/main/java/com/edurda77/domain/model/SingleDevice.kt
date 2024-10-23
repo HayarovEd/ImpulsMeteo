@@ -7,6 +7,7 @@ data class SingleDevice(
     val status: Boolean,
     val video: String?,
     val updatedAt: String,
+    val frequency: Int,
     val groups: List<GroupDevices>,
     val params: List<Param>,
     val notifications: List<NotificationDevice>

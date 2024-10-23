@@ -9,6 +9,7 @@ import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
@@ -206,4 +207,13 @@ object UseCaseModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun providesCloseWebsocketUseCase(
+        webSocketRepository: WebSocketRepository,
+    ): CloseWebsocketUseCase {
+        return CloseWebsocketUseCase(
+            webSocketRepository = webSocketRepository,
+        )
+    }
 }

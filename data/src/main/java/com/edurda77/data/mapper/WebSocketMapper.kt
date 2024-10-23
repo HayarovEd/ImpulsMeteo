@@ -10,6 +10,7 @@ import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.MessageWebSocketStart
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SuccessSubscribe
+import com.edurda77.domain.utils.IS_HIDDEN
 import com.edurda77.domain.utils.STATUS_ON
 import kotlinx.serialization.json.Json
 
@@ -67,7 +68,8 @@ fun convertDeviceMessageToDevice(message: String): Device {
                 label = param.label,
                 value = param.value.toDoubleOrNull() ?: 0.0,
                 idUnit = param.idUnit,
-                id = param.id
+                id = param.id,
+                isHidden = param.isHidden == IS_HIDDEN
             )
         },
         updatedAt = originalData.wsDevices.first().lastUpdate ?: ""

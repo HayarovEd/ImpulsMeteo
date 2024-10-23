@@ -3,7 +3,6 @@ package com.edurda77.data.mapper
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.device.BodyDeviceDto
-import com.edurda77.data.remote.device.NotificationDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
@@ -23,12 +22,11 @@ import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
+import com.edurda77.domain.utils.IS_HIDDEN
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.domain.utils.convertToLocalDateTime
-import kotlinx.serialization.json.Json
-
 
 fun AuthDto.convertToAuth(): Auth {
     return Auth(
@@ -62,30 +60,31 @@ fun DevicesGropusDto.convertToGroups(): List<GroupDevices> {
 }
 
 fun DevicesDto.convertToDevices(): List<Device> {
-    return this.deviceDto.map {
+    return this.deviceDto.map { device ->
         Device(
-            id = it.id,
-            name = it.name,
-            key = it.key,
-            status = it.status == STATUS_ON,
-            video = it.video,
-            groups = it.groups.map { group ->
+            id = device.id,
+            name = device.name,
+            key = device.key,
+            status = device.status == STATUS_ON,
+            video = device.video,
+            groups = device.groups.map { group ->
                 GroupDevices(
                     id = group.id,
                     name = group.name
                 )
             },
-            params = it.paramDtos.map { param ->
+            params = device.paramDtos.map { param ->
                 Param(
                     classIcon = param.classIcon,
                     name = param.name,
                     label = param.label,
                     value = param.value.toDoubleOrNull() ?: 0.0,
                     idUnit = param.idUnit,
-                    id = param.id
+                    id = param.id,
+                    isHidden = param.isHidden == IS_HIDDEN
                 )
-            },
-            updatedAt = it.lastUpdate ?: ""
+            }.filter { !it.isHidden },
+            updatedAt = device.lastUpdate ?: "",
         )
     }
 }
@@ -139,39 +138,39 @@ fun UnitsDto.convertToUnits(): List<UnitMeteo> {
     }
 }
 
-private val json = Json { ignoreUnknownKeys = true }
 
 fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
     return SingleDevice(
-        id = this.deviceDto.first().id,
-        name = this.deviceDto.first().name,
-        key = this.deviceDto.first().key,
-        status = this.deviceDto.first().status == STATUS_ON,
-        video = this.deviceDto.first().video,
-        updatedAt = this.deviceDto.first().lastUpdate ?: "",
-        groups = this.deviceDto.first().groups.map {
+        id = this.singleDeviceDto.first().id,
+        name = this.singleDeviceDto.first().name,
+        key = this.singleDeviceDto.first().key,
+        status = this.singleDeviceDto.first().status == STATUS_ON,
+        video = this.singleDeviceDto.first().video,
+        frequency = this.singleDeviceDto.first().update,
+        updatedAt = this.singleDeviceDto.first().lastUpdate,
+        groups = this.singleDeviceDto.first().groups.map {
             GroupDevices(
                 id = it.id,
                 name = it.name
             )
         },
-        params = this.deviceDto.first().params.map {
+        params = this.singleDeviceDto.first().params.map {
             Param(
                 classIcon = it.classIcon,
                 name = it.name,
                 label = it.label,
                 value = it.value.toDoubleOrNull() ?: 0.0,
                 idUnit = it.idUnit,
-                id = it.id
+                id = it.id,
+                isHidden = it.isHidden == IS_HIDDEN
             )
         },
-        notifications = this.deviceDto.first().notificationsDto.params.map {
-            val notificationDto = json.decodeFromString<NotificationDto>(it)
+        notifications = this.singleDeviceDto.first().notificationsDto.paramNotifications.map {
             NotificationDevice(
-                id = notificationDto.id,
-                condition = notificationDto.condition,
-                idParam = notificationDto.idParam,
-                value = notificationDto.value
+                id = it.id,
+                condition = it.condition,
+                idParam = it.idParam,
+                value = it.value
             )
         }
     )

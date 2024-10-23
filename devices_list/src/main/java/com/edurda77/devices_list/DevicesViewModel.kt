@@ -3,6 +3,7 @@ package com.edurda77.devices_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -29,7 +30,8 @@ class DevicesViewModel @Inject constructor(
     private val logoffUseCase: LogOffUseCase,
     private val addDeviceUseCase: AddDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
-    private val webSocketUseCase: WebSocketUseCase
+    private val webSocketUseCase: WebSocketUseCase,
+    private val closeWebsocketUseCase: CloseWebsocketUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state.asStateFlow()
@@ -113,6 +115,12 @@ class DevicesViewModel @Inject constructor(
                 )
                     .updateState()
             }
+
+            DevicesEvent.OnCloseWebSocket -> {
+                viewModelScope.launch {
+                    closeWebsocketUseCase.invoke()
+                }
+            }
         }
     }
 
@@ -136,7 +144,7 @@ class DevicesViewModel @Inject constructor(
                             .updateState()
                         delay(500)
                         loadLoggedUserData(collectedToken.data.accessToken)
-                        loadUpdateData()
+                        //loadUpdateData()
                     }
                 }
             }
@@ -265,6 +273,13 @@ class DevicesViewModel @Inject constructor(
     private fun DevicesState.updateState() {
         _state.update {
             this
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch {
+            closeWebsocketUseCase.invoke()
         }
     }
 }

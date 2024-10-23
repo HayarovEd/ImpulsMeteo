@@ -6,5 +6,6 @@ data class Param(
     val name: String,
     val label: String,
     val value: Double,
-    val classIcon: String
+    val classIcon: String,
+    val isHidden: Boolean,
 )

@@ -9,5 +9,5 @@ data class NotificationsDto(
     @SerialName("device_status")
     val deviceStatus: Boolean,
     @SerialName("params")
-    val params: List<String>
+    val paramNotifications: List<ParamNotification>
 )

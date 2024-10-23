@@ -50,7 +50,8 @@ const val CAMERA_DELETE = 14
 
 
 const val STATUS_ON = "on"
-
+const val IS_NOT_HIDDEN = 0
+const val IS_HIDDEN = 1
 
 const val PING_INTERVAL = 20_000L
 const val ESTABLISHED = "pusher:connection_established"

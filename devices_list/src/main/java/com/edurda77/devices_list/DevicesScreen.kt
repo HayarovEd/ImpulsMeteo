@@ -119,6 +119,7 @@ fun DevicesScreen(
                 isShowDialogLogOff.value = false
                 onEvent(DevicesEvent.Logoff)
                 onGoToLogin()
+                onEvent(DevicesEvent.OnCloseWebSocket)
             },
             onClickCancel = {
                 isShowDialogLogOff.value = false
