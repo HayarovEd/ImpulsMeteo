@@ -20,8 +20,8 @@ data class DeviceState(
     val deviceId: Int = NEGATIVE_ID,
     val loggedUser: LoggedUser? = null,
     val device: SingleDevice? = null,
-    val fromDate: LocalDateTime = LocalDateTime.now(),
-    val toDate: LocalDateTime = Clock.System.now()
+    val toDate: LocalDateTime = LocalDateTime.now(),
+    val fromDate: LocalDateTime = Clock.System.now()
         .minus(DateTimePeriod(months = 1), TimeZone.currentSystemDefault())
         .toLocalDateTime(TimeZone.currentSystemDefault())
 )

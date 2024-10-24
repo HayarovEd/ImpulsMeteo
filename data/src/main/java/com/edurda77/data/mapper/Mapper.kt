@@ -14,6 +14,7 @@ import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.Notifications
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionUser
 import com.edurda77.domain.model.Permissions
@@ -165,14 +166,17 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
                 isHidden = it.isHidden == IS_HIDDEN
             )
         },
-        notifications = this.singleDeviceDto.first().notificationsDto.paramNotifications.map {
-            NotificationDevice(
-                id = it.id,
-                condition = it.condition,
-                idParam = it.idParam,
-                value = it.value
-            )
-        }
+        notifications = Notifications(
+            deviceStatus = this.singleDeviceDto.first().notificationsDto.deviceStatus,
+            notifications = this.singleDeviceDto.first().notificationsDto.paramNotifications.map {
+                NotificationDevice(
+                    id = it.id,
+                    condition = it.condition,
+                    idParam = it.idParam,
+                    value = it.value
+                )
+            },
+        )
     )
 }
 

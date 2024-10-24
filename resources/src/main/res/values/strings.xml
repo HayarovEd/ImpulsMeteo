@@ -69,5 +69,7 @@
     <string name="date_from">Дата от:</string>
     <string name="date_to">Дата до:</string>
     <string name="count_records">Количество записей</string>
+    <string name="edit_notification_of_device">Редактирование уведомлений устройства</string>
+    <string name="notificate_to_change_status">Уведомлять при изменении статуса</string>
 
 </resources>

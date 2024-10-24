@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,14 +16,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,7 +46,9 @@ import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDateContent
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiText
+import kotlinx.coroutines.CoroutineScope
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortraitScreen(
     modifier: Modifier = Modifier,
@@ -59,11 +63,16 @@ fun PortraitScreen(
     openFilter: (Boolean) -> Unit,
     isLoading: Boolean,
     device: SingleDevice?,
-    currentLimit: MutableIntState,
+    currentLimit: Int,
     limits: List<Int>,
     expandedLimits: Boolean,
-    onClickExpandedLimit: () -> Unit,
+    onClickChangeVisibleBottomSheet: () -> Unit,
+    onClickChangeVisibleLimit: () -> Unit,
+    onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
+    sheetState: SheetState,
+    scope: CoroutineScope,
+    showBottomSheet: Boolean,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -98,9 +107,7 @@ fun PortraitScreen(
                         UiIconButton(
                             modifier = modifier,
                             icon = ImageVector.vectorResource(id = R.drawable.outline_notifications_24),
-                            onClick = {
-                                ///////////
-                            }
+                            onClick = onClickChangeVisibleBottomSheet
                         )
                         UiIconButton(
                             modifier = modifier,
@@ -226,21 +233,21 @@ fun PortraitScreen(
                             UiDateContent(
                                 modifier = modifier
                                     .weight(1f)
-                                    .basicMarquee()
                                     .onGloballyPositioned { coordinates ->
                                         offsetXDropDownMenu.value =
                                             with(localDensity) { coordinates.positionInRoot().x.toDp() }
                                     },
                                 title = stringResource(R.string.count_records),
-                                content = currentLimit.intValue.toString(),
+                                content = currentLimit.toString(),
                                 icon = null,
-                                onClick = onClickExpandedLimit,
+                                onClick = onClickChangeVisibleLimit,
                             )
                             DropdownMenu(
                                 modifier = modifier,
                                 offset = DpOffset(x = offsetXDropDownMenu.value, y = 0.dp),
+                                containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 expanded = expandedLimits,
-                                onDismissRequest = onClickExpandedLimit
+                                onDismissRequest = onClickChangeVisibleLimit
                             ) {
                                 limits.forEachIndexed { index, limit ->
                                     DropdownMenuItem(
@@ -248,20 +255,30 @@ fun PortraitScreen(
                                             Text(
                                                 text = limit.toString(),
                                                 style = Typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.secondary
                                             )
                                         }, onClick = {
-                                            onClickExpandedLimit()
+                                            onClickChangeVisibleLimit()
                                             onClickLimit(index)
                                         })
                                 }
                             }
                             IconButton(onClick = {
-                                onClickExpandedLimit()
+                                onClickChangeVisibleLimit()
                             }) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24),
                                     contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onSurface
+                                    tint = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                            IconButton(onClick = {
+                                onClickRequestHistory(currentLimit)
+                            }) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.baseline_search_24),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }
@@ -270,7 +287,22 @@ fun PortraitScreen(
             }
         },
         content = {
-
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    modifier = modifier
+                        .fillMaxWidth(),
+                    onDismissRequest = onClickChangeVisibleBottomSheet,
+                    sheetState = sheetState,
+                    shape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                ) {
+                    NotificationsContent(
+                        onClickChangeVisibleBottomSheet = onClickChangeVisibleBottomSheet,
+                        notifications = device?.notifications,
+                        name = device?.name
+                    )
+                }
+            }
         }
     )
 }

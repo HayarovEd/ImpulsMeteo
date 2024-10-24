@@ -1,10 +1,13 @@
 package com.edurda77.device_detail
 
 import android.content.res.Configuration
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,6 +17,7 @@ import com.edurda77.resources.theme.Typography
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeviceScreen(
     onBackClick: () -> Unit,
@@ -22,9 +26,12 @@ fun DeviceScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
     val expandedFromDateDialog = remember { mutableStateOf(false) }
     val expandedToDateDialog = remember { mutableStateOf(false) }
     val expandedLimits = remember { mutableStateOf(false) }
+    val showBottomSheet = remember { mutableStateOf(false) }
     val isFilterOpen = remember { mutableStateOf(false) }
     val limits = listOf(100, 500, 1000, 1500)
     val currentLimit = remember { mutableIntStateOf(limits[0]) }
@@ -79,8 +86,11 @@ fun DeviceScreen(
             dateFrom = state.value.fromDate.date.toString(),
             dateTo = state.value.toDate.date.toString(),
             isOpenFilter = isFilterOpen.value,
-            currentLimit = currentLimit,
+            currentLimit = currentLimit.intValue,
             expandedLimits = expandedLimits.value,
+            sheetState = sheetState,
+            scope = scope,
+            showBottomSheet = showBottomSheet.value,
             limits = limits,
             openFilter = {
                 isFilterOpen.value = it
@@ -94,8 +104,14 @@ fun DeviceScreen(
             onClickLimit = {
                 currentLimit.intValue = limits[it]
             },
-            onClickExpandedLimit = {
+            onClickChangeVisibleLimit = {
                 expandedLimits.value = !expandedLimits.value
+            },
+            onClickRequestHistory = {
+                onEvent(DeviceEvent.GetHistory(it))
+            },
+            onClickChangeVisibleBottomSheet = {
+                showBottomSheet.value = !showBottomSheet.value
             }
         )
     }

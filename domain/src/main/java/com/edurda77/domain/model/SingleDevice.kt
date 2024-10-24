@@ -10,5 +10,5 @@ data class SingleDevice(
     val frequency: Int,
     val groups: List<GroupDevices>,
     val params: List<Param>,
-    val notifications: List<NotificationDevice>
+    val notifications: Notifications
 )
