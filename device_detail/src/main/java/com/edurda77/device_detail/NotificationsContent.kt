@@ -9,9 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,14 +21,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.Param
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.UiDialog
+import com.edurda77.resources.uikit.UiIconButton
+import com.edurda77.resources.uikit.asUiIconParam
 
 @Composable
 fun NotificationsContent(
@@ -37,8 +39,30 @@ fun NotificationsContent(
     onClickChangeVisibleBottomSheet: () -> Unit,
     name: String?,
     notifications: Notifications?,
+    params: List<Param>,
+    deviceId: Int?,
 ) {
-    val currentNifications = remember { mutableStateOf(notifications) }
+    val currentNotifications = remember { mutableStateOf(notifications) }
+    val expandedAddNotificationDialog = remember { mutableStateOf(false) }
+
+    if (expandedAddNotificationDialog.value) {
+        UiDialog(
+            onCloseDialog = {
+                expandedAddNotificationDialog.value = false
+            },
+            content = {
+                AddNotificationDialog(
+                    onCloseClick = {
+                        expandedAddNotificationDialog.value = false
+                    },
+                    params = params,
+                    deviceId = deviceId
+                )
+            }
+        )
+    }
+
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -65,56 +89,125 @@ fun NotificationsContent(
             }
         }
         Spacer(modifier = modifier.height(10.dp))
-        Card(
+        Text(
+            modifier = modifier,
+            text = name ?: "",
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            style = Typography.bodyLarge,
+        )
+        Spacer(modifier = modifier.height(10.dp))
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .clickable(
+                    onClick = {
+                        currentNotifications.value = currentNotifications.value?.copy(
+                            currentNotifications.value?.deviceStatus != true
+                        )
+                    }
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                checked = currentNotifications.value?.deviceStatus == true,
+                onCheckedChange = {
+                    currentNotifications.value = currentNotifications.value?.copy(
+                        currentNotifications.value?.deviceStatus != true
+                    )
+                }
+            )
+            Spacer(modifier = modifier.width(5.dp))
+            Text(
+                modifier = modifier,
+                text = stringResource(R.string.notificate_to_change_status),
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                style = Typography.labelSmall,
+            )
+        }
+        Spacer(modifier = modifier.height(10.dp))
+        Row(
             modifier = modifier
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 20.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Transparent
-            )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-            ) {
-                Text(
-                    modifier = modifier,
-                    text = name ?: "",
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    style = Typography.bodyLarge,
-                )
-                Spacer(modifier = modifier.height(10.dp))
-                Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            onClick = {
-                                currentNifications.value = currentNifications.value?.copy(
-                                    currentNifications.value?.deviceStatus != true
+            Text(
+                modifier = modifier,
+                text = stringResource(R.string.parameters),
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                style = Typography.bodyLarge,
+            )
+            UiIconButton(
+                icon = ImageVector.vectorResource(R.drawable.baseline_add_24),
+                onClick = {
+                    expandedAddNotificationDialog.value = true
+                }
+            )
+        }
+        Spacer(modifier = modifier.height(10.dp))
+        LazyColumn(
+            modifier = modifier
+                .fillMaxWidth(),
+        ) {
+            if (notifications?.notifications != null) {
+                items(currentNotifications.value?.notifications ?: emptyList()) { notification ->
+                    val intIcon = params.firstOrNull { it.id == notification.idParam }?.idUnit ?: 1
+                    val description =
+                        params.firstOrNull { it.id == notification.idParam }?.name ?: ""
+                    val label = params.firstOrNull { it.id == notification.idParam }?.label ?: ""
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                imageVector = intIcon.asUiIconParam(),
+                                contentDescription = ""
+                            )
+                            Spacer(modifier = modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    modifier = Modifier,
+                                    text = description,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    style = Typography.labelSmall,
+                                )
+                                Spacer(modifier = modifier.height(5.dp))
+                                Text(
+                                    modifier = Modifier,
+                                    text = label,
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    style = Typography.labelSmall,
                                 )
                             }
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Checkbox(
-                        checked = currentNifications.value?.deviceStatus == true,
-                        onCheckedChange = {
-                            currentNifications.value = currentNifications.value?.copy(
-                                currentNifications.value?.deviceStatus != true
+                        }
+                        Text(
+                            modifier = Modifier,
+                            text = notification.condition,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                            style = Typography.labelSmall,
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier,
+                                text = notification.value.toString(),
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                style = Typography.labelSmall,
+                            )
+                            UiIconButton(
+                                icon = ImageVector.vectorResource(R.drawable.baseline_delete_24),
+                                onClick = {
+                                    //////////////////
+                                }
                             )
                         }
-                    )
-                    Spacer(modifier = modifier.width(5.dp))
-                    Text(
-                        modifier = modifier,
-                        text = stringResource(R.string.notificate_to_change_status),
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        style = Typography.labelSmall,
-                    )
+                    }
                 }
             }
         }

@@ -71,5 +71,9 @@
     <string name="count_records">Количество записей</string>
     <string name="edit_notification_of_device">Редактирование уведомлений устройства</string>
     <string name="notificate_to_change_status">Уведомлять при изменении статуса</string>
+    <string name="parameters">Параметры</string>
+    <string name="parameter">Параметер</string>
+    <string name="conditions">Условия</string>
+    <string name="value">Значение</string>
 
 </resources>

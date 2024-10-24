@@ -299,7 +299,9 @@ fun PortraitScreen(
                     NotificationsContent(
                         onClickChangeVisibleBottomSheet = onClickChangeVisibleBottomSheet,
                         notifications = device?.notifications,
-                        name = device?.name
+                        name = device?.name,
+                        deviceId = device?.id,
+                        params = device?.params ?: emptyList()
                     )
                 }
             }
