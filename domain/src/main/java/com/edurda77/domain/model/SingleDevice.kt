@@ -5,6 +5,8 @@ data class SingleDevice(
     val name: String,
     val key: String,
     val status: Boolean,
+    val host: String,
+    val port: Int,
     val video: String?,
     val updatedAt: String,
     val frequency: Int,

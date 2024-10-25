@@ -11,6 +11,7 @@ import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
@@ -31,6 +32,7 @@ class DeviceViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val updateNotificationsDeviceUseCase: UpdateNotificationsDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
+    private val updateDeviceUseCase: UpdateDeviceUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -183,16 +185,44 @@ class DeviceViewModel @Inject constructor(
             }
 
             is DeviceEvent.UpdateDevice -> {
-                /////
+                if (state.value.device != null) {
+                    viewModelScope.launch {
+                        val device = state.value.device!!.copy(
+                            name = event.name,
+                            frequency = event.frequency.toIntOrNull() ?: 0,
+                            key = event.key
+                        )
+                        when (val result = updateDeviceUseCase.invoke(
+                            token = state.value.token,
+                            device = device
+                        )) {
+                            is ResultWork.Error -> {
+                                _state.value.copy(
+                                    message = result.error.asUiText(),
+                                    device = state.value.device!!.copy(
+                                        groups = _startGroups.value
+                                    )
+                                )
+                                    .updateState()
+                            }
+
+                            is ResultWork.Success -> {
+                                loadDevice()
+                            }
+                        }
+                    }
+                }
             }
 
             DeviceEvent.BackStartGroups -> {
-                _state.value.copy(
-                    device = state.value.device!!.copy(
-                        groups = _startGroups.value
+                if (state.value.device != null) {
+                    _state.value.copy(
+                        device = state.value.device!!.copy(
+                            groups = _startGroups.value
+                        )
                     )
-                )
-                    .updateState()
+                        .updateState()
+                }
             }
         }
     }

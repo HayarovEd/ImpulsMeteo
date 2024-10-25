@@ -24,6 +24,7 @@ import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
+import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
@@ -228,4 +229,13 @@ object UseCaseModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun providesUpdateDeviceUseCaseUseCase(
+        remoteRepository: RemoteRepository
+    ): UpdateDeviceUseCase {
+        return UpdateDeviceUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
 }

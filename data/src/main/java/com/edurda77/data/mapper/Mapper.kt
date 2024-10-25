@@ -7,6 +7,10 @@ import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.units.UnitsDto
+import com.edurda77.data.remote.update_device.UpdateDeviceDto
+import com.edurda77.data.remote.update_device.UpdateDeviceNotificationsDto
+import com.edurda77.data.remote.update_device.UpdateDeviceNotificationsParamsDto
+import com.edurda77.data.remote.update_device.UpdateDeviceParamsDto
 import com.edurda77.data.remote.update_notifications.UpdateNotificationsDto
 import com.edurda77.data.remote.update_notifications.UpdateParamsNotificationsDto
 import com.edurda77.data.remote.user.UsersDto
@@ -84,7 +88,8 @@ fun DevicesDto.convertToDevices(): List<Device> {
                     value = param.value.toDoubleOrNull() ?: 0.0,
                     idUnit = param.idUnit,
                     id = param.id,
-                    isHidden = param.isHidden == IS_HIDDEN
+                    isHidden = param.isHidden == IS_HIDDEN,
+                    color = param.color
                 )
             }.filter { !it.isHidden },
             updatedAt = device.lastUpdate ?: "",
@@ -151,6 +156,8 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
         video = this.singleDeviceDto.first().video,
         frequency = this.singleDeviceDto.first().update,
         updatedAt = this.singleDeviceDto.first().lastUpdate,
+        host = this.singleDeviceDto.first().host,
+        port = this.singleDeviceDto.first().port,
         groups = this.singleDeviceDto.first().groups.map {
             GroupDevices(
                 id = it.id,
@@ -165,7 +172,8 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
                 value = it.value.toDoubleOrNull() ?: 0.0,
                 idUnit = it.idUnit,
                 id = it.id,
-                isHidden = it.isHidden == IS_HIDDEN
+                isHidden = it.isHidden == IS_HIDDEN,
+                color = it.color
             )
         },
         notifications = Notifications(
@@ -193,6 +201,48 @@ fun Notifications.convertToUpdateNotificationsDto(): UpdateNotificationsDto {
                 value = it.value
             )
         }
+    )
+}
+
+fun SingleDevice.convertToSingleDeviceDto(): UpdateDeviceDto {
+    return UpdateDeviceDto(
+        groups = this.groups.map {
+            it.id
+        },
+        host = this.host,
+        id = this.id,
+        key = this.key,
+        lastUpdate = "",
+        name = this.name,
+        notifications = UpdateDeviceNotificationsDto(
+            deviceStatus = this.notifications.deviceStatus,
+            params = this.notifications.notifications.map {
+                UpdateDeviceNotificationsParamsDto(
+                    condition = it.condition,
+                    id = it.id ?: 0,
+                    idParam = it.idParam,
+                    value = it.value
+                )
+            }
+        ),
+        port = this.port,
+        params = this.params.map {
+            UpdateDeviceParamsDto(
+                classIcon = it.classIcon,
+                id = it.id,
+                idDevice = this.id,
+                color = it.color,
+                idUnit = it.idUnit,
+                isHidden = if (!it.isHidden) 0 else 1,
+                label = it.label,
+                name = it.name,
+                value = it.value.toString()
+            )
+        },
+        status = if (this.status) "on" else "off",
+        update = this.frequency,
+        video = this.video,
+        cameras = emptyList()
     )
 }
 

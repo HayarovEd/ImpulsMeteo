@@ -1,15 +1,15 @@
-package com.edurda77.data.remote.device
+package com.edurda77.data.remote.update_device
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ParamNotification(
+data class UpdateDeviceNotificationsParamsDto(
     @SerialName("condition")
     val condition: String,
     @SerialName("id")
-    val id: Int?,
+    val id: Int,
     @SerialName("id_param")
     val idParam: Int,
     @SerialName("value")

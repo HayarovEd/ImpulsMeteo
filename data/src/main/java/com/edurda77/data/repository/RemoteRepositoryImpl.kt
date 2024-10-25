@@ -7,6 +7,7 @@ import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.mapper.convertToSingleDevice
+import com.edurda77.data.mapper.convertToSingleDeviceDto
 import com.edurda77.data.mapper.convertToUnits
 import com.edurda77.data.mapper.convertToUpdateNotificationsDto
 import com.edurda77.data.mapper.convertToUsers
@@ -211,6 +212,26 @@ class RemoteRepositoryImpl @Inject constructor(
                         bearerAuth(token)
                         setBody(
                             notifications.convertToUpdateNotificationsDto()
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun updateDeviceById(
+        token: String,
+        device: SingleDevice
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$DEVICES_POSTFIX/${device.id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            device.convertToSingleDeviceDto()
                         )
                     }
                 }.bodyAsText()

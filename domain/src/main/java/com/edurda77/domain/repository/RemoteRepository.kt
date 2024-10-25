@@ -84,4 +84,6 @@ interface RemoteRepository {
         id: Int,
         notifications: Notifications
     ): ResultWork<Unit, DataError>
+
+    suspend fun updateDeviceById(token: String, device: SingleDevice): ResultWork<Unit, DataError>
 }

@@ -92,7 +92,13 @@ fun DeviceScreen(
                     frequency = state.value.device?.frequency ?: 0,
                     groups = state.value.groups,
                     onUpdateClick = { currentName, currentKey, currentFrequency ->
-
+                        onEvent(
+                            DeviceEvent.UpdateDevice(
+                                name = currentName,
+                                key = currentKey,
+                                frequency = currentFrequency
+                            )
+                        )
                     },
                     onUpdateGroups = {
                         onEvent(DeviceEvent.UpdateSelectedGroups(it))
