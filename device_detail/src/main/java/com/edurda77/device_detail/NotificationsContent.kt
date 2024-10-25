@@ -40,9 +40,8 @@ fun NotificationsContent(
     name: String?,
     notifications: Notifications?,
     params: List<Param>,
-    deviceId: Int?,
+    onAddNotificationToListClick: (Int, String, Int) -> Unit,
 ) {
-    val currentNotifications = remember { mutableStateOf(notifications) }
     val expandedAddNotificationDialog = remember { mutableStateOf(false) }
 
     if (expandedAddNotificationDialog.value) {
@@ -55,8 +54,15 @@ fun NotificationsContent(
                     onCloseClick = {
                         expandedAddNotificationDialog.value = false
                     },
+                    onConfirmClick = { idParam, condition, value ->
+                        expandedAddNotificationDialog.value = false
+                        onAddNotificationToListClick(
+                            idParam,
+                            condition,
+                            value
+                        )
+                    },
                     params = params,
-                    deviceId = deviceId
                 )
             }
         )
@@ -101,19 +107,19 @@ fun NotificationsContent(
                 .fillMaxWidth()
                 .clickable(
                     onClick = {
-                        currentNotifications.value = currentNotifications.value?.copy(
-                            currentNotifications.value?.deviceStatus != true
-                        )
+                        /* currentNotifications.value = currentNotifications.value?.copy(
+                             currentNotifications.value?.deviceStatus != true
+                         )*/
                     }
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
-                checked = currentNotifications.value?.deviceStatus == true,
+                checked = notifications?.deviceStatus == true,
                 onCheckedChange = {
-                    currentNotifications.value = currentNotifications.value?.copy(
-                        currentNotifications.value?.deviceStatus != true
-                    )
+                    /* currentNotifications.value = currentNotifications.value?.copy(
+                         currentNotifications.value?.deviceStatus != true
+                     )*/
                 }
             )
             Spacer(modifier = modifier.width(5.dp))
@@ -150,7 +156,7 @@ fun NotificationsContent(
                 .fillMaxWidth(),
         ) {
             if (notifications?.notifications != null) {
-                items(currentNotifications.value?.notifications ?: emptyList()) { notification ->
+                items(notifications.notifications) { notification ->
                     val intIcon = params.firstOrNull { it.id == notification.idParam }?.idUnit ?: 1
                     val description =
                         params.firstOrNull { it.id == notification.idParam }?.name ?: ""

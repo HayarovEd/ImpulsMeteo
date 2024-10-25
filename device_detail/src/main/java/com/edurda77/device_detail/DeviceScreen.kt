@@ -112,6 +112,15 @@ fun DeviceScreen(
             },
             onClickChangeVisibleBottomSheet = {
                 showBottomSheet.value = !showBottomSheet.value
+            },
+            onAddNotificationToListClick = { idParam, condition, value ->
+                onEvent(
+                    DeviceEvent.AddNewNotificationToList(
+                        idParam = idParam,
+                        condition = condition,
+                        value = value
+                    )
+                )
             }
         )
     }

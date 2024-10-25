@@ -10,7 +10,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Param
+import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiIconButton
@@ -29,15 +32,16 @@ import com.edurda77.resources.uikit.UiTextField
 fun AddNotificationDialog(
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
+    onConfirmClick: (Int, String, Int) -> Unit,
     params: List<Param>,
-    deviceId: Int?,
 ) {
 
     val condition = remember { mutableStateOf("") }
     val value = remember { mutableStateOf("") }
     val parameter = remember { mutableStateOf("") }
+    val parameterId = remember { mutableIntStateOf(NEGATIVE_ID) }
     val expandedParameters = remember { mutableStateOf(false) }
-    val expandedContidions = remember { mutableStateOf(false) }
+    val expandedConditions = remember { mutableStateOf(false) }
     val conditions = listOf("<=", ">=")
 
     Column {
@@ -79,6 +83,7 @@ fun AddNotificationDialog(
                                     )
                                 }, onClick = {
                                     parameter.value = param.name
+                                    parameterId.intValue = param.id
                                 })
                         }
                     }
@@ -109,8 +114,8 @@ fun AddNotificationDialog(
                         modifier = modifier,
                         //offset = DpOffset(x = offsetXDropDownMenu.value, y = 0.dp),
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        expanded = expandedContidions.value,
-                        onDismissRequest = { expandedContidions.value = false }
+                        expanded = expandedConditions.value,
+                        onDismissRequest = { expandedConditions.value = false }
                     ) {
                         conditions.forEach { cnd ->
                             DropdownMenuItem(
@@ -128,7 +133,7 @@ fun AddNotificationDialog(
                     UiIconButton(
                         icon = ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24),
                         onClick = {
-                            expandedContidions.value = true
+                            expandedConditions.value = true
                         }
                     )
                 }
@@ -148,6 +153,39 @@ fun AddNotificationDialog(
                     onClickContent = {
                         value.value = it
                     }
+                )
+            }
+        }
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            TextButton(
+                onClick = onCloseClick
+            ) {
+                Text(
+                    modifier = modifier,
+                    text = stringResource(id = R.string.cancel),
+                    color = MaterialTheme.colorScheme.error,
+                    style = Typography.bodyLarge,
+                )
+            }
+            TextButton(
+                onClick = {
+                    onConfirmClick(
+                        parameterId.intValue,
+                        condition.value,
+                        value.value.toIntOrNull() ?: 0
+                    )
+                }
+            ) {
+                Text(
+                    modifier = modifier,
+                    text = stringResource(id = R.string.ok),
+                    color = MaterialTheme.colorScheme.primary,
+                    style = Typography.bodyLarge,
                 )
             }
         }

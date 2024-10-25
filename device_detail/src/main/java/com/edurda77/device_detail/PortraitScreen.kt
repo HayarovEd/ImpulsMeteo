@@ -70,6 +70,7 @@ fun PortraitScreen(
     onClickChangeVisibleLimit: () -> Unit,
     onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
+    onAddNotificationToListClick: (Int, String, Int) -> Unit,
     sheetState: SheetState,
     scope: CoroutineScope,
     showBottomSheet: Boolean,
@@ -298,9 +299,15 @@ fun PortraitScreen(
                 ) {
                     NotificationsContent(
                         onClickChangeVisibleBottomSheet = onClickChangeVisibleBottomSheet,
+                        onAddNotificationToListClick = { idParam, condition, value ->
+                            onAddNotificationToListClick(
+                                idParam,
+                                condition,
+                                value
+                            )
+                        },
                         notifications = device?.notifications,
                         name = device?.name,
-                        deviceId = device?.id,
                         params = device?.params ?: emptyList()
                     )
                 }

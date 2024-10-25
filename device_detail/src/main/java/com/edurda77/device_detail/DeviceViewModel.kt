@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.NavigationRoute
+import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -52,6 +53,30 @@ class DeviceViewModel @Inject constructor(
 
             is DeviceEvent.GetHistory -> {
                 ////////
+            }
+
+            is DeviceEvent.AddNewNotificationToList -> {
+                viewModelScope.launch {
+                    val updateList =
+                        state.value.device?.notifications?.notifications?.toMutableList()
+                    updateList?.add(
+                        NotificationDevice(
+                            condition = event.condition,
+                            idParam = event.idParam,
+                            value = event.value
+                        )
+                    )
+                    if (state.value.device != null) {
+                        _state.value.copy(
+                            device = state.value.device?.copy(
+                                notifications = state.value.device!!.notifications.copy(
+                                    notifications = updateList ?: emptyList()
+                                )
+                            )
+                        )
+                            .updateState()
+                    }
+                }
             }
         }
     }
