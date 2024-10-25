@@ -64,6 +64,7 @@ fun PortraitScreen(
     device: SingleDevice?,
     currentLimit: Int,
     limits: List<Int>,
+    isEnableEdit: Boolean,
     expandedLimits: Boolean,
     onClickChangeVisibleBottomSheet: () -> Unit,
     onClickExpandedUpdateDialog: () -> Unit,
@@ -113,11 +114,13 @@ fun PortraitScreen(
                             icon = ImageVector.vectorResource(id = R.drawable.outline_notifications_24),
                             onClick = onClickChangeVisibleBottomSheet
                         )
-                        UiIconButton(
-                            modifier = modifier,
-                            icon = ImageVector.vectorResource(id = R.drawable.baseline_edit_24),
-                            onClick = onClickExpandedUpdateDialog
-                        )
+                        if (isEnableEdit) {
+                            UiIconButton(
+                                modifier = modifier,
+                                icon = ImageVector.vectorResource(id = R.drawable.baseline_edit_24),
+                                onClick = onClickExpandedUpdateDialog
+                            )
+                        }
                         Text(
                             modifier = modifier,
                             text = if (device?.status == true) stringResource(R.string.online) else stringResource(

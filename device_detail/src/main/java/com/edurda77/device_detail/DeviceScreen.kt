@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.edurda77.domain.utils.DEVICES_EDIT
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiDialog
@@ -124,6 +125,7 @@ fun DeviceScreen(
             currentLimit = currentLimit.intValue,
             expandedLimits = expandedLimits.value,
             sheetState = sheetState,
+            isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
             openFilter = {
