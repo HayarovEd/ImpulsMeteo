@@ -12,4 +12,15 @@ sealed class DeviceEvent {
         val condition: String,
         val value: Int
     ) : DeviceEvent()
+    class DeleteNotificationFromList(
+        val index: Int,
+    ) : DeviceEvent()
+
+    class UpdateNotificationInList(
+        val index: Int,
+        val id: Int,
+        val idParam: Int,
+        val condition: String,
+        val value: Int
+    ) : DeviceEvent()
 }

@@ -78,6 +78,49 @@ class DeviceViewModel @Inject constructor(
                     }
                 }
             }
+
+            is DeviceEvent.DeleteNotificationFromList -> {
+                viewModelScope.launch {
+                    val updateList =
+                        state.value.device?.notifications?.notifications?.toMutableList()
+                    updateList?.removeAt(event.index)
+                    if (state.value.device != null) {
+                        _state.value.copy(
+                            device = state.value.device?.copy(
+                                notifications = state.value.device!!.notifications.copy(
+                                    notifications = updateList ?: emptyList()
+                                )
+                            )
+                        )
+                            .updateState()
+                    }
+                }
+            }
+
+            is DeviceEvent.UpdateNotificationInList -> {
+                viewModelScope.launch {
+                    val updateList =
+                        state.value.device?.notifications?.notifications?.toMutableList()
+                    if (state.value.device != null) {
+                        updateList?.set(
+                            event.index, NotificationDevice(
+                                id = event.id,
+                                condition = event.condition,
+                                idParam = event.idParam,
+                                value = event.value
+                            )
+                        )
+                        _state.value.copy(
+                            device = state.value.device?.copy(
+                                notifications = state.value.device!!.notifications.copy(
+                                    notifications = updateList ?: emptyList()
+                                )
+                            )
+                        )
+                            .updateState()
+                    }
+                }
+            }
         }
     }
 

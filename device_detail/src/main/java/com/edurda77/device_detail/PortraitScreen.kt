@@ -71,6 +71,8 @@ fun PortraitScreen(
     onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
     onAddNotificationToListClick: (Int, String, Int) -> Unit,
+    onDeleteNotificationFromListClick: (Int) -> Unit,
+    onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     sheetState: SheetState,
     scope: CoroutineScope,
     showBottomSheet: Boolean,
@@ -306,9 +308,21 @@ fun PortraitScreen(
                                 value
                             )
                         },
+                        onDeleteNotificationFromListClick = {
+                            onDeleteNotificationFromListClick(it)
+                        },
                         notifications = device?.notifications,
                         name = device?.name,
-                        params = device?.params ?: emptyList()
+                        params = device?.params ?: emptyList(),
+                        onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
+                            onUpdateNotificationInListClick(
+                                index,
+                                id,
+                                idParam,
+                                condition,
+                                value
+                            )
+                        }
                     )
                 }
             }

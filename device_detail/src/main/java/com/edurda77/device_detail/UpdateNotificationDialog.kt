@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.R
@@ -30,17 +31,18 @@ import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 
 @Composable
-fun AddNotificationDialog(
+fun UpdateNotificationDialog(
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
-    onConfirmClick: (Int, String, Int) -> Unit,
+    notificationDevice: NotificationDevice,
+    onConfirmClick: (Int, Int, String, Int) -> Unit,
     params: List<Param>,
 ) {
-
-    val condition = remember { mutableStateOf("") }
-    val value = remember { mutableStateOf("") }
-    val parameter = remember { mutableStateOf("") }
+    val condition = remember { mutableStateOf(notificationDevice.condition) }
+    val value = remember { mutableStateOf(notificationDevice.value.toString()) }
     val parameterId = remember { mutableIntStateOf(NEGATIVE_ID) }
+    val parameter =
+        remember { mutableStateOf(params.first { it.id == notificationDevice.idParam }.label) }
     val expandedParameters = remember { mutableStateOf(false) }
     val expandedConditions = remember { mutableStateOf(false) }
     val conditions = listOf("<=", ">=")
@@ -182,6 +184,7 @@ fun AddNotificationDialog(
             TextButton(
                 onClick = {
                     onConfirmClick(
+                        notificationDevice.id ?: NEGATIVE_ID,
                         parameterId.intValue,
                         condition.value,
                         value.value.toIntOrNull() ?: 0

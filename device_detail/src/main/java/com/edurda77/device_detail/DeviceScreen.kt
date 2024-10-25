@@ -121,6 +121,20 @@ fun DeviceScreen(
                         value = value
                     )
                 )
+            },
+            onDeleteNotificationFromListClick = {
+                onEvent(
+                    DeviceEvent.DeleteNotificationFromList(it)
+                )
+            },
+            onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
+                DeviceEvent.UpdateNotificationInList(
+                    index = index,
+                    id = id,
+                    idParam = idParam,
+                    condition = condition,
+                    value = value
+                )
             }
         )
     }

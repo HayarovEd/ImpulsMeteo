@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,8 +41,11 @@ fun NotificationsContent(
     notifications: Notifications?,
     params: List<Param>,
     onAddNotificationToListClick: (Int, String, Int) -> Unit,
+    onDeleteNotificationFromListClick: (Int) -> Unit,
+    onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
 ) {
     val expandedAddNotificationDialog = remember { mutableStateOf(false) }
+    val expandedUpdateNotificationDialog = remember { mutableStateOf(false) }
 
     if (expandedAddNotificationDialog.value) {
         UiDialog(
@@ -156,14 +159,43 @@ fun NotificationsContent(
                 .fillMaxWidth(),
         ) {
             if (notifications?.notifications != null) {
-                items(notifications.notifications) { notification ->
+                itemsIndexed(notifications.notifications) { index, notification ->
                     val intIcon = params.firstOrNull { it.id == notification.idParam }?.idUnit ?: 1
                     val description =
                         params.firstOrNull { it.id == notification.idParam }?.name ?: ""
                     val label = params.firstOrNull { it.id == notification.idParam }?.label ?: ""
+                    if (expandedUpdateNotificationDialog.value) {
+                        UiDialog(
+                            onCloseDialog = {
+                                expandedUpdateNotificationDialog.value = false
+                            },
+                            content = {
+                                UpdateNotificationDialog(
+                                    onCloseClick = {
+                                        expandedUpdateNotificationDialog.value = false
+                                    },
+                                    onConfirmClick = { id, idParam, condition, value ->
+                                        expandedUpdateNotificationDialog.value = false
+                                        onUpdateNotificationInListClick(
+                                            index,
+                                            id,
+                                            idParam,
+                                            condition,
+                                            value
+                                        )
+                                    },
+                                    params = params,
+                                    notificationDevice = notification
+                                )
+                            }
+                        )
+                    }
                     Row(
                         modifier = modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clickable {
+                                expandedUpdateNotificationDialog.value = true
+                            },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -209,7 +241,7 @@ fun NotificationsContent(
                             UiIconButton(
                                 icon = ImageVector.vectorResource(R.drawable.baseline_delete_24),
                                 onClick = {
-                                    //////////////////
+                                    onDeleteNotificationFromListClick(index)
                                 }
                             )
                         }
