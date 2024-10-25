@@ -89,7 +89,6 @@ fun DeviceScreen(
             currentLimit = currentLimit.intValue,
             expandedLimits = expandedLimits.value,
             sheetState = sheetState,
-            scope = scope,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
             openFilter = {
@@ -128,13 +127,21 @@ fun DeviceScreen(
                 )
             },
             onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
-                DeviceEvent.UpdateNotificationInList(
+                onEvent(
+                    DeviceEvent.UpdateNotificationInList(
                     index = index,
                     id = id,
                     idParam = idParam,
                     condition = condition,
                     value = value
+                    )
                 )
+            },
+            onChangeStatusClick = {
+                onEvent(DeviceEvent.ChangeStatusNotifications)
+            },
+            onUpdateNotificationClick = {
+                onEvent(DeviceEvent.UpdateNotifications)
             }
         )
     }

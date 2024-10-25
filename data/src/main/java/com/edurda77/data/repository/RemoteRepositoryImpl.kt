@@ -8,6 +8,7 @@ import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.mapper.convertToSingleDevice
 import com.edurda77.data.mapper.convertToUnits
+import com.edurda77.data.mapper.convertToUpdateNotificationsDto
 import com.edurda77.data.mapper.convertToUsers
 import com.edurda77.data.remote.add_device.AddDeviceDto
 import com.edurda77.data.remote.add_devices_group.AddDevicesGroupDto
@@ -29,6 +30,7 @@ import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.Notifications
 import com.edurda77.domain.model.Permissions
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -44,6 +46,7 @@ import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
+import com.edurda77.domain.utils.NOTIFICATIONS_POSTFIX
 import com.edurda77.domain.utils.PAGE_PARAMETER
 import com.edurda77.domain.utils.PARAMETER_GROUP
 import com.edurda77.domain.utils.PASSWORD
@@ -161,7 +164,6 @@ class RemoteRepositoryImpl @Inject constructor(
                         bearerAuth(token)
                     }
                 }.call
-                // println("TEST DEVECE DETAIL SCREEN, ${responseDevices.response.body<String>()}")
                 responseDevices
                     .body<BodyDeviceDto>().convertToSingleDevice()
             }
@@ -188,6 +190,27 @@ class RemoteRepositoryImpl @Inject constructor(
                                 name = name,
                                 update = update
                             )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun updateNotificationsDevice(
+        token: String,
+        id: Int,
+        notifications: Notifications,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post("$BASE_URL$DEVICES_POSTFIX/$id/$NOTIFICATIONS_POSTFIX") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            notifications.convertToUpdateNotificationsDto()
                         )
                     }
                 }.bodyAsText()
@@ -483,6 +506,7 @@ class RemoteRepositoryImpl @Inject constructor(
             }
         }
     }
+
 
     /* override suspend fun getHistoryDeviceById(
          token: String,

@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,8 @@ fun NotificationsContent(
     onAddNotificationToListClick: (Int, String, Int) -> Unit,
     onDeleteNotificationFromListClick: (Int) -> Unit,
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
+    onChangeStatusClick: () -> Unit,
+    onUpdateNotificationClick: () -> Unit,
 ) {
     val expandedAddNotificationDialog = remember { mutableStateOf(false) }
     val expandedUpdateNotificationDialog = remember { mutableStateOf(false) }
@@ -109,21 +112,13 @@ fun NotificationsContent(
             modifier = modifier
                 .fillMaxWidth()
                 .clickable(
-                    onClick = {
-                        /* currentNotifications.value = currentNotifications.value?.copy(
-                             currentNotifications.value?.deviceStatus != true
-                         )*/
-                    }
+                    onClick = onChangeStatusClick
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
                 checked = notifications?.deviceStatus == true,
-                onCheckedChange = {
-                    /* currentNotifications.value = currentNotifications.value?.copy(
-                         currentNotifications.value?.deviceStatus != true
-                     )*/
-                }
+                onCheckedChange = { onChangeStatusClick() }
             )
             Spacer(modifier = modifier.width(5.dp))
             Text(
@@ -248,6 +243,17 @@ fun NotificationsContent(
                     }
                 }
             }
+        }
+        Spacer(modifier = modifier.height(10.dp))
+        TextButton(
+            onClick = onUpdateNotificationClick
+        ) {
+            Text(
+                modifier = modifier,
+                text = stringResource(id = R.string.save),
+                color = MaterialTheme.colorScheme.primary,
+                style = Typography.bodyLarge,
+            )
         }
     }
 }

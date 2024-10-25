@@ -9,6 +9,7 @@ import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
@@ -26,6 +27,7 @@ class DeviceViewModel @Inject constructor(
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
     private val savedStateHandle: SavedStateHandle,
+    private val updateNotificationsDeviceUseCase: UpdateNotificationsDeviceUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -118,6 +120,44 @@ class DeviceViewModel @Inject constructor(
                             )
                         )
                             .updateState()
+                    }
+                }
+            }
+
+            DeviceEvent.ChangeStatusNotifications -> {
+                viewModelScope.launch {
+                    if (state.value.device != null) {
+                        _state.value.copy(
+                            device = state.value.device?.copy(
+                                notifications = state.value.device!!.notifications.copy(
+                                    deviceStatus = !state.value.device!!.notifications.deviceStatus
+                                )
+                            )
+                        )
+                            .updateState()
+                    }
+                }
+            }
+
+            DeviceEvent.UpdateNotifications -> {
+                if (state.value.device != null) {
+                    viewModelScope.launch {
+                        when (val result = updateNotificationsDeviceUseCase.invoke(
+                            token = state.value.token,
+                            id = state.value.deviceId,
+                            notifications = state.value.device!!.notifications
+                        )) {
+                            is ResultWork.Error -> {
+                                _state.value.copy(
+                                    isLoading = false,
+                                )
+                                    .updateState()
+                            }
+
+                            is ResultWork.Success -> {
+                                loadDevice()
+                            }
+                        }
                     }
                 }
             }

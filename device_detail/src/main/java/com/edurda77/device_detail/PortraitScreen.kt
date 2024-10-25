@@ -46,7 +46,6 @@ import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDateContent
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiText
-import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,8 +72,9 @@ fun PortraitScreen(
     onAddNotificationToListClick: (Int, String, Int) -> Unit,
     onDeleteNotificationFromListClick: (Int) -> Unit,
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
+    onUpdateNotificationClick: () -> Unit,
+    onChangeStatusClick: () -> Unit,
     sheetState: SheetState,
-    scope: CoroutineScope,
     showBottomSheet: Boolean,
 ) {
     val localDensity = LocalDensity.current
@@ -322,7 +322,9 @@ fun PortraitScreen(
                                 condition,
                                 value
                             )
-                        }
+                        },
+                        onChangeStatusClick = onChangeStatusClick,
+                        onUpdateNotificationClick = onUpdateNotificationClick
                     )
                 }
             }

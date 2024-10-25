@@ -7,6 +7,7 @@ const val WEB_SOCKET_URL =
 const val AUTH_POSTFIX = "auth/login"
 const val AUTH_LOGGED_USER_POSTFIX = "auth/user"
 const val DEVICES_POSTFIX = "devices"
+const val NOTIFICATIONS_POSTFIX = "notifications"
 const val PARAMS_POSTFIX = "params"
 const val DEVICES_GROUPS_POSTFIX = "devicesgroups"
 const val PERMISSIONS_POSTFIX = "permissions"

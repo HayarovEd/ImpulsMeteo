@@ -7,6 +7,8 @@ import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.units.UnitsDto
+import com.edurda77.data.remote.update_notifications.UpdateNotificationsDto
+import com.edurda77.data.remote.update_notifications.UpdateParamsNotificationsDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
@@ -177,6 +179,20 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
                 )
             },
         )
+    )
+}
+
+fun Notifications.convertToUpdateNotificationsDto(): UpdateNotificationsDto {
+    return UpdateNotificationsDto(
+        deviceStatus = this.deviceStatus,
+        params = this.notifications.map {
+            UpdateParamsNotificationsDto(
+                condition = it.condition,
+                id = it.id,
+                idParam = it.idParam,
+                value = it.value
+            )
+        }
     )
 }
 

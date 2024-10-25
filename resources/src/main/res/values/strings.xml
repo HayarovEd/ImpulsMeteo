@@ -75,5 +75,6 @@
     <string name="parameter">Параметр</string>
     <string name="conditions">Условия</string>
     <string name="value">Значение</string>
+    <string name="save">СОХРАНИТЬ</string>
 
 </resources>

@@ -23,4 +23,7 @@ sealed class DeviceEvent {
         val condition: String,
         val value: Int
     ) : DeviceEvent()
+
+    data object ChangeStatusNotifications : DeviceEvent()
+    data object UpdateNotifications : DeviceEvent()
 }

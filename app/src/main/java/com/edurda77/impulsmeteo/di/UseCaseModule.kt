@@ -25,6 +25,7 @@ import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
+import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
@@ -216,4 +217,15 @@ object UseCaseModule {
             webSocketRepository = webSocketRepository,
         )
     }
+
+    @Provides
+    @Singleton
+    fun providesUpdateNotificationsDeviceUseCase(
+        remoteRepository: RemoteRepository
+    ): UpdateNotificationsDeviceUseCase {
+        return UpdateNotificationsDeviceUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
+
 }
