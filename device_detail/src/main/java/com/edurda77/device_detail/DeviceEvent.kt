@@ -1,5 +1,7 @@
 package com.edurda77.device_detail
 
+import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.SingleDevice
 import kotlinx.datetime.LocalDateTime
 
 
@@ -26,4 +28,7 @@ sealed class DeviceEvent {
 
     data object ChangeStatusNotifications : DeviceEvent()
     data object UpdateNotifications : DeviceEvent()
+    class UpdateSelectedGroups(val groupDevices: GroupDevices) : DeviceEvent()
+    class UpdateDevice(val device: SingleDevice) : DeviceEvent()
+    data object BackStartGroups : DeviceEvent()
 }

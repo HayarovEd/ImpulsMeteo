@@ -66,6 +66,7 @@ fun PortraitScreen(
     limits: List<Int>,
     expandedLimits: Boolean,
     onClickChangeVisibleBottomSheet: () -> Unit,
+    onClickExpandedUpdateDialog: () -> Unit,
     onClickChangeVisibleLimit: () -> Unit,
     onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
@@ -115,9 +116,7 @@ fun PortraitScreen(
                         UiIconButton(
                             modifier = modifier,
                             icon = ImageVector.vectorResource(id = R.drawable.baseline_edit_24),
-                            onClick = {
-                                ///////////
-                            }
+                            onClick = onClickExpandedUpdateDialog
                         )
                         Text(
                             modifier = modifier,

@@ -1,6 +1,7 @@
 package com.edurda77.device_detail
 
 
+import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.utils.NEGATIVE_ID
@@ -20,6 +21,7 @@ data class DeviceState(
     val deviceId: Int = NEGATIVE_ID,
     val loggedUser: LoggedUser? = null,
     val device: SingleDevice? = null,
+    val groups: List<GroupDevices> = emptyList(),
     val toDate: LocalDateTime = LocalDateTime.now(),
     val fromDate: LocalDateTime = Clock.System.now()
         .minus(DateTimePeriod(months = 1), TimeZone.currentSystemDefault())

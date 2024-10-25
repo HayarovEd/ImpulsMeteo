@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.UiDialog
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 
@@ -32,6 +33,7 @@ fun DeviceScreen(
     val expandedToDateDialog = remember { mutableStateOf(false) }
     val expandedLimits = remember { mutableStateOf(false) }
     val showBottomSheet = remember { mutableStateOf(false) }
+    val expandedUpdateDialog = remember { mutableStateOf(false) }
     val isFilterOpen = remember { mutableStateOf(false) }
     val limits = listOf(100, 500, 1000, 1500)
     val currentLimit = remember { mutableIntStateOf(limits[0]) }
@@ -73,6 +75,33 @@ fun DeviceScreen(
         }
     )
 
+    if (expandedUpdateDialog.value) {
+        UiDialog(
+            onCloseDialog = {
+                expandedUpdateDialog.value = false
+                onEvent(DeviceEvent.BackStartGroups)
+            },
+            content = {
+                UpdateDeviceDialog(
+                    onCloseClick = {
+                        expandedUpdateDialog.value = false
+                        onEvent(DeviceEvent.BackStartGroups)
+                    },
+                    label = state.value.device?.name ?: "",
+                    key = state.value.device?.key ?: "",
+                    frequency = state.value.device?.frequency ?: 0,
+                    groups = state.value.groups,
+                    onUpdateClick = { currentName, currentKey, currentFrequency ->
+
+                    },
+                    onUpdateGroups = {
+                        onEvent(DeviceEvent.UpdateSelectedGroups(it))
+                    },
+                    selectedGroups = state.value.device?.groups ?: emptyList()
+                )
+            }
+        )
+    }
 
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
@@ -129,11 +158,11 @@ fun DeviceScreen(
             onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
                 onEvent(
                     DeviceEvent.UpdateNotificationInList(
-                    index = index,
-                    id = id,
-                    idParam = idParam,
-                    condition = condition,
-                    value = value
+                        index = index,
+                        id = id,
+                        idParam = idParam,
+                        condition = condition,
+                        value = value
                     )
                 )
             },
@@ -142,6 +171,9 @@ fun DeviceScreen(
             },
             onUpdateNotificationClick = {
                 onEvent(DeviceEvent.UpdateNotifications)
+            },
+            onClickExpandedUpdateDialog = {
+                expandedUpdateDialog.value = true
             }
         )
     }

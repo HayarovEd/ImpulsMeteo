@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.DeviceByIdUseCase
+import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
@@ -27,11 +29,12 @@ class DeviceViewModel @Inject constructor(
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
     private val savedStateHandle: SavedStateHandle,
-    private val updateNotificationsDeviceUseCase: UpdateNotificationsDeviceUseCase
+    private val updateNotificationsDeviceUseCase: UpdateNotificationsDeviceUseCase,
+    private val devicesGroupsUseCase: DevicesGroupsUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
-
+    private var _startGroups = MutableStateFlow<List<GroupDevices>>(emptyList())
 
     init {
         loadLocalData()
@@ -149,7 +152,7 @@ class DeviceViewModel @Inject constructor(
                         )) {
                             is ResultWork.Error -> {
                                 _state.value.copy(
-                                    isLoading = false,
+                                    message = result.error.asUiText()
                                 )
                                     .updateState()
                             }
@@ -160,6 +163,36 @@ class DeviceViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+
+            is DeviceEvent.UpdateSelectedGroups -> {
+                if (state.value.device != null) {
+                    val updatedGroups = state.value.device!!.groups.toMutableList()
+                    if (updatedGroups.contains(event.groupDevices)) {
+                        updatedGroups.remove(event.groupDevices)
+                    } else {
+                        updatedGroups.add(event.groupDevices)
+                    }
+                    _state.value.copy(
+                        device = state.value.device!!.copy(
+                            groups = updatedGroups
+                        )
+                    )
+                        .updateState()
+                }
+            }
+
+            is DeviceEvent.UpdateDevice -> {
+                /////
+            }
+
+            DeviceEvent.BackStartGroups -> {
+                _state.value.copy(
+                    device = state.value.device!!.copy(
+                        groups = _startGroups.value
+                    )
+                )
+                    .updateState()
             }
         }
     }
@@ -212,6 +245,7 @@ class DeviceViewModel @Inject constructor(
                 )
                     .updateState()
                 loadDevice()
+                loadGroups()
             }
         }
     }
@@ -237,7 +271,26 @@ class DeviceViewModel @Inject constructor(
                         device = result.data
                     )
                         .updateState()
+                    _startGroups.value = result.data.groups
                 }
+            }
+        }
+    }
+
+    private suspend fun loadGroups() {
+        when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                _state.value.copy(
+                    groups = result.data
+                )
+                    .updateState()
             }
         }
     }

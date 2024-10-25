@@ -76,5 +76,6 @@
     <string name="conditions">Условия</string>
     <string name="value">Значение</string>
     <string name="save">СОХРАНИТЬ</string>
+    <string name="update_device">Изменить</string>
 
 </resources>
