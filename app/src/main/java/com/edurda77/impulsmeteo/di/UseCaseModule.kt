@@ -27,6 +27,7 @@ import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
+import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
@@ -235,6 +236,16 @@ object UseCaseModule {
         remoteRepository: RemoteRepository
     ): UpdateDeviceUseCase {
         return UpdateDeviceUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesUpdateParamUseCase(
+        remoteRepository: RemoteRepository
+    ): UpdateParamUseCase {
+        return UpdateParamUseCase(
             remoteRepository = remoteRepository,
         )
     }

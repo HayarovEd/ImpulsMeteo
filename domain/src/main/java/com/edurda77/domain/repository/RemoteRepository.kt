@@ -5,6 +5,7 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.Permissions
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -86,4 +87,5 @@ interface RemoteRepository {
     ): ResultWork<Unit, DataError>
 
     suspend fun updateDeviceById(token: String, device: SingleDevice): ResultWork<Unit, DataError>
+    suspend fun updateParam(token: String, param: Param): ResultWork<Unit, DataError>
 }

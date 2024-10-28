@@ -14,6 +14,7 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
+import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
@@ -35,6 +36,7 @@ class DeviceViewModel @Inject constructor(
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val updateDeviceUseCase: UpdateDeviceUseCase,
     private val unitsUseCase: UnitsUseCase,
+    private val updateParamUseCase: UpdateParamUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -224,6 +226,28 @@ class DeviceViewModel @Inject constructor(
                         )
                     )
                         .updateState()
+                }
+            }
+
+            is DeviceEvent.UpdateParam -> {
+                if (state.value.device != null) {
+                    viewModelScope.launch {
+                        when (val result = updateParamUseCase.invoke(
+                            token = state.value.token,
+                            param = event.param
+                        )) {
+                            is ResultWork.Error -> {
+                                _state.value.copy(
+                                    message = result.error.asUiText()
+                                )
+                                    .updateState()
+                            }
+
+                            is ResultWork.Success -> {
+                                loadDevice()
+                            }
+                        }
+                    }
                 }
             }
         }

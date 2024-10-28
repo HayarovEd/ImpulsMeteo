@@ -70,7 +70,8 @@ fun convertDeviceMessageToDevice(message: String): Device {
                 idUnit = param.idUnit,
                 id = param.id,
                 isHidden = param.isHidden == IS_HIDDEN,
-                color = param.color
+                color = param.color,
+                idDevice = param.idDevice
             )
         },
         updatedAt = originalData.wsDevices.first().lastUpdate ?: ""

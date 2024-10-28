@@ -5,6 +5,7 @@ import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
+import com.edurda77.data.mapper.convertToParamDto
 import com.edurda77.data.mapper.convertToPermissions
 import com.edurda77.data.mapper.convertToSingleDevice
 import com.edurda77.data.mapper.convertToSingleDeviceDto
@@ -32,6 +33,7 @@ import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.Permissions
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -50,6 +52,7 @@ import com.edurda77.domain.utils.EMAIL
 import com.edurda77.domain.utils.NOTIFICATIONS_POSTFIX
 import com.edurda77.domain.utils.PAGE_PARAMETER
 import com.edurda77.domain.utils.PARAMETER_GROUP
+import com.edurda77.domain.utils.PARAMS_POSTFIX
 import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
@@ -528,6 +531,25 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateParam(
+        token: String,
+        param: Param
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$PARAMS_POSTFIX/${param.id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            param.convertToParamDto()
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
 
     /* override suspend fun getHistoryDeviceById(
          token: String,

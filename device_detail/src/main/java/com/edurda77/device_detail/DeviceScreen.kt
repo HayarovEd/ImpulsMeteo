@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +28,6 @@ fun DeviceScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     val expandedFromDateDialog = remember { mutableStateOf(false) }
     val expandedToDateDialog = remember { mutableStateOf(false) }
     val expandedLimits = remember { mutableStateOf(false) }
@@ -41,6 +39,8 @@ fun DeviceScreen(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
+    val historyParams = state.value.device?.params?.take(6) ?: emptyList()
+    val withoutHistoryParams = state.value.device?.params?.drop(6) ?: emptyList()
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -128,6 +128,10 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
+            historyParams = historyParams,
+            withoutHistoryParams = withoutHistoryParams,
+            screenWidth = screenWidth,
+            units = state.value.units,
             openFilter = {
                 isFilterOpen.value = it
             },
@@ -182,6 +186,9 @@ fun DeviceScreen(
             },
             onClickExpandedUpdateDialog = {
                 expandedUpdateDialog.value = true
+            },
+            onUpdateClick = { param ->
+                onEvent(DeviceEvent.UpdateParam(param))
             }
         )
     }

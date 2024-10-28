@@ -8,14 +8,24 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -31,21 +41,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDateContent
 import com.edurda77.resources.uikit.UiIconButton
+import com.edurda77.resources.uikit.UiRowDeviceValueWithClick
 import com.edurda77.resources.uikit.UiText
+import com.edurda77.resources.uikit.asUiIconParam
+import com.edurda77.resources.uikit.asUiTextParam
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,8 +93,13 @@ fun PortraitScreen(
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onUpdateNotificationClick: () -> Unit,
     onChangeStatusClick: () -> Unit,
+    onUpdateClick: (Param) -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
+    historyParams: List<Param>,
+    withoutHistoryParams: List<Param>,
+    screenWidth: Dp,
+    units: List<UnitMeteo>,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -291,7 +313,7 @@ fun PortraitScreen(
                 }
             }
         },
-        content = {
+        content = { innerPadings ->
             if (showBottomSheet) {
                 ModalBottomSheet(
                     modifier = modifier
@@ -328,6 +350,95 @@ fun PortraitScreen(
                         onChangeStatusClick = onChangeStatusClick,
                         onUpdateNotificationClick = onUpdateNotificationClick
                     )
+                }
+            }
+            Column(
+                modifier = modifier
+                    .padding(innerPadings)
+                    .fillMaxSize()
+                    .padding(start = 15.dp, end = 15.dp, bottom = 55.dp),
+            ) {
+                LazyRow(
+                    modifier = modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
+                    items(historyParams) { param ->
+                        val expandedDialog = remember { mutableStateOf(false) }
+                        Box(
+                            modifier = modifier
+                                .width(screenWidth * 0.8f)
+                                .aspectRatio(16 / 9f)
+                                .background(Color.White),
+                        ) {
+                            UiRowDeviceValueWithClick(
+                                modifier = modifier.align(Alignment.TopStart),
+                                icon = param.idUnit.asUiIconParam(),
+                                value = param.value,
+                                unit = param.idUnit.asUiTextParam(),
+                                name = param.label,
+                                content = {
+                                    UpdateParamDialog(
+                                        param = param,
+                                        units = units,
+                                        onCloseClick = {
+                                            expandedDialog.value = false
+                                        },
+                                        onUpdateClick = { param ->
+                                            expandedDialog.value = false
+                                            onUpdateClick(param)
+                                        }
+                                    )
+                                },
+                                expandedDialog = expandedDialog.value,
+                                onCloseClick = {
+                                    expandedDialog.value = false
+                                },
+                                onOpenClick = {
+                                    expandedDialog.value = true
+                                }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = modifier.height(10.dp))
+                LazyVerticalGrid(
+                    modifier = modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(15.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                    columns = GridCells.Fixed(2)
+                ) {
+                    items(withoutHistoryParams) { param ->
+                        val expandedDialog = remember { mutableStateOf(false) }
+                        UiRowDeviceValueWithClick(
+                            modifier = modifier,
+                            icon = param.idUnit.asUiIconParam(),
+                            value = param.value,
+                            name = param.label,
+                            expandedDialog = expandedDialog.value,
+                            unit = param.idUnit.asUiTextParam(),
+                            content = {
+                                UpdateParamDialog(
+                                    param = param,
+                                    units = units,
+                                    onCloseClick = {
+                                        expandedDialog.value = false
+                                    },
+                                    onUpdateClick = {
+                                        expandedDialog.value = false
+                                        onUpdateClick(param)
+                                    }
+                                )
+                            },
+                            onCloseClick = {
+                                expandedDialog.value = false
+                            },
+                            onOpenClick = {
+                                expandedDialog.value = true
+                            }
+                        )
+                    }
                 }
             }
         }

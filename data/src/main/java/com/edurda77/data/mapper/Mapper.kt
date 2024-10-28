@@ -4,6 +4,7 @@ import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
+import com.edurda77.data.remote.devices.ParamDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.units.UnitsDto
@@ -245,6 +246,20 @@ fun SingleDevice.convertToSingleDeviceDto(): UpdateDeviceDto {
         update = this.frequency,
         video = this.video,
         cameras = emptyList()
+    )
+}
+
+fun Param.convertToParamDto(): ParamDto {
+    return ParamDto(
+        classIcon = this.classIcon,
+        id = this.id,
+        idDevice = this.id,
+        color = this.color,
+        idUnit = this.idUnit,
+        isHidden = if (!this.isHidden) 0 else 1,
+        label = this.label,
+        name = this.name,
+        value = this.value.toString()
     )
 }
 
