@@ -111,7 +111,84 @@ fun DeviceScreen(
     }
 
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
+        LandscapeScreen(
+            configuration = configuration,
+            message = state.value.message,
+            isLoading = state.value.isLoading,
+            device = state.value.device,
+            onBackClick = onBackClick,
+            dateFrom = state.value.fromDate.date.toString(),
+            dateTo = state.value.toDate.date.toString(),
+            isOpenFilter = isFilterOpen.value,
+            currentLimit = currentLimit.intValue,
+            expandedLimits = expandedLimits.value,
+            sheetState = sheetState,
+            isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
+            showBottomSheet = showBottomSheet.value,
+            limits = limits,
+            historyParams = historyParams,
+            withoutHistoryParams = withoutHistoryParams,
+            screenWidth = screenWidth,
+            units = state.value.units,
+            openFilter = {
+                isFilterOpen.value = it
+            },
+            openFromDateDialog = {
+                expandedFromDateDialog.value = true
+            },
+            openToDateDialog = {
+                expandedToDateDialog.value = true
+            },
+            onClickLimit = {
+                currentLimit.intValue = limits[it]
+            },
+            onClickChangeVisibleLimit = {
+                expandedLimits.value = !expandedLimits.value
+            },
+            onClickRequestHistory = {
+                onEvent(DeviceEvent.GetHistory(it))
+            },
+            onClickChangeVisibleBottomSheet = {
+                showBottomSheet.value = !showBottomSheet.value
+            },
+            onAddNotificationToListClick = { idParam, condition, value ->
+                onEvent(
+                    DeviceEvent.AddNewNotificationToList(
+                        idParam = idParam,
+                        condition = condition,
+                        value = value
+                    )
+                )
+            },
+            onDeleteNotificationFromListClick = {
+                onEvent(
+                    DeviceEvent.DeleteNotificationFromList(it)
+                )
+            },
+            onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
+                onEvent(
+                    DeviceEvent.UpdateNotificationInList(
+                        index = index,
+                        id = id,
+                        idParam = idParam,
+                        condition = condition,
+                        value = value
+                    )
+                )
+            },
+            onChangeStatusClick = {
+                onEvent(DeviceEvent.ChangeStatusNotifications)
+            },
+            onUpdateNotificationClick = {
+                onEvent(DeviceEvent.UpdateNotifications)
+            },
+            onClickExpandedUpdateDialog = {
+                expandedUpdateDialog.value = true
+            },
+            onUpdateClick = { param ->
+                onEvent(DeviceEvent.UpdateParam(param))
+            }
+        )
     } else {
         PortraitScreen(
             configuration = configuration,

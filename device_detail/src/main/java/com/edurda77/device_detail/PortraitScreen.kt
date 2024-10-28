@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,6 +49,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -352,31 +354,91 @@ fun PortraitScreen(
                     )
                 }
             }
-            Column(
-                modifier = modifier
-                    .padding(innerPadings)
-                    .fillMaxSize()
-                    .padding(start = 15.dp, end = 15.dp, bottom = 55.dp),
-            ) {
-                LazyRow(
+            if (isLoading) {
+                Column(
                     modifier = modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(15.dp)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    items(historyParams) { param ->
-                        val expandedDialog = remember { mutableStateOf(false) }
-                        Box(
-                            modifier = modifier
-                                .width(screenWidth * 0.8f)
-                                .aspectRatio(16 / 9f)
-                                .background(Color.White),
-                        ) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = modifier.height(10.dp))
+                    Text(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        text = stringResource(R.string.loading),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = Typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            } else {
+                Column(
+                    modifier = modifier
+                        .padding(innerPadings)
+                        .fillMaxSize()
+                        .padding(start = 15.dp, end = 15.dp, bottom = 55.dp),
+                ) {
+                    LazyRow(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(15.dp)
+                    ) {
+                        items(historyParams) { param ->
+                            val expandedDialog = remember { mutableStateOf(false) }
+                            Box(
+                                modifier = modifier
+                                    .width(screenWidth * 0.8f)
+                                    .aspectRatio(16 / 9f)
+                                    .background(Color.White),
+                            ) {
+                                UiRowDeviceValueWithClick(
+                                    modifier = modifier.align(Alignment.TopStart),
+                                    icon = param.idUnit.asUiIconParam(),
+                                    value = param.value,
+                                    unit = param.idUnit.asUiTextParam(),
+                                    name = param.label,
+                                    content = {
+                                        UpdateParamDialog(
+                                            param = param,
+                                            units = units,
+                                            onCloseClick = {
+                                                expandedDialog.value = false
+                                            },
+                                            onUpdateClick = { param ->
+                                                expandedDialog.value = false
+                                                onUpdateClick(param)
+                                            }
+                                        )
+                                    },
+                                    expandedDialog = expandedDialog.value,
+                                    onCloseClick = {
+                                        expandedDialog.value = false
+                                    },
+                                    onOpenClick = {
+                                        expandedDialog.value = true
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = modifier.height(10.dp))
+                    LazyVerticalGrid(
+                        modifier = modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(15.dp),
+                        verticalArrangement = Arrangement.spacedBy(15.dp),
+                        columns = GridCells.Fixed(2)
+                    ) {
+                        items(withoutHistoryParams) { param ->
+                            val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
-                                modifier = modifier.align(Alignment.TopStart),
+                                modifier = modifier,
                                 icon = param.idUnit.asUiIconParam(),
                                 value = param.value,
-                                unit = param.idUnit.asUiTextParam(),
                                 name = param.label,
+                                expandedDialog = expandedDialog.value,
+                                unit = param.idUnit.asUiTextParam(),
                                 content = {
                                     UpdateParamDialog(
                                         param = param,
@@ -384,13 +446,12 @@ fun PortraitScreen(
                                         onCloseClick = {
                                             expandedDialog.value = false
                                         },
-                                        onUpdateClick = { param ->
+                                        onUpdateClick = {
                                             expandedDialog.value = false
                                             onUpdateClick(param)
                                         }
                                     )
                                 },
-                                expandedDialog = expandedDialog.value,
                                 onCloseClick = {
                                     expandedDialog.value = false
                                 },
@@ -399,45 +460,6 @@ fun PortraitScreen(
                                 }
                             )
                         }
-                    }
-                }
-                Spacer(modifier = modifier.height(10.dp))
-                LazyVerticalGrid(
-                    modifier = modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(15.dp),
-                    verticalArrangement = Arrangement.spacedBy(15.dp),
-                    columns = GridCells.Fixed(2)
-                ) {
-                    items(withoutHistoryParams) { param ->
-                        val expandedDialog = remember { mutableStateOf(false) }
-                        UiRowDeviceValueWithClick(
-                            modifier = modifier,
-                            icon = param.idUnit.asUiIconParam(),
-                            value = param.value,
-                            name = param.label,
-                            expandedDialog = expandedDialog.value,
-                            unit = param.idUnit.asUiTextParam(),
-                            content = {
-                                UpdateParamDialog(
-                                    param = param,
-                                    units = units,
-                                    onCloseClick = {
-                                        expandedDialog.value = false
-                                    },
-                                    onUpdateClick = {
-                                        expandedDialog.value = false
-                                        onUpdateClick(param)
-                                    }
-                                )
-                            },
-                            onCloseClick = {
-                                expandedDialog.value = false
-                            },
-                            onOpenClick = {
-                                expandedDialog.value = true
-                            }
-                        )
                     }
                 }
             }
