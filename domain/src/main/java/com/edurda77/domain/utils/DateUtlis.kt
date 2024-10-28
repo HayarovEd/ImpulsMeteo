@@ -29,3 +29,16 @@ fun convertToStringDateTime(localDateTime: LocalDateTime): String {
         localDateTimeFormat
     )
 }
+
+fun formatDateTimeChart(
+    localDateTime: LocalDateTime
+): String {
+    val dateFormat = LocalDateTime.Format {
+        hour()
+        char('\n')
+        monthNumber()
+        char('/')
+        dayOfMonth()
+    }
+    return localDateTime.format(dateFormat)
+}
