@@ -61,8 +61,8 @@
     <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
     <string name="short_title">Сокращенное название</string>
     <string name="updated_data">Данные получены:</string>
-    <string name="key_l">key:</string>
-    <string name="update">update:</string>
+    <string name="key_l">Ключ:</string>
+    <string name="update">Обновления:</string>
     <string name="choose_from_date">Начало периода</string>
     <string name="choose_to_date">Конец периода</string>
     <string name="filter">Фильтр</string>
@@ -77,5 +77,8 @@
     <string name="value">Значение</string>
     <string name="save">СОХРАНИТЬ</string>
     <string name="update_device">Изменить</string>
+    <string name="update_param">Изменить параметр</string>
+    <string name="units_lower_case">Единицы измерения</string>
+    <string name="hite_parameter">Скрыть параметр</string>
 
 </resources>

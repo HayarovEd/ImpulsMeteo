@@ -9,4 +9,5 @@ data class Param(
     val color: String,
     val classIcon: String,
     val isHidden: Boolean,
+    val idDevice: Int,
 )

@@ -4,6 +4,7 @@ package com.edurda77.device_detail
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.SingleDevice
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.uikit.UiText
 import kotlinx.datetime.Clock
@@ -21,6 +22,7 @@ data class DeviceState(
     val deviceId: Int = NEGATIVE_ID,
     val loggedUser: LoggedUser? = null,
     val device: SingleDevice? = null,
+    val units: List<UnitMeteo> = emptyList(),
     val groups: List<GroupDevices> = emptyList(),
     val toDate: LocalDateTime = LocalDateTime.now(),
     val fromDate: LocalDateTime = Clock.System.now()

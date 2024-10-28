@@ -11,6 +11,7 @@ import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
@@ -33,6 +34,7 @@ class DeviceViewModel @Inject constructor(
     private val updateNotificationsDeviceUseCase: UpdateNotificationsDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val updateDeviceUseCase: UpdateDeviceUseCase,
+    private val unitsUseCase: UnitsUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -276,6 +278,7 @@ class DeviceViewModel @Inject constructor(
                     .updateState()
                 loadDevice()
                 loadGroups()
+                loadUnits()
             }
         }
     }
@@ -319,6 +322,24 @@ class DeviceViewModel @Inject constructor(
             is ResultWork.Success -> {
                 _state.value.copy(
                     groups = result.data
+                )
+                    .updateState()
+            }
+        }
+    }
+
+    private suspend fun loadUnits() {
+        when (val result = unitsUseCase.invoke(state.value.token)) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
+
+            is ResultWork.Success -> {
+                _state.value.copy(
+                    units = result.data
                 )
                     .updateState()
             }

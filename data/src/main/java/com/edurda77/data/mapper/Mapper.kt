@@ -89,7 +89,8 @@ fun DevicesDto.convertToDevices(): List<Device> {
                     idUnit = param.idUnit,
                     id = param.id,
                     isHidden = param.isHidden == IS_HIDDEN,
-                    color = param.color
+                    color = param.color,
+                    idDevice = param.idDevice
                 )
             }.filter { !it.isHidden },
             updatedAt = device.lastUpdate ?: "",
@@ -173,7 +174,8 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
                 idUnit = it.idUnit,
                 id = it.id,
                 isHidden = it.isHidden == IS_HIDDEN,
-                color = it.color
+                color = it.color,
+                idDevice = it.idDevice
             )
         },
         notifications = Notifications(
