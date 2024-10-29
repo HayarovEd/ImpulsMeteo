@@ -86,6 +86,18 @@ fun DataError.asUiText(): UiText {
                 R.string.bad_request
             )
         }
+
+        DataError.LocalDateBase.ERROR_READ_DATA -> {
+            UiText.StringResource(
+                R.string.read_error_data
+            )
+        }
+
+        DataError.LocalDateBase.ERROR_WRITE_DATA -> {
+            UiText.StringResource(
+                R.string.read_error_data
+            )
+        }
     }
 }
 

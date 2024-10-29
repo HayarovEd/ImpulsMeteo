@@ -61,3 +61,8 @@ const val DEVICE_EVENT = "DeviceEvent"
 const val SUBSCRIBE_EVENT = "pusher:subscribe"
 const val EVENT_CHANNEL_PREFIX = "private-device."
 //const val MULTIPLE_SIZE = 10
+
+const val DATABASE = "db_meteo"
+const val FAVORITE_TABLE = "tb_favorite"
+const val FAVORITE_ID = "id"
+const val FAVORITE_DEVICE_ID = "device_id"

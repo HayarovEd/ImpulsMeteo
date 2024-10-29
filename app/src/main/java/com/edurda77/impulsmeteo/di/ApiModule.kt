@@ -1,5 +1,6 @@
 package com.edurda77.impulsmeteo.di
 
+import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -7,7 +8,10 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.room.Room
+import com.edurda77.data.local.MeteoDataBase
 import com.edurda77.domain.utils.APP_PREFERENCES
+import com.edurda77.domain.utils.DATABASE
 import com.edurda77.domain.utils.PING_INTERVAL
 import dagger.Module
 import dagger.Provides
@@ -61,5 +65,16 @@ object ApiModule {
                 pingInterval = PING_INTERVAL
             }
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(app: Application): MeteoDataBase {
+        return Room.databaseBuilder(
+            app,
+            MeteoDataBase::class.java,
+            DATABASE
+        )
+            .build()
     }
 }

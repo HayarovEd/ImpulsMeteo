@@ -41,4 +41,9 @@ sealed interface DataError : RootError {
         ERROR_READ_DATA,
         ERROR_WRITE_DATA
     }
+
+    enum class LocalDateBase : DataError {
+        ERROR_READ_DATA,
+        ERROR_WRITE_DATA
+    }
 }
