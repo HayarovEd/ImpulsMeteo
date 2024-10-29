@@ -72,7 +72,7 @@ fun UiRowDeviceValueWithClick(
 @Composable
 private fun Sample() {
     UiRowDeviceValue(
-        icon = ImageVector.vectorResource(R.drawable.temperature_half),
+        icon = ImageVector.vectorResource(R.drawable.low_temperature),
         value = 0.3,
         unit = stringResource(R.string.unit_temperature),
         name = "t° Улица 2"
