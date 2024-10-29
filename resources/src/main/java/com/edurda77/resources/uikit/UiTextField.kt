@@ -94,37 +94,4 @@ fun UiTextField(
             )
         }
     )
-    /*TextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .defaultMinSize(minHeight = 40.dp),
-        value = content,
-        enabled = enabled,
-        readOnly = readOnly,
-        onValueChange = {
-            onClickContent(it)
-        },
-        trailingIcon = {
-            if (trailingIcon != null) {
-                UiIconButton(
-                    icon = trailingIcon,
-                    onClick = onClickTrailingIcon
-                )
-            }
-        },
-        textStyle = Typography.bodyLarge,
-        label = {
-            Text(
-                text = label,
-                style = Typography.labelSmall
-            )
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = imeAction
-        ),
-        keyboardActions = keyboardActions,
-        maxLines = 1,
-        visualTransformation = visualTransformation
-    )*/
 }

@@ -9,11 +9,13 @@ import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
+import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
-import com.edurda77.domain.usecase.GrouppedDevicesUseCase
+import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -22,10 +24,14 @@ import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
+import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
+import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
+import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -82,13 +88,11 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesGrouppedDevicesUseCase(
+    fun providesGroupedDevicesUseCase(
         remoteRepository: RemoteRepository,
-        webSocketRepository: WebSocketRepository,
-    ): GrouppedDevicesUseCase {
-        return GrouppedDevicesUseCase(
+    ): GroupedDevicesUseCase {
+        return GroupedDevicesUseCase(
             remoteRepository = remoteRepository,
-            webSocketRepository = webSocketRepository
         )
     }
 
@@ -186,5 +190,63 @@ object UseCaseModule {
     @Singleton
     fun providesUpdateUnitUseCase(remoteRepository: RemoteRepository): UpdateUnitUseCase {
         return UpdateUnitUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeviceByIdUseCase(remoteRepository: RemoteRepository): DeviceByIdUseCase {
+        return DeviceByIdUseCase(remoteRepository = remoteRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesWebSocketUseCase(
+        webSocketRepository: WebSocketRepository,
+        remoteRepository: RemoteRepository
+    ): WebSocketUseCase {
+        return WebSocketUseCase(
+            webSocketRepository = webSocketRepository,
+            remoteRepository = remoteRepository
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesCloseWebsocketUseCase(
+        webSocketRepository: WebSocketRepository,
+    ): CloseWebsocketUseCase {
+        return CloseWebsocketUseCase(
+            webSocketRepository = webSocketRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesUpdateNotificationsDeviceUseCase(
+        remoteRepository: RemoteRepository
+    ): UpdateNotificationsDeviceUseCase {
+        return UpdateNotificationsDeviceUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesUpdateDeviceUseCaseUseCase(
+        remoteRepository: RemoteRepository
+    ): UpdateDeviceUseCase {
+        return UpdateDeviceUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesUpdateParamUseCase(
+        remoteRepository: RemoteRepository
+    ): UpdateParamUseCase {
+        return UpdateParamUseCase(
+            remoteRepository = remoteRepository,
+        )
     }
 }

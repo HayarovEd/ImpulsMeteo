@@ -119,6 +119,7 @@ fun DevicesScreen(
                 isShowDialogLogOff.value = false
                 onEvent(DevicesEvent.Logoff)
                 onGoToLogin()
+                onEvent(DevicesEvent.OnCloseWebSocket)
             },
             onClickCancel = {
                 isShowDialogLogOff.value = false
@@ -326,10 +327,9 @@ fun DevicesScreen(
                                     modifier = modifier,
                                     device = device,
                                     configuration = configuration,
-                                    /* authToken = state.value.user?.authToken ?: "",
-                                     onClick = {
-                                         onGoToCamera(device.mid)
-                                     }*/
+                                    onClickDevice = {
+                                        onGoToDevice(device.id)
+                                    }
                                 )
                             }
                         }

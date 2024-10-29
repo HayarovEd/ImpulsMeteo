@@ -14,7 +14,7 @@ import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EXPIRED_LABEL
 import com.edurda77.domain.utils.LAST_EMAIL
 import com.edurda77.domain.utils.LAST_PASSWORD
-import com.edurda77.domain.utils.NEGATIVE_USER_ID
+import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.TOKEN_LABEL
 import com.edurda77.domain.utils.USER_ID_LABEL
@@ -46,7 +46,7 @@ class DataStoreRepositoryImpl @Inject constructor(
                 Auth(
                     accessToken = it[FIELD_TOKEN_LABEL] ?: "",
                     expiresAt = convertToLocalDateTime(it[FIELD_EXPIRED_LABEL] ?: ""),
-                    id = it[FIELD_USER_ID_LABEL] ?: NEGATIVE_USER_ID,
+                    id = it[FIELD_USER_ID_LABEL] ?: NEGATIVE_ID,
                 )
             }
         }

@@ -17,8 +17,9 @@ sealed class NavigationRoute {
 
     @Serializable
     data object Directory : NavigationRoute()
-    /* @Serializable
-    data class Camera(
-         val id:String
-     ): NavigationRoute()*/
+
+    @Serializable
+    data class Device(
+        val id: String
+    ) : NavigationRoute()
 }

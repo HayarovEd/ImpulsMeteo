@@ -1,11 +1,14 @@
 package com.edurda77.domain.utils
 
 const val BASE_URL = "https://meteo.i-perm.ru:8001/api/"
+const val BRADCASTING_URL = "https://meteo.i-perm.ru:8001/broadcasting/auth"
 const val WEB_SOCKET_URL =
     "wss://meteo.i-perm.ru:6001/app/meteo?protocol=7&client=js&version=5.1.1&flash=false"
 const val AUTH_POSTFIX = "auth/login"
 const val AUTH_LOGGED_USER_POSTFIX = "auth/user"
 const val DEVICES_POSTFIX = "devices"
+const val NOTIFICATIONS_POSTFIX = "notifications"
+const val PARAMS_POSTFIX = "params"
 const val DEVICES_GROUPS_POSTFIX = "devicesgroups"
 const val PERMISSIONS_POSTFIX = "permissions"
 const val USERS_POSTFIX = "users"
@@ -13,7 +16,11 @@ const val UNITS_POSTFIX = "units"
 const val EMAIL = "email"
 const val PASSWORD = "password"
 const val PAGE_PARAMETER = "page"
-
+const val FROM_DATE_PARAMETER = "fromDate"
+const val TO_DATE_PARAMETER = "toDate"
+const val SOCKET_ID_PARAMETER = "socket_id"
+const val CHANNEL_NAME_PARAMETER = "channel_name"
+const val CHANNEL_NAME_PREFIX = "private-device."
 const val PARAMETER_GROUP = "groups"
 
 
@@ -24,7 +31,7 @@ const val USER_ID_LABEL = "user_id"
 const val LAST_EMAIL = "last_email"
 const val LAST_PASSWORD = "last_password"
 
-const val NEGATIVE_USER_ID = -1
+const val NEGATIVE_ID = -1
 
 //permissions
 const val USERS_LIST = 1
@@ -44,9 +51,13 @@ const val CAMERA_DELETE = 14
 
 
 const val STATUS_ON = "on"
-
+const val IS_NOT_HIDDEN = 0
+const val IS_HIDDEN = 1
 
 const val PING_INTERVAL = 20_000L
-const val SUBSCRIBE = "pusher:subscribe"
+const val ESTABLISHED = "pusher:connection_established"
+const val SUCCESSES = "subscription_succeeded"
+const val DEVICE_EVENT = "DeviceEvent"
+const val SUBSCRIBE_EVENT = "pusher:subscribe"
 const val EVENT_CHANNEL_PREFIX = "private-device."
 //const val MULTIPLE_SIZE = 10

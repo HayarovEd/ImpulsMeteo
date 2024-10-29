@@ -3,16 +3,15 @@ package com.edurda77.domain.usecase
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.repository.RemoteRepository
-import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.convertToMapGroupedDevices
 import com.edurda77.domain.utils.filterGroupedDevices
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
-class GrouppedDevicesUseCase @Inject constructor(
+class GroupedDevicesUseCase @Inject constructor(
     private val remoteRepository: RemoteRepository,
-    private val webSocketRepository: WebSocketRepository,
 ) {
     private val _currentGroupedDevices =
         MutableStateFlow<Map<GroupDevices, List<Device>>>(emptyMap())
@@ -22,16 +21,7 @@ class GrouppedDevicesUseCase @Inject constructor(
         query: String,
         isRefresh: Boolean,
     ): ResultWork<Map<GroupDevices, List<Device>>, DataError> {
-        /*webSocketRepository.getStateStream().collect{
-            when (it) {
-                is ResultWork.Error -> {
-                    println("web socket open ${it.error}")
-                }
-                is ResultWork.Success -> {
-                    println("web socket open ${it.data}")
-                }
-            }
-        }*/
+
         if (_currentGroupedDevices.value.isEmpty() || isRefresh) {
             when (val result = remoteRepository.getGroupedDevices(token)) {
                 is ResultWork.Error -> {
@@ -39,7 +29,9 @@ class GrouppedDevicesUseCase @Inject constructor(
                 }
 
                 is ResultWork.Success -> {
-                    _currentGroupedDevices.value = result.data
+                    _currentGroupedDevices.value = convertToMapGroupedDevices(
+                        devices = result.data
+                    )
                 }
             }
         }

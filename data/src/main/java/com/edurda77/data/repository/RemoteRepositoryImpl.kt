@@ -5,8 +5,12 @@ import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
+import com.edurda77.data.mapper.convertToParamDto
 import com.edurda77.data.mapper.convertToPermissions
+import com.edurda77.data.mapper.convertToSingleDevice
+import com.edurda77.data.mapper.convertToSingleDeviceDto
 import com.edurda77.data.mapper.convertToUnits
+import com.edurda77.data.mapper.convertToUpdateNotificationsDto
 import com.edurda77.data.mapper.convertToUsers
 import com.edurda77.data.remote.add_device.AddDeviceDto
 import com.edurda77.data.remote.add_devices_group.AddDevicesGroupDto
@@ -14,6 +18,8 @@ import com.edurda77.data.remote.add_unit.AddUnitDto
 import com.edurda77.data.remote.add_user.AddUserDto
 import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
+import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
+import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.permission.PermissionsDto
@@ -26,29 +32,38 @@ import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
 import com.edurda77.domain.utils.BASE_URL
+import com.edurda77.domain.utils.BRADCASTING_URL
+import com.edurda77.domain.utils.CHANNEL_NAME_PARAMETER
+import com.edurda77.domain.utils.CHANNEL_NAME_PREFIX
 import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
+import com.edurda77.domain.utils.NOTIFICATIONS_POSTFIX
 import com.edurda77.domain.utils.PAGE_PARAMETER
 import com.edurda77.domain.utils.PARAMETER_GROUP
+import com.edurda77.domain.utils.PARAMS_POSTFIX
 import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.SOCKET_ID_PARAMETER
 import com.edurda77.domain.utils.UNITS_POSTFIX
 import com.edurda77.domain.utils.USERS_POSTFIX
-import com.edurda77.domain.utils.convertToMapGroupedDevices
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -57,6 +72,7 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
@@ -86,6 +102,27 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getBroadcatingAuth(
+        socketId: String,
+        deviceId: Int,
+        token: String,
+    ): ResultWork<String, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.post(BRADCASTING_URL) {
+                    bearerAuth(token)
+                    FormDataContent(Parameters.build {
+                        parameter(SOCKET_ID_PARAMETER, socketId)
+                        parameter(CHANNEL_NAME_PARAMETER, "$CHANNEL_NAME_PREFIX$deviceId")
+                    }
+                    )
+                }.call
+                    .body<BroadcatingAuthDto>()
+                result.auth
+            }
+        }
+    }
+
     override suspend fun authorizedUser(
         token: String,
     ): ResultWork<LoggedUser, DataError> {
@@ -105,7 +142,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override suspend fun getGroupedDevices(
         token: String,
         parameterGroup: Int
-    ): ResultWork<Map<GroupDevices, List<Device>>, DataError> {
+    ): ResultWork<List<Device>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val responseDevices = httpClient.get(BASE_URL + DEVICES_POSTFIX) {
@@ -115,17 +152,24 @@ class RemoteRepositoryImpl @Inject constructor(
                     }
                 }.call
                     .body<DevicesDto>()
-                val devices = responseDevices.convertToDevices()
-                /* val responseGroups = httpClient.get(BASE_URL + DEVICES_GROUPS_POSTFIX) {
-                     url {
-                         bearerAuth(token)
-                     }
-                 }.call
-                     .body<DevicesGropusDto>()
-                 val groups = responseGroups.convertToGroups()*/
-                convertToMapGroupedDevices(
-                    devices = devices
-                )
+                responseDevices.convertToDevices()
+            }
+        }
+    }
+
+    override suspend fun getDeviceById(
+        token: String,
+        id: Int,
+    ): ResultWork<SingleDevice, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val responseDevices = httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id") {
+                    url {
+                        bearerAuth(token)
+                    }
+                }.call
+                responseDevices
+                    .body<BodyDeviceDto>().convertToSingleDevice()
             }
         }
     }
@@ -150,6 +194,47 @@ class RemoteRepositoryImpl @Inject constructor(
                                 name = name,
                                 update = update
                             )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun updateNotificationsDevice(
+        token: String,
+        id: Int,
+        notifications: Notifications,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post("$BASE_URL$DEVICES_POSTFIX/$id/$NOTIFICATIONS_POSTFIX") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            notifications.convertToUpdateNotificationsDto()
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun updateDeviceById(
+        token: String,
+        device: SingleDevice
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$DEVICES_POSTFIX/${device.id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            device.convertToSingleDeviceDto()
                         )
                     }
                 }.bodyAsText()
@@ -445,4 +530,46 @@ class RemoteRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun updateParam(
+        token: String,
+        param: Param
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$PARAMS_POSTFIX/${param.id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            param.convertToParamDto()
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    /* override suspend fun getHistoryDeviceById(
+         token: String,
+         id: Int,
+         fromDate: String,
+         toDate: String,
+         limit: Int,
+     ): ResultWork<SingleDevice, DataError> {
+         return withContext(Dispatchers.IO) {
+             handleResponse {
+                 val responseDevices = httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id/$PARAMS_POSTFIX") {
+                     url {
+                         bearerAuth(token)
+                         parameter(FROM_DATE_PARAMETER, fromDate)
+                         parameter(TO_DATE_PARAMETER, toDate)
+                     }
+                 }.call
+                     .body<BodyDeviceDto>()
+                 responseDevices.convertToSingleDevice()
+             }
+         }
+     }*/
 }

@@ -7,10 +7,10 @@ import androidx.compose.ui.res.vectorResource
 import com.edurda77.resources.R
 
 @Composable
-internal fun Int.asUiIconParam(): ImageVector {
+fun Int.asUiIconParam(): ImageVector {
     return when (this) {
         1 -> ImageVector.vectorResource(R.drawable.no_icon)
-        2 -> ImageVector.vectorResource(R.drawable.temperature_half)
+        2 -> ImageVector.vectorResource(R.drawable.low_temperature)
         3 -> ImageVector.vectorResource(R.drawable.humidity_percentage)
         4 -> ImageVector.vectorResource(R.drawable.pressure)
         5 -> ImageVector.vectorResource(R.drawable.sea_height)
@@ -19,7 +19,7 @@ internal fun Int.asUiIconParam(): ImageVector {
 }
 
 @Composable
-internal fun Int.asUiTextParam(): String {
+fun Int.asUiTextParam(): String {
     return when (this) {
         1 -> stringResource(R.string.unit_unknown)
         2 -> stringResource(R.string.unit_temperature)

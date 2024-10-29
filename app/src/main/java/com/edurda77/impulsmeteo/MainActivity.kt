@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.edurda77.impulsmeteo.navigation.NavController
-import com.edurda77.impulsmeteo.ui.theme.ImpulsMeteoTheme
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

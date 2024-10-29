@@ -7,8 +7,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DeviceDto(
-    @SerialName("cameras")
-    val cameraDtos: List<CameraDto>,
     @SerialName("groups")
     val groups: List<GroupDto>,
     @SerialName("host")

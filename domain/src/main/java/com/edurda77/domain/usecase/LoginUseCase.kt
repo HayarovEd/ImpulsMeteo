@@ -4,7 +4,7 @@ import com.edurda77.domain.model.Auth
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
-import com.edurda77.domain.utils.NEGATIVE_USER_ID
+import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.isValidEmail
 import javax.inject.Inject
@@ -34,7 +34,7 @@ class LoginUseCase @Inject constructor(
             }
 
             is ResultWork.Success -> {
-                if (result.data.id == NEGATIVE_USER_ID) {
+                if (result.data.id == NEGATIVE_ID) {
                     ResultWork.Error(DataError.NameError.ID_ERROR)
                 } else {
                     dataStoreRepository.setAuthorization(result.data)

@@ -62,7 +62,8 @@ dependencies {
     implementation(project(":devices_list"))
     implementation(project(":users_list"))
     implementation(project(":directories"))
-
+    implementation(project(":device_detail"))
+    implementation(project(":chart"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

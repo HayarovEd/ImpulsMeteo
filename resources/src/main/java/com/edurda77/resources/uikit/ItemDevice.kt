@@ -2,6 +2,8 @@ package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,12 +12,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,13 +32,29 @@ import com.edurda77.resources.theme.Typography
 fun ItemDevice(
     modifier: Modifier = Modifier,
     device: Device,
-    configuration: Configuration
+    configuration: Configuration,
+    onClickDevice: () -> Unit,
 ) {
+
+    val gradient = listOf(
+        MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
+        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
+    )
     Box(
         modifier = modifier
+            .clip(shape = RoundedCornerShape(10.dp))
             .fillMaxWidth()
-            .background(Color.Transparent)
-            // .clickable(onClick = onClick)
+            /*  .border(
+                  width = 2.dp,
+                  shape = RoundedCornerShape(10.dp),
+                  color = MaterialTheme.colorScheme.onPrimaryContainer
+              )*/
+            .background(
+                brush = Brush.linearGradient(
+                    gradient,
+                )
+            )
+            .clickable(onClick = onClickDevice)
             .padding(10.dp),
     ) {
         Text(
@@ -120,6 +141,23 @@ fun ItemDevice(
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
+                    }
+                }
+            }
+            if (device.params.size > 6) {
+                Spacer(modifier = modifier.height(5.dp))
+                Row(
+                    modifier = modifier.horizontalScroll(rememberScrollState()),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for (i in 6..<device.params.size) {
+                        UiRowDeviceValue(
+                            icon = device.params[i].idUnit.asUiIconParam(),
+                            value = device.params[i].value,
+                            unit = device.params[i].idUnit.asUiTextParam(),
+                            name = device.params[i].label
+                        )
+                        Spacer(modifier = modifier.width(3.dp))
                     }
                 }
             }

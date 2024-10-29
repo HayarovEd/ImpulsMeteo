@@ -11,7 +11,6 @@ import java.net.UnknownHostException
 suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> {
     return try {
         ResultWork.Success(data())
-
     } catch (e: ClientRequestException) {
         when (e.response.status.value) {
             400 -> ResultWork.Error(DataError.Network.BAD_REQUEST)

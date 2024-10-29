@@ -8,5 +8,5 @@ data class Device(
     val video: String?,
     val updatedAt: String,
     val groups: List<GroupDevices>,
-    val params: List<Param>
+    val params: List<Param>,
 )
