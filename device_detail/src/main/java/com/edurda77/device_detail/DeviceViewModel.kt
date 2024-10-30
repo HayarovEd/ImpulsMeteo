@@ -7,10 +7,12 @@ import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
@@ -37,6 +39,8 @@ class DeviceViewModel @Inject constructor(
     private val updateDeviceUseCase: UpdateDeviceUseCase,
     private val unitsUseCase: UnitsUseCase,
     private val updateParamUseCase: UpdateParamUseCase,
+    private val addFavoriteUseCase: AddFavoriteUseCase,
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -250,6 +254,20 @@ class DeviceViewModel @Inject constructor(
                     }
                 }
             }
+
+            is DeviceEvent.WorkWithFavorite -> {
+                viewModelScope.launch {
+                    if (state.value.device?.isFavorite == true) {
+                        removeFavoriteUseCase.invoke(
+                            deviceId = state.value.deviceId,
+                        )
+                    } else {
+                        addFavoriteUseCase.invoke(
+                            deviceId = state.value.deviceId,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -310,25 +328,27 @@ class DeviceViewModel @Inject constructor(
     private suspend fun loadDevice() {
         val deviceId = state.value.deviceId
         if (deviceId != NEGATIVE_ID) {
-            when (val result = deviceByIdUseCase.invoke(
+            deviceByIdUseCase.invoke(
                 token = state.value.token,
                 id = deviceId
-            )) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        message = result.error.asUiText()
-                    )
-                        .updateState()
-                }
+            ).collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            message = collector.error.asUiText()
+                        )
+                            .updateState()
+                    }
 
-                is ResultWork.Success -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        device = result.data
-                    )
-                        .updateState()
-                    _startGroups.value = result.data.groups
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            device = collector.data
+                        )
+                            .updateState()
+                        _startGroups.value = collector.data.groups
+                    }
                 }
             }
         }

@@ -187,6 +187,9 @@ fun DeviceScreen(
             },
             onUpdateClick = { param ->
                 onEvent(DeviceEvent.UpdateParam(param))
+            },
+            onClickChangeFavorite = {
+                onEvent(DeviceEvent.WorkWithFavorite)
             }
         )
     } else {
@@ -266,6 +269,9 @@ fun DeviceScreen(
             },
             onUpdateClick = { param ->
                 onEvent(DeviceEvent.UpdateParam(param))
+            },
+            onClickChangeFavorite = {
+                onEvent(DeviceEvent.WorkWithFavorite)
             }
         )
     }

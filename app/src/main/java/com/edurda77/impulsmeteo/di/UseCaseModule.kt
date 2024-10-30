@@ -199,8 +199,14 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesDeviceByIdUseCase(remoteRepository: RemoteRepository): DeviceByIdUseCase {
-        return DeviceByIdUseCase(remoteRepository = remoteRepository)
+    fun providesDeviceByIdUseCase(
+        remoteRepository: RemoteRepository,
+        localRepository: LocalRepository,
+    ): DeviceByIdUseCase {
+        return DeviceByIdUseCase(
+            remoteRepository = remoteRepository,
+            localRepository = localRepository
+        )
     }
 
     @Provides

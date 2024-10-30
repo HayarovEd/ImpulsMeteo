@@ -95,6 +95,7 @@ fun LandscapeScreen(
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onUpdateNotificationClick: () -> Unit,
     onChangeStatusClick: () -> Unit,
+    onClickChangeFavorite: () -> Unit,
     onUpdateClick: (Param) -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
@@ -192,6 +193,12 @@ fun LandscapeScreen(
                                 style = Typography.titleLarge,
                             )
                             Spacer(modifier = modifier.weight(1f))
+                            UiIconButton(
+                                icon = if (device?.isFavorite == true) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                                    R.drawable.baseline_star_border_24
+                                ),
+                                onClick = onClickChangeFavorite
+                            )
                             UiIconButton(
                                 modifier = modifier,
                                 icon = ImageVector.vectorResource(id = R.drawable.outline_notifications_24),
