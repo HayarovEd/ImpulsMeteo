@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Device
@@ -34,6 +36,7 @@ fun ItemDevice(
     device: Device,
     configuration: Configuration,
     onClickDevice: () -> Unit,
+    onClickChangeFavorite: () -> Unit,
 ) {
 
     val gradient = listOf(
@@ -57,12 +60,22 @@ fun ItemDevice(
             .clickable(onClick = onClickDevice)
             .padding(10.dp),
     ) {
-        Text(
+        Column(
             modifier = modifier.align(alignment = Alignment.TopEnd),
-            text = if (device.status) stringResource(R.string.online) else stringResource(R.string.offline),
-            color = if (device.status) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-            style = Typography.bodyLarge,
-        )
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = if (device.status) stringResource(R.string.online) else stringResource(R.string.offline),
+                color = if (device.status) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                style = Typography.bodyLarge,
+            )
+            UiIconButton(
+                icon = if (device.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                    R.drawable.baseline_star_border_24
+                ),
+                onClick = onClickChangeFavorite
+            )
+        }
         Column(
             modifier = modifier
                 .fillMaxWidth()

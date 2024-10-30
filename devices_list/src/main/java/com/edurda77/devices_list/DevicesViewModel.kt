@@ -3,12 +3,14 @@ package com.edurda77.devices_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
+import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
@@ -31,7 +33,9 @@ class DevicesViewModel @Inject constructor(
     private val addDeviceUseCase: AddDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val webSocketUseCase: WebSocketUseCase,
-    private val closeWebsocketUseCase: CloseWebsocketUseCase
+    private val closeWebsocketUseCase: CloseWebsocketUseCase,
+    private val addFavoriteUseCase: AddFavoriteUseCase,
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state.asStateFlow()
@@ -121,6 +125,20 @@ class DevicesViewModel @Inject constructor(
                     closeWebsocketUseCase.invoke()
                 }
             }
+
+            is DevicesEvent.WorkWithFavorite -> {
+                viewModelScope.launch {
+                    if (event.device.isFavorite) {
+                        removeFavoriteUseCase.invoke(
+                            deviceId = event.device.id,
+                        )
+                    } else {
+                        addFavoriteUseCase.invoke(
+                            deviceId = event.device.id,
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -202,25 +220,27 @@ class DevicesViewModel @Inject constructor(
     }
 
     private suspend fun loadDevices(isRefresh: Boolean) {
-        when (val result = groupedDevicesUseCase.invoke(
+        groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = state.value.query,
             isRefresh = isRefresh
-        )) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
+        ).collect { collector ->
+            when (collector) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        message = collector.error.asUiText()
+                    )
+                        .updateState()
+                }
 
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    isLoading = false,
-                    devices = result.data
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        devices = collector.data
+                    )
+                        .updateState()
+                }
             }
         }
     }

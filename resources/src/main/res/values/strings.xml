@@ -80,5 +80,6 @@
     <string name="update_param">Изменить параметр</string>
     <string name="units_lower_case">Единицы измерения</string>
     <string name="hite_parameter">Скрыть параметр</string>
+    <string name="favorite">Избранное</string>
 
 </resources>

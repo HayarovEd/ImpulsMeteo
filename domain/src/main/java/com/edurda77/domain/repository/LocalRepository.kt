@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalRepository {
     suspend fun insertFavorite(deviceId: Int): ResultWork<Unit, DataError.LocalDateBase>
-    suspend fun deleteFavorite(id: Int, deviceId: Int): ResultWork<Unit, DataError.LocalDateBase>
+    suspend fun deleteFavorite(deviceId: Int): ResultWork<Unit, DataError.LocalDateBase>
     suspend fun getAllFavorites(): Flow<ResultWork<List<Favorite>, DataError.LocalDateBase>>
 }

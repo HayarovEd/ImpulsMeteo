@@ -11,12 +11,22 @@ fun isValidEmail(email: String): Boolean {
 
 
 fun convertToMapGroupedDevices(
-    devices: List<Device>
+    devices: List<Device>,
 ): Map<GroupDevices, List<Device>> {
     val groupedDevices = mutableMapOf<GroupDevices, List<Device>>()
     val groups = mutableListOf<GroupDevices>()
+    val favoriteDevices = mutableListOf<Device>()
     devices.forEach { device ->
+        if (device.isFavorite) {
+            favoriteDevices.add(device)
+        }
         groups.addAll(device.groups.filterNot { it in groups })
+    }
+    if (favoriteDevices.isNotEmpty()) {
+        groupedDevices[GroupDevices(
+            id = FAVORITE_ID_GROUP,
+            name = FAVORITE
+        )] = favoriteDevices
     }
     groups
         .sortedBy { it.id }
@@ -47,9 +57,13 @@ fun updateDevices(
     devices: Map<GroupDevices, List<Device>>,
     newDevice: Device
 ): Map<GroupDevices, List<Device>> {
+
     return devices.mapValues { (_, deviceList) ->
         deviceList.map { device ->
-            if (device.id == newDevice.id) newDevice else device
+            if (device.id == newDevice.id) {
+                val updatedDevice = newDevice.copy(isFavorite = device.isFavorite)
+                updatedDevice
+            } else device
         }
     }
 }

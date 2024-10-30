@@ -66,3 +66,5 @@ const val DATABASE = "db_meteo"
 const val FAVORITE_TABLE = "tb_favorite"
 const val FAVORITE_ID = "id"
 const val FAVORITE_DEVICE_ID = "device_id"
+const val FAVORITE = "favorite"
+const val FAVORITE_ID_GROUP = -10

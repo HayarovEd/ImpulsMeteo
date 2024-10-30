@@ -30,15 +30,11 @@ class LocalRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteFavorite(
-        id: Int,
         deviceId: Int,
     ): ResultWork<Unit, DataError.LocalDateBase> {
         return handleWriteToDataBase {
             dao.delete(
-                FavoriteEntity(
-                    id = id,
-                    deviceId = deviceId
-                )
+                deviceId = deviceId
             )
         }
     }
@@ -48,7 +44,6 @@ class LocalRepositoryImpl @Inject constructor(
             dao.getAllFavorites().map { favorites ->
                 favorites.map {
                     Favorite(
-                        id = it.id,
                         deviceId = it.deviceId
                     )
                 }

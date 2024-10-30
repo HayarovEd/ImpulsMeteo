@@ -1,10 +1,10 @@
 package com.edurda77.data.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.edurda77.domain.utils.FAVORITE_DEVICE_ID
 import com.edurda77.domain.utils.FAVORITE_TABLE
 import kotlinx.coroutines.flow.Flow
 
@@ -16,6 +16,6 @@ interface MeteoDao {
     @Query("SELECT * FROM $FAVORITE_TABLE")
     fun getAllFavorites(): Flow<List<FavoriteEntity>>
 
-    @Delete
-    fun delete(favoriteEntity: FavoriteEntity)
+    @Query("DELETE FROM $FAVORITE_TABLE WHERE $FAVORITE_DEVICE_ID=:deviceId")
+    fun delete(deviceId: Int)
 }

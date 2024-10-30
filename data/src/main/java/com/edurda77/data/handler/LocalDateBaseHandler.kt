@@ -2,17 +2,21 @@ package com.edurda77.data.handler
 
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 suspend fun <D> handleWriteToDataBase(data: suspend () -> D): ResultWork<D, DataError.LocalDateBase> {
-    return try {
-        ResultWork.Success(data())
+    return withContext(Dispatchers.IO) {
+        try {
+            ResultWork.Success(data())
 
-    } catch (e: Exception) {
-        e.printStackTrace()
-        ResultWork.Error(DataError.LocalDateBase.ERROR_WRITE_DATA)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ResultWork.Error(DataError.LocalDateBase.ERROR_WRITE_DATA)
+        }
     }
 }
 

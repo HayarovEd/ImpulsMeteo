@@ -2,10 +2,12 @@ package com.edurda77.impulsmeteo.di
 
 
 import com.edurda77.domain.repository.DataStoreRepository
+import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
+import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
@@ -22,6 +24,7 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.LoginUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
+import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
@@ -90,9 +93,11 @@ object UseCaseModule {
     @Singleton
     fun providesGroupedDevicesUseCase(
         remoteRepository: RemoteRepository,
+        localRepository: LocalRepository,
     ): GroupedDevicesUseCase {
         return GroupedDevicesUseCase(
             remoteRepository = remoteRepository,
+            localRepository = localRepository
         )
     }
 
@@ -247,6 +252,26 @@ object UseCaseModule {
     ): UpdateParamUseCase {
         return UpdateParamUseCase(
             remoteRepository = remoteRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesAddFavoriteUseCase(
+        localRepository: LocalRepository
+    ): AddFavoriteUseCase {
+        return AddFavoriteUseCase(
+            localRepository = localRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesRemoveFavoriteUseCase(
+        localRepository: LocalRepository
+    ): RemoveFavoriteUseCase {
+        return RemoveFavoriteUseCase(
+            localRepository = localRepository,
         )
     }
 }
