@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiBaseScaffold
@@ -63,7 +64,7 @@ import com.edurda77.resources.uikit.UiDateContent
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiRowDeviceValueWithClick
 import com.edurda77.resources.uikit.UiText
-import com.edurda77.resources.uikit.asUiIconParam
+import com.edurda77.resources.uikit.asUiImageParam
 import com.edurda77.resources.uikit.asUiTextParam
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -285,7 +286,9 @@ fun LandscapeScreen(
                                 val expandedDialog = remember { mutableStateOf(false) }
                                 UiRowDeviceValueWithClick(
                                     modifier = modifier,
-                                    icon = param.idUnit.asUiIconParam(),
+                                    image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                                        true
+                                    ) else param.idUnit.asUiImageParam(),
                                     value = param.value,
                                     name = param.label,
                                     expandedDialog = expandedDialog.value,
@@ -437,7 +440,9 @@ fun LandscapeScreen(
                                 ) {
                                     UiRowDeviceValueWithClick(
                                         modifier = modifier.align(Alignment.TopStart),
-                                        icon = param.idUnit.asUiIconParam(),
+                                        image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                                            true
+                                        ) else param.idUnit.asUiImageParam(),
                                         value = param.value,
                                         unit = param.idUnit.asUiTextParam(),
                                         name = param.label,

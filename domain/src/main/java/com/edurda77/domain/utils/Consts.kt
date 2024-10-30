@@ -32,6 +32,7 @@ const val LAST_EMAIL = "last_email"
 const val LAST_PASSWORD = "last_password"
 
 const val NEGATIVE_ID = -1
+const val TEMPERATURE_ID = 2
 
 //permissions
 const val USERS_LIST = 1

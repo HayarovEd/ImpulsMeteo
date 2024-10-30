@@ -27,6 +27,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Device
+import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 
@@ -99,7 +100,7 @@ fun ItemDevice(
                     Column {
                         for (i in 0..<steps step 3) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -111,7 +112,9 @@ fun ItemDevice(
                     Column {
                         for (i in 1..<steps step 3) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -123,7 +126,9 @@ fun ItemDevice(
                     Column {
                         for (i in 2..<steps step 3) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -135,7 +140,9 @@ fun ItemDevice(
                     Column {
                         for (i in 0..<steps step 2) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -147,7 +154,9 @@ fun ItemDevice(
                     Column {
                         for (i in 1..<steps step 2) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -165,7 +174,9 @@ fun ItemDevice(
                 ) {
                     for (i in 6..<device.params.size) {
                         UiRowDeviceValue(
-                            icon = device.params[i].idUnit.asUiIconParam(),
+                            image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                true
+                            ) else device.params[i].idUnit.asUiImageParam(),
                             value = device.params[i].value,
                             unit = device.params[i].idUnit.asUiTextParam(),
                             name = device.params[i].label
