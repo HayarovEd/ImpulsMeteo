@@ -81,5 +81,6 @@
     <string name="units_lower_case">Единицы измерения</string>
     <string name="hite_parameter">Скрыть параметр</string>
     <string name="favorite">Избранное</string>
+    <string name="sure_delete_device">Вы действительно хотите удалить устройство?</string>
 
 </resources>

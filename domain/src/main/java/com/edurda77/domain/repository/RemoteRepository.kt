@@ -88,4 +88,5 @@ interface RemoteRepository {
 
     suspend fun updateDeviceById(token: String, device: SingleDevice): ResultWork<Unit, DataError>
     suspend fun updateParam(token: String, param: Param): ResultWork<Unit, DataError>
+    suspend fun deleteDevice(token: String, id: Int): ResultWork<Unit, DataError>
 }

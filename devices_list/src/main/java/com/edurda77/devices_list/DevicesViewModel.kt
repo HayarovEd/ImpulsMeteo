@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
+import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -35,7 +36,8 @@ class DevicesViewModel @Inject constructor(
     private val webSocketUseCase: WebSocketUseCase,
     private val closeWebsocketUseCase: CloseWebsocketUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
-    private val removeFavoriteUseCase: RemoveFavoriteUseCase
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase,
+    private val deleteDeviceUseCase: DeleteDeviceUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state.asStateFlow()
@@ -139,6 +141,21 @@ class DevicesViewModel @Inject constructor(
                     }
                 }
             }
+
+            is DevicesEvent.OnDeleteDevice -> {
+                viewModelScope.launch {
+                    deleteDeviceUseCase.invoke(
+                        token = state.value.token,
+                        isFavorite = event.device.isFavorite,
+                        id = event.device.id
+                    )
+                    _state.value.copy(
+                        isLoading = true,
+                    )
+                        .updateState()
+                    loadDevices(true)
+                }
+            }
         }
     }
 
@@ -211,10 +228,12 @@ class DevicesViewModel @Inject constructor(
                     loggedUser = result.data
                 )
                     .updateState()
-                loadDevices(true)
-                if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
-                    loadGroups()
+                viewModelScope.launch {
+                    if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
+                        loadGroups()
+                    }
                 }
+                loadDevices(true)
             }
         }
     }

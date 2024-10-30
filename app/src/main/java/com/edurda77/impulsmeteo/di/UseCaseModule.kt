@@ -12,6 +12,7 @@ import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
+import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
@@ -280,4 +281,17 @@ object UseCaseModule {
             localRepository = localRepository,
         )
     }
+
+    @Provides
+    @Singleton
+    fun providesDeleteDeviceUseCase(
+        remoteRepository: RemoteRepository,
+        localRepository: LocalRepository
+    ): DeleteDeviceUseCase {
+        return DeleteDeviceUseCase(
+            remoteRepository = remoteRepository,
+            localRepository = localRepository,
+        )
+    }
+
 }

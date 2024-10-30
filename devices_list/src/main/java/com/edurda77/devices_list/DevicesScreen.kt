@@ -333,6 +333,9 @@ fun DevicesScreen(
                                     },
                                     onClickChangeFavorite = {
                                         onEvent(DevicesEvent.WorkWithFavorite(device))
+                                    },
+                                    onDeleteClick = {
+                                        onEvent(DevicesEvent.OnDeleteDevice(device))
                                     }
                                 )
                             }

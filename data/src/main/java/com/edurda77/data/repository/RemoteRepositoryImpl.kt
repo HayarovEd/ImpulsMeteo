@@ -243,6 +243,23 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteDevice(
+        token: String,
+        id: Int
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete("$BASE_URL$DEVICES_POSTFIX/${id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
     override suspend fun getPermissions(
         token: String,
     ): ResultWork<Permissions, DataError> {

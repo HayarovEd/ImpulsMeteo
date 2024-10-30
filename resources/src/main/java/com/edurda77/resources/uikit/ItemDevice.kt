@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,12 +40,28 @@ fun ItemDevice(
     configuration: Configuration,
     onClickDevice: () -> Unit,
     onClickChangeFavorite: () -> Unit,
+    onDeleteClick: (Int) -> Unit,
 ) {
+
+    val expandedDeleteDialog = remember { mutableStateOf(false) }
 
     val gradient = listOf(
         MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
         MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
     )
+
+    if (expandedDeleteDialog.value) {
+        UiAlertDialog(
+            title = stringResource(R.string.sure_delete_device),
+            onClickConfirm = {
+                onDeleteClick(device.id)
+                expandedDeleteDialog.value = false
+            },
+            onClickCancel = {
+                expandedDeleteDialog.value = false
+            }
+        )
+    }
     Box(
         modifier = modifier
             .clip(shape = RoundedCornerShape(10.dp))
@@ -75,6 +93,12 @@ fun ItemDevice(
                     R.drawable.baseline_star_border_24
                 ),
                 onClick = onClickChangeFavorite
+            )
+            UiIconButton(
+                icon = ImageVector.vectorResource(
+                    R.drawable.baseline_delete_24
+                ),
+                onClick = { expandedDeleteDialog.value = true }
             )
         }
         Column(
