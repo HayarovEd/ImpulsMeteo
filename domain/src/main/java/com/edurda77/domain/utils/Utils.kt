@@ -2,6 +2,7 @@ package com.edurda77.domain.utils
 
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.SingleDevice
 
 
 fun isValidEmail(email: String): Boolean {
@@ -66,5 +67,20 @@ fun updateDevices(
             } else device
         }
     }
+}
+
+fun updateDevice(
+    device: SingleDevice,
+    newDevice: Device
+): SingleDevice {
+    return device.copy(
+        name = newDevice.name,
+        key = newDevice.key,
+        status = newDevice.status,
+        video = newDevice.video,
+        updatedAt = newDevice.updatedAt,
+        groups = newDevice.groups,
+        params = newDevice.params
+    )
 }
 

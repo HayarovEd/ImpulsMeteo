@@ -1,5 +1,6 @@
 package com.edurda77.device_detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.AddFavoriteUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -17,8 +19,10 @@ import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateParamUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.updateDevice
 import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -40,7 +44,9 @@ class DeviceViewModel @Inject constructor(
     private val unitsUseCase: UnitsUseCase,
     private val updateParamUseCase: UpdateParamUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
-    private val removeFavoriteUseCase: RemoveFavoriteUseCase
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase,
+    private val webSocketUseCase: WebSocketUseCase,
+    private val closeWebsocketUseCase: CloseWebsocketUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -318,9 +324,14 @@ class DeviceViewModel @Inject constructor(
                     loggedUser = result.data
                 )
                     .updateState()
-                loadDevice()
+                viewModelScope.launch {
+                    loadDevice()
+                }
                 loadGroups()
                 loadUnits()
+                viewModelScope.launch {
+                    loadUpdateData()
+                }
             }
         }
     }
@@ -390,10 +401,48 @@ class DeviceViewModel @Inject constructor(
         }
     }
 
+    private suspend fun loadUpdateData() {
+
+        webSocketUseCase.invoke(
+            token = state.value.token,
+            ids = listOf(state.value.deviceId)
+        ).collect { collector ->
+            when (collector) {
+                is ResultWork.Error -> {
+                    Log.d("TEST UPDATE DEVICE", "error ${collector.error}")
+                    _state.value.copy(
+                        message = collector.error.asUiText()
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    Log.d("TEST UPDATE DEVICE", "new device ${collector.data}")
+                    if (state.value.device != null && state.value.device!!.id == collector.data.id) {
+                        _state.value.copy(
+                            device = updateDevice(
+                                device = state.value.device!!,
+                                newDevice = collector.data
+                            )
+                        )
+                            .updateState()
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun DeviceState.updateState() {
         _state.update {
             this
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch {
+            closeWebsocketUseCase.invoke()
         }
     }
 }
