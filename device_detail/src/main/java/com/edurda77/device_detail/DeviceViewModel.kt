@@ -327,8 +327,10 @@ class DeviceViewModel @Inject constructor(
                 viewModelScope.launch {
                     loadDevice()
                 }
-                loadGroups()
-                loadUnits()
+                viewModelScope.launch {
+                    loadGroups()
+                    loadUnits()
+                }
                 viewModelScope.launch {
                     loadUpdateData()
                 }

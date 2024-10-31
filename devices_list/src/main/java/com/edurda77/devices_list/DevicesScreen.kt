@@ -61,6 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.utils.DEVICES_CREATE
+import com.edurda77.domain.utils.DEVICES_DELETE
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.FAVORITE
 import com.edurda77.resources.R
@@ -328,6 +329,9 @@ fun DevicesScreen(
                                     modifier = modifier,
                                     device = device,
                                     configuration = configuration,
+                                    isEnabledDelete = state.value.loggedUser?.permissions?.contains(
+                                        DEVICES_DELETE
+                                    ) == true,
                                     onClickDevice = {
                                         onGoToDevice(device.id)
                                     },

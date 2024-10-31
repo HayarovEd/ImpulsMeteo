@@ -38,6 +38,7 @@ fun ItemDevice(
     modifier: Modifier = Modifier,
     device: Device,
     configuration: Configuration,
+    isEnabledDelete: Boolean,
     onClickDevice: () -> Unit,
     onClickChangeFavorite: () -> Unit,
     onDeleteClick: (Int) -> Unit,
@@ -94,12 +95,14 @@ fun ItemDevice(
                 ),
                 onClick = onClickChangeFavorite
             )
-            UiIconButton(
-                icon = ImageVector.vectorResource(
-                    R.drawable.baseline_delete_24
-                ),
-                onClick = { expandedDeleteDialog.value = true }
-            )
+            if (isEnabledDelete) {
+                UiIconButton(
+                    icon = ImageVector.vectorResource(
+                        R.drawable.baseline_delete_24
+                    ),
+                    onClick = { expandedDeleteDialog.value = true }
+                )
+            }
         }
         Column(
             modifier = modifier
