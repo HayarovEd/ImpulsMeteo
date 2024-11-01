@@ -27,7 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edurda77.domain.model.CoinPrice
+import com.edurda77.domain.model.DataPoint
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import kotlinx.datetime.Clock
@@ -352,11 +353,11 @@ private fun getSelectedDataPointIndex(
 private fun LineChartPreview() {
     ImpulsMeteoTheme {
         val coinHistoryRandomized = remember {
-            (1..20).map {
-                CoinPrice(
-                    priceUsd = Random.nextFloat() * 100.0,
-                    dateTime = Clock.System.now()
-                        .plus(1 * it, DateTimeUnit.HOUR, TimeZone.currentSystemDefault())
+            (1..100).map {
+                ElementHistory(
+                    value = (Random.nextFloat() - 0.5) * 20.0,
+                    time = Clock.System.now()
+                        .plus(1 * it, DateTimeUnit.MINUTE, TimeZone.currentSystemDefault())
                         .toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             }
@@ -376,9 +377,9 @@ private fun LineChartPreview() {
         val dataPoints = remember {
             coinHistoryRandomized.map {
                 DataPoint(
-                    x = it.dateTime.hour.toFloat(),
-                    y = it.priceUsd.toFloat(),
-                    xLabel = formatDateTimeChart(it.dateTime)
+                    x = it.time.hour.toFloat(),
+                    y = it.value.toFloat(),
+                    xLabel = formatDateTimeChart(it.time)
                 )
             }
         }
@@ -391,7 +392,7 @@ private fun LineChartPreview() {
                 .width(700.dp)
                 .height(300.dp)
                 .background(Color.White),
-            selectedDataPoint = dataPoints[1]
+            selectedDataPoint = dataPoints[2]
         )
     }
 }

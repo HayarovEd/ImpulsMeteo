@@ -19,6 +19,7 @@ import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GroupedDevicesUseCase
+import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
@@ -294,4 +295,13 @@ object UseCaseModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun providesHistoryUseCase(
+        remoteRepository: RemoteRepository
+    ): HistoryUseCase {
+        return HistoryUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
 }

@@ -1,4 +1,4 @@
-package com.edurda77.chart
+package com.edurda77.domain.model
 
 data class DataPoint(
     val x: Float,

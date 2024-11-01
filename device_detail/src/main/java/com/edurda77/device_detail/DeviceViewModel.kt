@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.HistoryState
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
+import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
@@ -22,6 +24,7 @@ import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.convertToStringDateTime
 import com.edurda77.domain.utils.updateDevice
 import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +50,7 @@ class DeviceViewModel @Inject constructor(
     private val removeFavoriteUseCase: RemoveFavoriteUseCase,
     private val webSocketUseCase: WebSocketUseCase,
     private val closeWebsocketUseCase: CloseWebsocketUseCase,
+    private val historyUseCase: HistoryUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state.asStateFlow()
@@ -73,7 +77,7 @@ class DeviceViewModel @Inject constructor(
             }
 
             is DeviceEvent.GetHistory -> {
-                ////////
+                loadHistory(event.limit)
             }
 
             is DeviceEvent.AddNewNotificationToList -> {
@@ -277,6 +281,7 @@ class DeviceViewModel @Inject constructor(
         }
     }
 
+
     private fun loadLocalData() {
         viewModelScope.launch {
             localTokenUseCase.invoke().collect { collectedToken ->
@@ -333,6 +338,9 @@ class DeviceViewModel @Inject constructor(
                 }
                 viewModelScope.launch {
                     loadUpdateData()
+                }
+                viewModelScope.launch {
+                    loadHistory(limit = 100)
                 }
             }
         }
@@ -411,7 +419,6 @@ class DeviceViewModel @Inject constructor(
         ).collect { collector ->
             when (collector) {
                 is ResultWork.Error -> {
-                    Log.d("TEST UPDATE DEVICE", "error ${collector.error}")
                     _state.value.copy(
                         message = collector.error.asUiText()
                     )
@@ -419,7 +426,6 @@ class DeviceViewModel @Inject constructor(
                 }
 
                 is ResultWork.Success -> {
-                    Log.d("TEST UPDATE DEVICE", "new device ${collector.data}")
                     if (state.value.device != null && state.value.device!!.id == collector.data.id) {
                         _state.value.copy(
                             device = updateDevice(
@@ -429,6 +435,43 @@ class DeviceViewModel @Inject constructor(
                         )
                             .updateState()
                     }
+                }
+            }
+        }
+    }
+
+    private fun loadHistory(limit: Int) {
+        _state.value.copy(
+            isLoadingHistory = true
+        )
+            .updateState()
+        viewModelScope.launch {
+            when (val result = historyUseCase.invoke(
+                token = state.value.token,
+                id = state.value.deviceId,
+                fromDate = convertToStringDateTime(state.value.fromDate),
+                toDate = convertToStringDateTime(state.value.toDate),
+                limit = limit
+            )) {
+                is ResultWork.Error -> {
+                    Log.d("TEST HISTORY DEVICE", "error ${result.error}")
+                    _state.value.copy(
+                        isLoadingHistory = false,
+                        message = result.error.asUiText()
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    result.data.forEach {
+                        if (it is HistoryState.Success)
+                            Log.d("TEST HISTORY DEVICE", "success ${it.history}")
+                    }
+                    _state.value.copy(
+                        isLoadingHistory = false,
+                        historyStates = result.data
+                    )
+                        .updateState()
                 }
             }
         }
