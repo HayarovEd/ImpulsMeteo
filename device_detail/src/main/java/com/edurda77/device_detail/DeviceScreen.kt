@@ -53,6 +53,7 @@ fun DeviceScreen(
         showDatePicker = expandedFromDateDialog.value,
         onDoneClick = {
             onEvent(DeviceEvent.OnSetFromDate(it))
+            expandedFromDateDialog.value = false
         },
         onDismiss = {
             expandedFromDateDialog.value = false
@@ -70,6 +71,7 @@ fun DeviceScreen(
         showDatePicker = expandedToDateDialog.value,
         onDoneClick = {
             onEvent(DeviceEvent.OnSetToDate(it))
+            expandedFromDateDialog.value = false
         },
         onDismiss = {
             expandedToDateDialog.value = false
@@ -211,6 +213,8 @@ fun DeviceScreen(
             historyParams = historyParams,
             withoutHistoryParams = withoutHistoryParams,
             screenWidth = screenWidth,
+            isLoadingHistory = state.value.isLoadingHistory,
+            historyState = state.value.historyStates,
             units = state.value.units,
             openFilter = {
                 isFilterOpen.value = it

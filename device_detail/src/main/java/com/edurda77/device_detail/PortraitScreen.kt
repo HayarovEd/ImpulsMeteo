@@ -25,7 +25,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -53,6 +53,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.edurda77.chart.StockSection
+import com.edurda77.domain.model.HistoryState
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -102,6 +104,8 @@ fun PortraitScreen(
     showBottomSheet: Boolean,
     historyParams: List<Param>,
     withoutHistoryParams: List<Param>,
+    isLoadingHistory: Boolean,
+    historyState: List<HistoryState>,
     screenWidth: Dp,
     units: List<UnitMeteo>,
 ) {
@@ -392,7 +396,7 @@ fun PortraitScreen(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(15.dp)
                     ) {
-                        items(historyParams) { param ->
+                        itemsIndexed(historyParams) { index, param ->
                             val expandedDialog = remember { mutableStateOf(false) }
                             Box(
                                 modifier = modifier
@@ -429,6 +433,33 @@ fun PortraitScreen(
                                         expandedDialog.value = true
                                     }
                                 )
+                                if (isLoadingHistory) {
+                                    CircularProgressIndicator(
+                                        modifier = modifier.align(Alignment.Center),
+                                    )
+                                } else {
+                                    when (val currentHistoryState = historyState[index]) {
+                                        HistoryState.Empty -> {
+                                            Text(
+                                                modifier = modifier
+                                                    .fillMaxWidth(),
+                                                text = stringResource(R.string.not_data),
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                style = Typography.bodyLarge,
+                                                textAlign = TextAlign.Center,
+                                            )
+                                        }
+
+                                        is HistoryState.Success -> {
+                                            StockSection(
+                                                modifier = modifier
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(16 / 9f),
+                                                infos = currentHistoryState.history
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

@@ -377,7 +377,7 @@ private fun LineChartPreview() {
         val dataPoints = remember {
             coinHistoryRandomized.map {
                 DataPoint(
-                    x = it.time.hour.toFloat(),
+                    x = it.time.minute.toFloat(),
                     y = it.value.toFloat(),
                     xLabel = formatDateTimeChart(it.time)
                 )
