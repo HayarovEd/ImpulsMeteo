@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.utils.calcluteInterval
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.domain.utils.formatted
 
@@ -39,8 +40,9 @@ fun SecondLineChart(
     textColor: Color,
     maxValue: String,
     minValue: String,
-    fonsSize: TextUnit = 10.sp
+    fonsSize: TextUnit = 10.sp,
 ) {
+    val intervalAxisXLabel = calcluteInterval(infos.size)
     val spacing = 100f
     val transparentGraphColor = remember {
         chartColor.copy(alpha = 0.5f)
@@ -89,11 +91,11 @@ fun SecondLineChart(
             }
     ) {
         val spacePerHour = (size.width - spacing) / infos.size
-        (0 until xLabelTextLayoutResults.size - 1 step 20).forEach { index ->
+        (0 until xLabelTextLayoutResults.size - 1 step intervalAxisXLabel).forEach { index ->
             drawText(
                 textLayoutResult = xLabelTextLayoutResults[index],
                 topLeft = Offset(
-                    x = spacing + index * spacePerHour,
+                    x = spacing + index * spacePerHour - xLabelTextLayoutResults[index].size.width / 2,
                     y = this.size.height - 50
                 ),
                 color = textColor
