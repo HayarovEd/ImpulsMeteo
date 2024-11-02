@@ -7,6 +7,7 @@ import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.utils.NEGATIVE_ID
+import com.edurda77.domain.utils.TAKED_COUNT
 import com.edurda77.resources.uikit.UiText
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimePeriod
@@ -29,6 +30,7 @@ data class DeviceState(
     val fromDate: LocalDateTime = Clock.System.now()
         .minus(DateTimePeriod(months = 1), TimeZone.currentSystemDefault())
         .toLocalDateTime(TimeZone.currentSystemDefault()),
-    val historyStates: List<HistoryState> = emptyList(),
+    val historyStates: List<HistoryState> = List(TAKED_COUNT) { HistoryState.Empty },
     val isLoadingHistory: Boolean = false,
 )
+

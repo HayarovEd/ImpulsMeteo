@@ -8,11 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DEVICES_EDIT
+import com.edurda77.domain.utils.TAKED_COUNT
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiDialog
@@ -40,9 +42,10 @@ fun DeviceScreen(
     val currentLimit = remember { mutableIntStateOf(limits[0]) }
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+    val scope = rememberCoroutineScope()
 
-    val historyParams = state.value.device?.params?.take(6) ?: emptyList()
-    val withoutHistoryParams = state.value.device?.params?.drop(6) ?: emptyList()
+    val historyParams = state.value.device?.params?.take(TAKED_COUNT) ?: emptyList()
+    val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -200,6 +203,7 @@ fun DeviceScreen(
         PortraitScreen(
             configuration = configuration,
             message = state.value.message,
+            scope = scope,
             isLoading = state.value.isLoading,
             device = state.value.device,
             onBackClick = onBackClick,

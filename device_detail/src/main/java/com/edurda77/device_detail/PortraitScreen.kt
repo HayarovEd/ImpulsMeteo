@@ -68,6 +68,8 @@ import com.edurda77.resources.uikit.UiRowDeviceValueWithClick
 import com.edurda77.resources.uikit.UiText
 import com.edurda77.resources.uikit.asUiImageParam
 import com.edurda77.resources.uikit.asUiTextParam
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,6 +111,7 @@ fun PortraitScreen(
     screenWidth: Dp,
     units: List<UnitMeteo>,
     historyRowState: LazyListState,
+    scope: CoroutineScope,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -328,7 +331,7 @@ fun PortraitScreen(
                 }
             }
         },
-        content = { innerPadings ->
+        content = { innerPaddings ->
             if (showBottomSheet) {
                 ModalBottomSheet(
                     modifier = modifier
@@ -388,7 +391,7 @@ fun PortraitScreen(
             } else {
                 Column(
                     modifier = modifier
-                        .padding(innerPadings)
+                        .padding(innerPaddings)
                         .fillMaxSize()
                         .padding(start = 15.dp, end = 15.dp, bottom = 55.dp),
                 ) {
@@ -405,7 +408,7 @@ fun PortraitScreen(
                                     .width(screenWidth * 0.9f)
                                     .clip(shape = RoundedCornerShape(10.dp))
                                     //.aspectRatio(16 / 9f)
-                                    .background(MaterialTheme.colorScheme.background)
+                                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                                     .padding(5.dp),
                             ) {
                                 UiRowDeviceValueWithClick(
@@ -470,6 +473,34 @@ fun PortraitScreen(
                                             )
                                         }
                                     }
+                                }
+                                Spacer(modifier = modifier.height(10.dp))
+                                Row(
+                                    modifier = modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    UiIconButton(
+                                        icon = ImageVector.vectorResource(R.drawable.outline_arrow_circle_left_24),
+                                        onClick = {
+                                            if (index != 0) {
+                                                scope.launch {
+                                                    historyRowState.scrollToItem(index - 1)
+                                                }
+                                            }
+                                        }
+                                    )
+                                    UiIconButton(
+                                        icon = ImageVector.vectorResource(R.drawable.outline_arrow_circle_right_24),
+                                        onClick = {
+                                            if (index != historyParams.size - 1) {
+                                                scope.launch {
+                                                    historyRowState.scrollToItem(index + 1)
+                                                }
+                                            }
+                                        }
+                                    )
                                 }
                             }
                         }
