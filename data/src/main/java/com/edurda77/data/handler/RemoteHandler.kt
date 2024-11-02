@@ -4,6 +4,7 @@ package com.edurda77.data.handler
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
 import kotlinx.serialization.SerializationException
 import java.net.UnknownHostException
@@ -21,6 +22,9 @@ suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> 
     } catch (e: ServerResponseException) {
         e.printStackTrace()
         ResultWork.Error(DataError.Network.SERVER_ERROR)
+    } catch (e: HttpRequestTimeoutException) {
+        e.printStackTrace()
+        ResultWork.Error(DataError.Network.REQUEST_TIMEOUT)
     } catch (e: UnknownHostException) {
         e.printStackTrace()
         ResultWork.Error(DataError.Network.NO_INTERNET)

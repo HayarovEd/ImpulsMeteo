@@ -1,12 +1,11 @@
 package com.edurda77.chart
 
-import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -17,49 +16,68 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asComposePath
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.utils.formatDateTimeChart
-import com.edurda77.domain.utils.formatDateTimeChart2
+import com.edurda77.domain.utils.formatted
 
 @Composable
-fun StockSection(
+fun SecondLineChart(
     modifier: Modifier = Modifier,
     infos: List<ElementHistory>,
-    graphColor: Color = Color.Black
+    unit: String,
+    chartColor: Color,
+    textColor: Color,
+    maxValue: String,
+    minValue: String,
+    fonsSize: TextUnit = 10.sp
 ) {
     val spacing = 100f
     val transparentGraphColor = remember {
-        graphColor.copy(alpha = 0.5f)
+        chartColor.copy(alpha = 0.5f)
     }
     var offsetX by remember {
-        mutableStateOf(0f)
-    }
-
-    var offsetTwice by remember {
         mutableFloatStateOf(0f)
     }
+
     val upperValue = infos.maxOfOrNull { it.value } ?: 0.0
     val lowerValue = infos.minOfOrNull { it.value } ?: 0.0
-    val density = LocalDensity.current
-    val textPaint = remember(density) {
-        Paint().apply {
-            color = android.graphics.Color.BLACK
-            textAlign = Paint.Align.CENTER
-            textSize = density.run { 10.sp.toPx() }
-        }
+
+    val textStyle = LocalTextStyle.current.copy(
+        fontSize = fonsSize
+    )
+    val measurer = rememberTextMeasurer()
+    val xLabelTextLayoutResults = infos.map {
+        measurer.measure(
+            text = formatDateTimeChart(it.time),
+            style = textStyle.copy(textAlign = TextAlign.Center)
+        )
+    }
+    val priceStep = (upperValue - lowerValue) / 5f
+    val yLabels = (0..5).map {
+        formatted(
+            value = (lowerValue + priceStep * it),
+            unit = unit
+        )
+    }
+    val yLabelTextLayoutResults = yLabels.map {
+        measurer.measure(
+            text = it,
+            style = textStyle
+        )
     }
     Canvas(
         modifier = modifier
             .pointerInput(key1 = Unit) {
                 detectDragGestures(
-                    onDrag = { change, dragAmount ->
+                    onDrag = { change, _ ->
                         offsetX = change.position.x
                     },
                     onDragEnd = {
@@ -69,40 +87,42 @@ fun StockSection(
             }
     ) {
         val spacePerHour = (size.width - spacing) / infos.size
-        (0 until infos.size - 1 step 20).forEach { i ->
-            val info = infos[i]
-            val hour = formatDateTimeChart(info.time)
-            val date = formatDateTimeChart2(info.time)
-            drawAxisXText(
-                signatureX1 = hour,
-                signatureX2 = date,
-                textPaint = textPaint,
-                spacing = spacing,
-                draw = this,
-                step = i,
-                spacePerHour = spacePerHour
+        (0 until xLabelTextLayoutResults.size - 1 step 20).forEach { index ->
+            drawText(
+                textLayoutResult = xLabelTextLayoutResults[index],
+                topLeft = Offset(
+                    x = spacing + index * spacePerHour,
+                    y = this.size.height - 50
+                ),
+                color = textColor
             )
         }
-        val priceStep = (upperValue - lowerValue) / 5f
-        (0..4).forEach { i ->
-            drawContext.canvas.nativeCanvas.apply {
-                drawText(
-                    (lowerValue + priceStep * i).toString(),
-                    100f,
-                    size.height - spacing - i * size.height / 5f,
-                    textPaint
-                )
-            }
+
+        (0..5).forEach { i ->
+            drawText(
+                textLayoutResult = yLabelTextLayoutResults[i],
+                topLeft = Offset(
+                    x = 0f,
+                    y = size.height - spacing - fonsSize.value - i * (size.height - spacing) / 5f,
+                ),
+                color = textColor
+            )
             drawLine(
-                color = Color.Black,
-                start = Offset(x = 100f, y = size.height - spacing - i * size.height / 5f),
-                end = Offset(x = size.width, y = size.height - spacing - i * size.height / 5f),
+                color = textColor,
+                start = Offset(
+                    x = spacing,
+                    y = size.height - spacing - i * (size.height - spacing) / 5f
+                ),
+                end = Offset(
+                    x = size.width,
+                    y = size.height - spacing - i * (size.height - spacing) / 5f
+                ),
             )
         }
         if (offsetX >= spacing && offsetX <= size.width) {
             drawLine(
-                color = Color.Black,
-                strokeWidth = 2f,
+                color = textColor,
+                strokeWidth = 3f,
                 start = Offset(x = offsetX, y = size.height - spacing),
                 end = Offset(x = offsetX, y = 0f),
             )
@@ -149,59 +169,41 @@ fun StockSection(
         )
         drawPath(
             path = strokePath,
-            color = graphColor,
+            color = chartColor,
             style = Stroke(
                 width = 3.dp.toPx(),
                 cap = StrokeCap.Round
             )
         )
+        drawText(
+            textLayoutResult = measurer.measure(
+                text = "$maxValue $upperValue$unit\n$minValue $lowerValue $unit",
+                style = textStyle.copy(textAlign = TextAlign.Center)
+            ),
+            topLeft = Offset(
+                x = size.width * 0.7f,
+                y = -spacing,
+            ),
+            color = textColor
+        )
         for (i in infos.indices) {
             val info = infos[i]
             val x = spacing + i * spacePerHour
             if (offsetX >= (x - spacePerHour / 2) && offsetX < (x + spacePerHour / 2)) {
-                //Log.d("wert", info.price.toString())
                 if (offsetX >= spacing && offsetX <= size.width) {
-
-                    drawContext.canvas.nativeCanvas.apply {
-                        drawText(
-                            "Дата ${info.time}\n${info.value}",
-                            size.width / 2,
-                            spacing,
-                            textPaint
-                        )
-                    }
+                    drawText(
+                        textLayoutResult = measurer.measure(
+                            text = "${formatDateTimeChart(info.time)}\n${info.value}$unit",
+                            style = textStyle.copy(textAlign = TextAlign.Center)
+                        ),
+                        topLeft = Offset(
+                            x = size.width / 2,
+                            y = -spacing,
+                        ),
+                        color = textColor
+                    )
                 }
             }
         }
     }
-}
-
-fun drawAxisXText(
-    signatureX1: String,
-    signatureX2: String,
-    textPaint: Paint,
-    spacing: Float,
-    draw: DrawScope,
-    step: Int,
-    spacePerHour: Float
-) {
-    draw.drawContext.canvas.nativeCanvas.apply {
-        drawText(
-            signatureX1,
-            spacing + step * spacePerHour,
-            draw.size.height - 50,
-            textPaint
-        )
-        drawText(
-            signatureX2,
-            spacing + step * spacePerHour,
-            draw.size.height - 25,
-            textPaint
-        )
-    }
-    draw.drawLine(
-        color = Color.White,
-        start = Offset(x = spacing + step * spacePerHour, y = draw.size.height - spacing),
-        end = Offset(x = spacing + step * spacePerHour, y = 0f),
-    )
 }

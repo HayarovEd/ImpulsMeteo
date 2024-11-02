@@ -82,5 +82,8 @@
     <string name="hite_parameter">Скрыть параметр</string>
     <string name="favorite">Избранное</string>
     <string name="sure_delete_device">Вы действительно хотите удалить устройство?</string>
+    <string name="request_timeout">Превышен интервал ожидания</string>
+    <string name="max_value">Макс. значение</string>
+    <string name="min_value">Мин. значение</string>
 
 </resources>

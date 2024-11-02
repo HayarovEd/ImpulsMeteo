@@ -98,6 +98,12 @@ fun DataError.asUiText(): UiText {
                 R.string.read_error_data
             )
         }
+
+        DataError.Network.REQUEST_TIMEOUT -> {
+            UiText.StringResource(
+                R.string.request_timeout
+            )
+        }
     }
 }
 

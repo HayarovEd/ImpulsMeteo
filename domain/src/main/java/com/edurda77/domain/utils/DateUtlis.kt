@@ -37,14 +37,7 @@ fun formatDateTimeChart(
         hour()
         char(':')
         minute()
-    }
-    return localDateTime.format(dateFormat)
-}
-
-fun formatDateTimeChart2(
-    localDateTime: LocalDateTime
-): String {
-    val dateFormat = LocalDateTime.Format {
+        char('\n')
         monthNumber()
         char('/')
         dayOfMonth()

@@ -1,6 +1,7 @@
 package com.edurda77.device_detail
 
 import android.content.res.Configuration
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ fun DeviceScreen(
     val showBottomSheet = remember { mutableStateOf(false) }
     val expandedUpdateDialog = remember { mutableStateOf(false) }
     val isFilterOpen = remember { mutableStateOf(false) }
+    val historyRowState = rememberLazyListState()
     val limits = listOf(100, 500, 1000, 1500)
     val currentLimit = remember { mutableIntStateOf(limits[0]) }
     val screenHeight = configuration.screenHeightDp.dp
@@ -216,6 +218,7 @@ fun DeviceScreen(
             isLoadingHistory = state.value.isLoadingHistory,
             historyState = state.value.historyStates,
             units = state.value.units,
+            historyRowState = historyRowState,
             openFilter = {
                 isFilterOpen.value = it
             },

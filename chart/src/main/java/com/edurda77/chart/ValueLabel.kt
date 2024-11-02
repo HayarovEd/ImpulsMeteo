@@ -10,7 +10,7 @@ data class ValueLabel(
     fun formatted(): String {
         val formatter = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
             val fractionDigits = when {
-                value > 1000 -> 0
+                value > 100 -> 0
                 else -> 2
                 //else -> 3
             }
