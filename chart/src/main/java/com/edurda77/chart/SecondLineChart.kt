@@ -28,6 +28,8 @@ import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.domain.utils.formatted
 
+private const val COUNT_STEPS = 5
+
 @Composable
 fun SecondLineChart(
     modifier: Modifier = Modifier,
@@ -60,8 +62,8 @@ fun SecondLineChart(
             style = textStyle.copy(textAlign = TextAlign.Center)
         )
     }
-    val priceStep = (upperValue - lowerValue) / 5f
-    val yLabels = (0..5).map {
+    val priceStep = (upperValue - lowerValue) / COUNT_STEPS
+    val yLabels = (0..COUNT_STEPS).map {
         formatted(
             value = (lowerValue + priceStep * it),
             unit = unit
@@ -98,12 +100,12 @@ fun SecondLineChart(
             )
         }
 
-        (0..5).forEach { i ->
+        (0..COUNT_STEPS).forEach { i ->
             drawText(
                 textLayoutResult = yLabelTextLayoutResults[i],
                 topLeft = Offset(
                     x = 0f,
-                    y = size.height - spacing - fonsSize.value - i * (size.height - spacing) / 5f,
+                    y = size.height - spacing - fonsSize.value - i * (size.height - spacing) / COUNT_STEPS,
                 ),
                 color = textColor
             )
@@ -111,11 +113,11 @@ fun SecondLineChart(
                 color = textColor,
                 start = Offset(
                     x = spacing,
-                    y = size.height - spacing - i * (size.height - spacing) / 5f
+                    y = size.height - spacing - i * (size.height - spacing) / COUNT_STEPS
                 ),
                 end = Offset(
                     x = size.width,
-                    y = size.height - spacing - i * (size.height - spacing) / 5f
+                    y = size.height - spacing - i * (size.height - spacing) / COUNT_STEPS
                 ),
             )
         }
