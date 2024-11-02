@@ -134,6 +134,8 @@ fun DeviceScreen(
             showBottomSheet = showBottomSheet.value,
             limits = limits,
             historyParams = historyParams,
+            isLoadingHistory = state.value.isLoadingHistory,
+            historyState = state.value.historyStates,
             withoutHistoryParams = withoutHistoryParams,
             screenWidth = screenWidth,
             units = state.value.units,
