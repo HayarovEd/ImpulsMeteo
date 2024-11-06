@@ -184,7 +184,17 @@ fun SecondLineChart(
         )
         drawText(
             textLayoutResult = measurer.measure(
-                text = "$maxValue $upperValue$unit\n$minValue $lowerValue $unit",
+                text = "$maxValue ${
+                    formatted(
+                        value = upperValue,
+                        unit = unit
+                    )
+                }\n$minValue ${
+                    formatted(
+                        value = lowerValue,
+                        unit = unit
+                    )
+                }",
                 style = textStyle.copy(textAlign = TextAlign.Center)
             ),
             topLeft = Offset(
