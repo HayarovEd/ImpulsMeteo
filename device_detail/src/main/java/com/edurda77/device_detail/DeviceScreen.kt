@@ -76,7 +76,7 @@ fun DeviceScreen(
         showDatePicker = expandedToDateDialog.value,
         onDoneClick = {
             onEvent(DeviceEvent.OnSetToDate(it))
-            expandedFromDateDialog.value = false
+            expandedToDateDialog.value = false
         },
         onDismiss = {
             expandedToDateDialog.value = false

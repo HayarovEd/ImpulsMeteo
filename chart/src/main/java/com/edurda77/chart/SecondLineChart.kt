@@ -51,9 +51,12 @@ fun SecondLineChart(
         mutableFloatStateOf(0f)
     }
 
-    val upperValue = infos.maxOfOrNull { it.value } ?: 0.0
-    val lowerValue = infos.minOfOrNull { it.value } ?: 0.0
-
+    val startUpperValue = infos.maxOfOrNull { it.value } ?: 0.0
+    val startLowerValue = infos.minOfOrNull { it.value } ?: 0.0
+    val upperValue =
+        if (startLowerValue == startUpperValue) startLowerValue * (1 + COUNT_STEPS / 2) else startUpperValue
+    val lowerValue =
+        if (startLowerValue == startUpperValue) startLowerValue * (1 - COUNT_STEPS / 2) else startLowerValue
     val textStyle = LocalTextStyle.current.copy(
         fontSize = fonsSize
     )
@@ -197,7 +200,12 @@ fun SecondLineChart(
                 if (offsetX >= spacing && offsetX <= size.width) {
                     drawText(
                         textLayoutResult = measurer.measure(
-                            text = "${formatDateTimeChart(info.time)}\n${info.value}$unit",
+                            text = "${formatDateTimeChart(info.time)}\n${
+                                formatted(
+                                    value = info.value,
+                                    unit = unit
+                                )
+                            }",
                             style = textStyle.copy(textAlign = TextAlign.Center)
                         ),
                         topLeft = Offset(

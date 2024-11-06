@@ -55,8 +55,9 @@ object ApiModule {
     fun provideHttpClient(): HttpClient {
         return HttpClient(OkHttp) {
             install(HttpTimeout) {
-                requestTimeoutMillis = 30000
-                socketTimeoutMillis = 30000
+                connectTimeoutMillis = 100000
+                requestTimeoutMillis = 100000
+                socketTimeoutMillis = 100000
             }
             install(Logging) {
                 logger = Logger.DEFAULT
