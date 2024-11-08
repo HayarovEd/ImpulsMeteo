@@ -102,7 +102,7 @@ fun formatted(
     return "${formatter.format(value)}$unit"
 }
 
-fun calcluteInterval(size: Int): Int {
+fun calculateInterval(size: Int): Int {
     return when {
         size < 6 -> 1
         else -> {

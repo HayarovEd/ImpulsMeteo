@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.utils.calcluteInterval
+import com.edurda77.domain.utils.calculateInterval
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.domain.utils.formatted
 
@@ -42,7 +42,7 @@ fun SecondLineChart(
     minValue: String,
     fonsSize: TextUnit = 10.sp,
 ) {
-    val intervalAxisXLabel = calcluteInterval(infos.size)
+    val intervalAxisXLabel = calculateInterval(infos.size)
     val spacing = 100f
     val transparentGraphColor = remember {
         chartColor.copy(alpha = 0.5f)
