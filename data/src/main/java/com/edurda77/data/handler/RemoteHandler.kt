@@ -6,7 +6,7 @@ import com.edurda77.domain.utils.ResultWork
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
-import kotlinx.serialization.SerializationException
+import io.ktor.serialization.JsonConvertException
 import java.net.UnknownHostException
 
 suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> {
@@ -28,7 +28,7 @@ suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> 
     } catch (e: UnknownHostException) {
         e.printStackTrace()
         ResultWork.Error(DataError.Network.NO_INTERNET)
-    }  catch (e: SerializationException) {
+    } catch (e: JsonConvertException) {
         e.printStackTrace()
         ResultWork.Error(DataError.SerializationError.FORMAT_ERROR)
     } catch (e: Exception) {

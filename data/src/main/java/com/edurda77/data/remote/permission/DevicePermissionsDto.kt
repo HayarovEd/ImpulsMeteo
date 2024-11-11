@@ -13,7 +13,7 @@ data class DevicePermissionsDto(
     @SerialName("key")
     val key: String,
     @SerialName("lastUpdate")
-    val lastUpdate: String,
+    val lastUpdate: String?,
     @SerialName("name")
     val name: String,
     @SerialName("port")
