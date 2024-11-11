@@ -80,7 +80,6 @@ class DevicesViewModel @Inject constructor(
                         numberSelectedGroup = event.index
                     )
                         .updateState()
-                    //loadDevices(false)
                 }
             }
 
@@ -179,7 +178,7 @@ class DevicesViewModel @Inject constructor(
                             .updateState()
                         delay(500)
                         loadLoggedUserData(collectedToken.data.accessToken)
-                        //loadUpdateData()
+                        loadUpdateData()
                     }
                 }
             }

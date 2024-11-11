@@ -160,7 +160,7 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
         video = this.singleDeviceDto.first().video,
         frequency = this.singleDeviceDto.first().update,
         updatedAt = this.singleDeviceDto.first().lastUpdate,
-        host = this.singleDeviceDto.first().host,
+        host = this.singleDeviceDto.first().host ?: "",
         port = this.singleDeviceDto.first().port,
         groups = this.singleDeviceDto.first().groups.map {
             GroupDevices(

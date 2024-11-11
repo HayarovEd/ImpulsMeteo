@@ -486,10 +486,10 @@ class DeviceViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.launch {
-            closeWebsocketUseCase.invoke()
-        }
-    }
+    /* override fun onCleared() {
+         super.onCleared()
+         viewModelScope.launch {
+             closeWebsocketUseCase.invoke()
+         }
+     }*/
 }
