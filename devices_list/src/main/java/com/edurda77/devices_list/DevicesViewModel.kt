@@ -45,6 +45,7 @@ class DevicesViewModel @Inject constructor(
 
     init {
         loadLocalData()
+        loadUpdateData()
     }
 
     fun onEvent(event: DevicesEvent) {
@@ -178,35 +179,36 @@ class DevicesViewModel @Inject constructor(
                             .updateState()
                         delay(500)
                         loadLoggedUserData(collectedToken.data.accessToken)
-                        loadUpdateData()
                     }
                 }
             }
         }
     }
 
-    private suspend fun loadUpdateData() {
-
-        webSocketUseCase.invoke(
-            token = state.value.token,
-            ids = state.value.devices.values.flatten().map { it.id }.toSet().toList()
-        ).collect { collector ->
-            when (collector) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        message = collector.error.asUiText()
-                    )
-                        .updateState()
-                }
-
-                is ResultWork.Success -> {
-                    _state.value.copy(
-                        devices = updateDevices(
-                            devices = state.value.devices,
-                            newDevice = collector.data
+    private fun loadUpdateData() {
+        viewModelScope.launch {
+            delay(5000)
+            webSocketUseCase.invoke(
+                token = state.value.token,
+                ids = state.value.devices.values.flatten().map { it.id }.toSet().toList()
+            ).collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            message = collector.error.asUiText()
                         )
-                    )
-                        .updateState()
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            devices = updateDevices(
+                                devices = state.value.devices,
+                                newDevice = collector.data
+                            )
+                        )
+                            .updateState()
+                    }
                 }
             }
         }

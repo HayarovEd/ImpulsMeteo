@@ -1,6 +1,5 @@
 package com.edurda77.device_detail
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +30,9 @@ import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,11 +55,19 @@ class DeviceViewModel @Inject constructor(
     private val historyUseCase: HistoryUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
-    val state = _state.asStateFlow()
+    val state = _state
+        .onStart {
+            loadLocalData()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            DeviceState()
+        )
     private var _startGroups = MutableStateFlow<List<GroupDevices>>(emptyList())
 
     init {
-        loadLocalData()
+        //loadLocalData()
     }
 
     fun onEvent(event: DeviceEvent) {
@@ -456,7 +465,6 @@ class DeviceViewModel @Inject constructor(
                 limit = limit
             )) {
                 is ResultWork.Error -> {
-                    Log.d("TEST HISTORY DEVICE", "error ${result.error}")
                     _state.value.copy(
                         isLoadingHistory = false,
                         message = result.error.asUiText()
@@ -465,10 +473,6 @@ class DeviceViewModel @Inject constructor(
                 }
 
                 is ResultWork.Success -> {
-                    result.data.forEach {
-                        if (it is HistoryState.Success)
-                            Log.d("TEST HISTORY DEVICE", "success ${it.history}")
-                    }
                     _state.value.copy(
                         isLoadingHistory = false,
                         historyStates = result.data
