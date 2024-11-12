@@ -1,7 +1,6 @@
 package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import coil3.compose.AsyncImage
 import com.edurda77.resources.R
 
 @Composable
@@ -27,6 +26,8 @@ fun UiBaseScaffold(
     modifier: Modifier = Modifier,
     message: UiText?,
     configuration: Configuration,
+    image: Any = if (isSystemInDarkTheme()) R.drawable.night_cloud else
+        R.drawable.cloud,
     topBarContent: @Composable () -> Unit = {},
     bottomBarContent: @Composable () -> Unit = {},
     fabContent: @Composable () -> Unit = {},
@@ -45,11 +46,9 @@ fun UiBaseScaffold(
     val imageModifier =
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) modifier.fillMaxWidth() else modifier.fillMaxHeight()
     Box(modifier = modifier.fillMaxSize()) {
-        Image(
+        AsyncImage(
             modifier = imageModifier,
-            painter = if (isSystemInDarkTheme()) painterResource(R.drawable.night_cloud) else painterResource(
-                R.drawable.cloud
-            ),
+            model = image,
             contentDescription = "",
             contentScale = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) ContentScale.FillWidth else ContentScale.FillHeight
         )

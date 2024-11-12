@@ -46,9 +46,6 @@ class UsersViewModel @Inject constructor(
             UsersState()
         )
 
-    /*init {
-        loadInitialData()
-    }*/
 
     fun onEvent(event: UsersEvent) {
         when (event) {

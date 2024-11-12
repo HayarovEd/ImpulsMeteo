@@ -1,6 +1,10 @@
 package com.edurda77.device_detail
 
 import android.content.res.Configuration
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -46,6 +50,16 @@ fun DeviceScreen(
 
     val historyParams = state.value.device?.params?.take(TAKED_COUNT) ?: emptyList()
     val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
+    val selectedImage = remember { mutableStateOf<Uri?>(null) }
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia(),
+            onResult = {
+                it?.let {
+                    selectedImage.value = it
+                }
+            }
+        )
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -225,6 +239,7 @@ fun DeviceScreen(
             historyState = state.value.historyStates,
             units = state.value.units,
             historyRowState = historyRowState,
+            selectedImage = selectedImage.value,
             openFilter = {
                 isFilterOpen.value = it
             },
@@ -285,6 +300,9 @@ fun DeviceScreen(
             },
             onClickChangeFavorite = {
                 onEvent(DeviceEvent.WorkWithFavorite)
+            },
+            onOpenSelectorImageClick = {
+                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
             }
         )
     }

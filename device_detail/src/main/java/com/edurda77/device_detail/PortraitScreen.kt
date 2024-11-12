@@ -1,6 +1,7 @@
 package com.edurda77.device_detail
 
 import android.content.res.Configuration
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -10,6 +11,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,10 +29,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -102,6 +107,7 @@ fun PortraitScreen(
     onChangeStatusClick: () -> Unit,
     onClickChangeFavorite: () -> Unit,
     onUpdateClick: (Param) -> Unit,
+    onOpenSelectorImageClick: () -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
@@ -112,6 +118,7 @@ fun PortraitScreen(
     units: List<UnitMeteo>,
     historyRowState: LazyListState,
     scope: CoroutineScope,
+    selectedImage: Uri?,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -119,6 +126,21 @@ fun PortraitScreen(
     UiBaseScaffold(
         message = message,
         configuration = configuration,
+        image = selectedImage
+            ?: if (isSystemInDarkTheme()) R.drawable.night_cloud else
+                R.drawable.cloud,
+        fabContent = {
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                onClick = onOpenSelectorImageClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountBox,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            }
+        },
         topBarContent = {
             if (!isLoading) {
                 Column(

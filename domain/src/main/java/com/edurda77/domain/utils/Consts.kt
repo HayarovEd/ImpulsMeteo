@@ -71,3 +71,5 @@ const val FAVORITE_TABLE = "tb_favorite"
 const val FAVORITE_DEVICE_ID = "device_id"
 const val FAVORITE = "favorite"
 const val FAVORITE_ID_GROUP = -10
+
+const val IMAGE_FILE = "image/*"

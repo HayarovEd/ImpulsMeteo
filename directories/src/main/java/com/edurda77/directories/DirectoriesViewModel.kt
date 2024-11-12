@@ -50,11 +50,6 @@ class DirectoriesViewModel @Inject constructor(
             DirectoriesState()
         )
 
-    /*init {
-        loadInitialData()
-    }*/
-
-
     fun onEvent(event: DirectoriesEvent) {
         when (event) {
             DirectoriesEvent.Logoff -> {

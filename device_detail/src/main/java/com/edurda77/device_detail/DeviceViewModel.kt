@@ -66,10 +66,6 @@ class DeviceViewModel @Inject constructor(
         )
     private var _startGroups = MutableStateFlow<List<GroupDevices>>(emptyList())
 
-    init {
-        //loadLocalData()
-    }
-
     fun onEvent(event: DeviceEvent) {
         when (event) {
             is DeviceEvent.OnSetFromDate -> {
