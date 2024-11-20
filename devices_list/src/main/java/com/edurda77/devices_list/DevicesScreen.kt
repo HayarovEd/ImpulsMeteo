@@ -277,7 +277,6 @@ fun DevicesScreen(
                 }
             }
         },
-        configuration = configuration,
         content = { paddings ->
             PullToRefreshBox(
                 modifier = modifier.padding(paddings),

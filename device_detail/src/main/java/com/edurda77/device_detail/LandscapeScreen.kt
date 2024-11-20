@@ -113,7 +113,6 @@ fun LandscapeScreen(
 
     UiBaseScaffold(
         message = message,
-        configuration = configuration,
         content = { innerPadding ->
             if (showBottomSheet) {
                 ModalBottomSheet(

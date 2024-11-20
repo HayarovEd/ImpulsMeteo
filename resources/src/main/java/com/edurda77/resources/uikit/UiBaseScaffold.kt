@@ -1,12 +1,9 @@
 package com.edurda77.resources.uikit
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -24,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 fun UiBaseScaffold(
     modifier: Modifier = Modifier,
     message: UiText?,
-    configuration: Configuration,
     topBarContent: @Composable () -> Unit = {},
     bottomBarContent: @Composable () -> Unit = {},
     fabContent: @Composable () -> Unit = {},
@@ -40,8 +36,6 @@ fun UiBaseScaffold(
             )
         }
     }
-    val imageModifier =
-        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) modifier.fillMaxWidth() else modifier.fillMaxHeight()
     val backgroundBrush = Brush.linearGradient(
         colors = listOf(
             MaterialTheme.colorScheme.background,

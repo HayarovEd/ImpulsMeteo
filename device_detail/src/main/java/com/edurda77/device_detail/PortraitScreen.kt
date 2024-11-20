@@ -118,7 +118,6 @@ fun PortraitScreen(
 
     UiBaseScaffold(
         message = message,
-        configuration = configuration,
         topBarContent = {
             if (!isLoading) {
                 Column(
