@@ -1,6 +1,5 @@
 package com.edurda77.device_detail
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -9,6 +8,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
-import com.edurda77.domain.model.HistoryState
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -76,7 +76,6 @@ import kotlinx.coroutines.launch
 fun PortraitScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    configuration: Configuration,
     message: UiText?,
     dateFrom: String,
     dateTo: String,
@@ -107,7 +106,7 @@ fun PortraitScreen(
     historyParams: List<Param>,
     withoutHistoryParams: List<Param>,
     isLoadingHistory: Boolean,
-    historyState: List<HistoryState>,
+    histories: List<List<ElementHistory>>,
     screenWidth: Dp,
     units: List<UnitMeteo>,
     historyRowState: LazyListState,
@@ -136,12 +135,13 @@ fun PortraitScreen(
                             onClick = onBackClick
                         )
                         Text(
-                            modifier = modifier,
+                            modifier = modifier
+                                .weight(2f)
+                                .basicMarquee(),
                             text = device?.name ?: "",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = Typography.titleLarge,
                         )
-                        Spacer(modifier = modifier.weight(1f))
                         UiIconButton(
                             icon = if (device?.isFavorite == true) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
                                 R.drawable.baseline_star_border_24
@@ -161,7 +161,9 @@ fun PortraitScreen(
                             )
                         }
                         Text(
-                            modifier = modifier,
+                            modifier = modifier
+                                .weight(1f)
+                                .basicMarquee(),
                             text = if (device?.status == true) stringResource(R.string.online) else stringResource(
                                 R.string.offline
                             ),
@@ -445,32 +447,28 @@ fun PortraitScreen(
                                         modifier = modifier.align(Alignment.CenterHorizontally),
                                     )
                                 } else {
-                                    when (val currentHistoryState = historyState[index]) {
-                                        HistoryState.Empty -> {
-                                            Text(
-                                                modifier = modifier
-                                                    .fillMaxWidth(),
-                                                text = stringResource(R.string.not_data),
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                                style = Typography.bodyLarge,
-                                                textAlign = TextAlign.Center,
-                                            )
-                                        }
-
-                                        is HistoryState.Success -> {
-                                            SecondLineChart(
-                                                modifier = modifier
-                                                    .fillMaxWidth()
-                                                    .aspectRatio(16 / 9f)
-                                                    .padding(5.dp),
-                                                infos = currentHistoryState.history,
-                                                unit = param.idUnit.asUiTextParam(),
-                                                chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                                textColor = MaterialTheme.colorScheme.onBackground,
-                                                maxValue = stringResource(R.string.max_value),
-                                                minValue = stringResource(R.string.min_value)
-                                            )
-                                        }
+                                    if (histories.isNotEmpty()) {
+                                        SecondLineChart(
+                                            modifier = modifier
+                                                .fillMaxWidth()
+                                                .aspectRatio(16 / 9f)
+                                                .padding(5.dp),
+                                            infos = histories[index],
+                                            unit = param.idUnit.asUiTextParam(),
+                                            chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                            textColor = MaterialTheme.colorScheme.onBackground,
+                                            maxValue = stringResource(R.string.max_value),
+                                            minValue = stringResource(R.string.min_value)
+                                        )
+                                    } else {
+                                        Text(
+                                            modifier = modifier
+                                                .fillMaxWidth(),
+                                            text = stringResource(R.string.not_data),
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            style = Typography.bodyLarge,
+                                            textAlign = TextAlign.Center,
+                                        )
                                     }
                                 }
                                 Spacer(modifier = modifier.height(10.dp))

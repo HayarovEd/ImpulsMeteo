@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.HistoryState
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -15,7 +15,7 @@ class HistoryUseCase @Inject constructor(
         fromDate: String,
         toDate: String,
         limit: Int,
-    ): ResultWork<List<HistoryState>, DataError> {
+    ): ResultWork<List<List<ElementHistory>>, DataError> {
 
         return when (val result = remoteRepository.getHistoryDeviceById(
             id = id,
@@ -29,15 +29,7 @@ class HistoryUseCase @Inject constructor(
             }
 
             is ResultWork.Success -> {
-                val historyStates = mutableListOf<HistoryState>()
-                result.data.map { history ->
-                    if (history.isEmpty()) {
-                        historyStates.add(HistoryState.Empty)
-                    } else {
-                        historyStates.add(HistoryState.Success(history))
-                    }
-                }
-                ResultWork.Success(historyStates)
+                ResultWork.Success(result.data)
             }
         }
     }

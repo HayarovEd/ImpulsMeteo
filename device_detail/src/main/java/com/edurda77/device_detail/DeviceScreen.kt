@@ -119,7 +119,6 @@ fun DeviceScreen(
 
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         LandscapeScreen(
-            configuration = configuration,
             message = state.value.message,
             isLoading = state.value.isLoading,
             device = state.value.device,
@@ -135,7 +134,7 @@ fun DeviceScreen(
             limits = limits,
             historyParams = historyParams,
             isLoadingHistory = state.value.isLoadingHistory,
-            historyState = state.value.historyStates,
+            histories = state.value.historyStates,
             withoutHistoryParams = withoutHistoryParams,
             screenWidth = screenWidth,
             units = state.value.units,
@@ -203,7 +202,6 @@ fun DeviceScreen(
         )
     } else {
         PortraitScreen(
-            configuration = configuration,
             message = state.value.message,
             scope = scope,
             isLoading = state.value.isLoading,
@@ -222,7 +220,7 @@ fun DeviceScreen(
             withoutHistoryParams = withoutHistoryParams,
             screenWidth = screenWidth,
             isLoadingHistory = state.value.isLoadingHistory,
-            historyState = state.value.historyStates,
+            histories = state.value.historyStates,
             units = state.value.units,
             historyRowState = historyRowState,
             openFilter = {

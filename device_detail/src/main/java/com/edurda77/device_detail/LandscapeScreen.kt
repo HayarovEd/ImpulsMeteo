@@ -1,6 +1,5 @@
 package com.edurda77.device_detail
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -53,7 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
-import com.edurda77.domain.model.HistoryState
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -73,7 +72,6 @@ import com.edurda77.resources.uikit.asUiTextParam
 fun LandscapeScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    configuration: Configuration,
     message: UiText?,
     dateFrom: String,
     dateTo: String,
@@ -106,7 +104,7 @@ fun LandscapeScreen(
     screenWidth: Dp,
     units: List<UnitMeteo>,
     isLoadingHistory: Boolean,
-    historyState: List<HistoryState>,
+    histories: List<List<ElementHistory>>,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -477,32 +475,28 @@ fun LandscapeScreen(
                                             modifier = modifier.align(Alignment.CenterHorizontally),
                                         )
                                     } else {
-                                        when (val currentHistoryState = historyState[index]) {
-                                            HistoryState.Empty -> {
-                                                Text(
-                                                    modifier = modifier
-                                                        .fillMaxWidth(),
-                                                    text = stringResource(R.string.not_data),
-                                                    color = MaterialTheme.colorScheme.onSurface,
-                                                    style = Typography.bodyLarge,
-                                                    textAlign = TextAlign.Center,
-                                                )
-                                            }
-
-                                            is HistoryState.Success -> {
-                                                SecondLineChart(
-                                                    modifier = modifier
-                                                        .fillMaxWidth()
-                                                        .aspectRatio(16 / 9f)
-                                                        .padding(5.dp),
-                                                    infos = currentHistoryState.history,
-                                                    unit = param.idUnit.asUiTextParam(),
-                                                    chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                                    maxValue = stringResource(R.string.max_value),
-                                                    minValue = stringResource(R.string.min_value)
-                                                )
-                                            }
+                                        if (histories.isNotEmpty()) {
+                                            SecondLineChart(
+                                                modifier = modifier
+                                                    .fillMaxWidth()
+                                                    .aspectRatio(16 / 9f)
+                                                    .padding(5.dp),
+                                                infos = histories[index],
+                                                unit = param.idUnit.asUiTextParam(),
+                                                chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                                textColor = MaterialTheme.colorScheme.onBackground,
+                                                maxValue = stringResource(R.string.max_value),
+                                                minValue = stringResource(R.string.min_value)
+                                            )
+                                        } else {
+                                            Text(
+                                                modifier = modifier
+                                                    .fillMaxWidth(),
+                                                text = stringResource(R.string.not_data),
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                style = Typography.bodyLarge,
+                                                textAlign = TextAlign.Center,
+                                            )
                                         }
                                     }
                                 }

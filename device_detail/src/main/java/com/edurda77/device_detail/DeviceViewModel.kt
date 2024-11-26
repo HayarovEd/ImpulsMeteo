@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevices
-import com.edurda77.domain.model.HistoryState
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.AddFavoriteUseCase
@@ -23,7 +22,6 @@ import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
-import com.edurda77.domain.utils.TAKED_COUNT
 import com.edurda77.domain.utils.convertToStringDateTime
 import com.edurda77.domain.utils.updateDevice
 import com.edurda77.resources.uikit.asUiText
@@ -449,7 +447,7 @@ class DeviceViewModel @Inject constructor(
     private fun loadHistory(limit: Int) {
         _state.value.copy(
             isLoadingHistory = true,
-            historyStates = List(TAKED_COUNT) { HistoryState.Empty },
+            historyStates = emptyList(),
         )
             .updateState()
         viewModelScope.launch {
