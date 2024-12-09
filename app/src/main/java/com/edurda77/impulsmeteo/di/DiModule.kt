@@ -2,9 +2,11 @@ package com.edurda77.impulsmeteo.di
 
 
 import com.edurda77.data.repository.DataStoreRepositoryImpl
+import com.edurda77.data.repository.LocalRepositoryImpl
 import com.edurda77.data.repository.RemoteRepositoryImpl
 import com.edurda77.data.repository.WebSocketRepositoryImpl
 import com.edurda77.domain.repository.DataStoreRepository
+import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.repository.WebSocketRepository
 import dagger.Binds
@@ -29,5 +31,10 @@ abstract class DiModule {
     @Binds
     @Singleton
     abstract fun bindWebSocketRepository(webSocketRepositoryImpl: WebSocketRepositoryImpl): WebSocketRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLocalRepository(localRepositoryImpl: LocalRepositoryImpl): LocalRepository
+
 
 }

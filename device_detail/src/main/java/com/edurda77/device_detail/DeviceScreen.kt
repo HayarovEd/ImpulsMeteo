@@ -1,17 +1,20 @@
 package com.edurda77.device_detail
 
 import android.content.res.Configuration
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DEVICES_EDIT
+import com.edurda77.domain.utils.TAKED_COUNT
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiDialog
@@ -34,13 +37,15 @@ fun DeviceScreen(
     val showBottomSheet = remember { mutableStateOf(false) }
     val expandedUpdateDialog = remember { mutableStateOf(false) }
     val isFilterOpen = remember { mutableStateOf(false) }
+    val historyRowState = rememberLazyListState()
     val limits = listOf(100, 500, 1000, 1500)
     val currentLimit = remember { mutableIntStateOf(limits[0]) }
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+    val scope = rememberCoroutineScope()
 
-    val historyParams = state.value.device?.params?.take(6) ?: emptyList()
-    val withoutHistoryParams = state.value.device?.params?.drop(6) ?: emptyList()
+    val historyParams = state.value.device?.params?.take(TAKED_COUNT) ?: emptyList()
+    val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -53,6 +58,7 @@ fun DeviceScreen(
         showDatePicker = expandedFromDateDialog.value,
         onDoneClick = {
             onEvent(DeviceEvent.OnSetFromDate(it))
+            expandedFromDateDialog.value = false
         },
         onDismiss = {
             expandedFromDateDialog.value = false
@@ -70,6 +76,7 @@ fun DeviceScreen(
         showDatePicker = expandedToDateDialog.value,
         onDoneClick = {
             onEvent(DeviceEvent.OnSetToDate(it))
+            expandedToDateDialog.value = false
         },
         onDismiss = {
             expandedToDateDialog.value = false
@@ -112,7 +119,6 @@ fun DeviceScreen(
 
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         LandscapeScreen(
-            configuration = configuration,
             message = state.value.message,
             isLoading = state.value.isLoading,
             device = state.value.device,
@@ -127,6 +133,8 @@ fun DeviceScreen(
             showBottomSheet = showBottomSheet.value,
             limits = limits,
             historyParams = historyParams,
+            isLoadingHistory = state.value.isLoadingHistory,
+            histories = state.value.historyStates,
             withoutHistoryParams = withoutHistoryParams,
             screenWidth = screenWidth,
             units = state.value.units,
@@ -187,12 +195,15 @@ fun DeviceScreen(
             },
             onUpdateClick = { param ->
                 onEvent(DeviceEvent.UpdateParam(param))
+            },
+            onClickChangeFavorite = {
+                onEvent(DeviceEvent.WorkWithFavorite)
             }
         )
     } else {
         PortraitScreen(
-            configuration = configuration,
             message = state.value.message,
+            scope = scope,
             isLoading = state.value.isLoading,
             device = state.value.device,
             onBackClick = onBackClick,
@@ -208,7 +219,10 @@ fun DeviceScreen(
             historyParams = historyParams,
             withoutHistoryParams = withoutHistoryParams,
             screenWidth = screenWidth,
+            isLoadingHistory = state.value.isLoadingHistory,
+            histories = state.value.historyStates,
             units = state.value.units,
+            historyRowState = historyRowState,
             openFilter = {
                 isFilterOpen.value = it
             },
@@ -266,7 +280,10 @@ fun DeviceScreen(
             },
             onUpdateClick = { param ->
                 onEvent(DeviceEvent.UpdateParam(param))
-            }
+            },
+            onClickChangeFavorite = {
+                onEvent(DeviceEvent.WorkWithFavorite)
+            },
         )
     }
 }

@@ -6,6 +6,7 @@ import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.devices.ParamDto
 import com.edurda77.data.remote.group.DevicesGropusDto
+import com.edurda77.data.remote.history.ResponseHistory
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.units.UnitsDto
 import com.edurda77.data.remote.update_device.UpdateDeviceDto
@@ -18,6 +19,7 @@ import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationDevice
@@ -158,7 +160,7 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
         video = this.singleDeviceDto.first().video,
         frequency = this.singleDeviceDto.first().update,
         updatedAt = this.singleDeviceDto.first().lastUpdate,
-        host = this.singleDeviceDto.first().host,
+        host = this.singleDeviceDto.first().host ?: "",
         port = this.singleDeviceDto.first().port,
         groups = this.singleDeviceDto.first().groups.map {
             GroupDevices(
@@ -261,5 +263,17 @@ fun Param.convertToParamDto(): ParamDto {
         name = this.name,
         value = this.value.toString()
     )
+}
+
+
+fun ResponseHistory.convertToElementsHistory(): List<List<ElementHistory>> {
+    return this.elementsHistory.map { baseHistory ->
+        baseHistory.map {
+            ElementHistory(
+                time = convertToLocalDateTime(it.time),
+                value = it.value
+            )
+        }
+    }
 }
 

@@ -35,6 +35,8 @@ fun formatDateTimeChart(
 ): String {
     val dateFormat = LocalDateTime.Format {
         hour()
+        char(':')
+        minute()
         char('\n')
         monthNumber()
         char('/')

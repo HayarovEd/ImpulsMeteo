@@ -55,4 +55,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     debugImplementation(libs.ui.tooling)
 
+    //coil
+    implementation(libs.coil.compose)
+
 }

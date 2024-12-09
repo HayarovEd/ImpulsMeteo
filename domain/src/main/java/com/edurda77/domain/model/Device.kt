@@ -9,4 +9,5 @@ data class Device(
     val updatedAt: String,
     val groups: List<GroupDevices>,
     val params: List<Param>,
+    val isFavorite: Boolean = false
 )

@@ -1,5 +1,6 @@
 package com.edurda77.device_detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -32,7 +34,7 @@ import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
-import com.edurda77.resources.uikit.asUiIconParam
+import com.edurda77.resources.uikit.asUiImageParam
 
 @Composable
 fun NotificationsContent(
@@ -197,8 +199,9 @@ fun NotificationsContent(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                imageVector = intIcon.asUiIconParam(),
+                            Image(
+                                modifier = modifier.size(24.dp),
+                                painter = intIcon.asUiImageParam(),
                                 contentDescription = ""
                             )
                             Spacer(modifier = modifier.width(10.dp))

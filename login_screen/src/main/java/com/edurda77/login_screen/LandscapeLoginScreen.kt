@@ -1,7 +1,7 @@
 package com.edurda77.login_screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -45,17 +47,20 @@ fun LandscapeLoginScreen(
     password: String,
     onEvent: (LoginEvent) -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Image(
-            modifier = modifier.fillMaxWidth(),
-            painter = if (isSystemInDarkTheme()) painterResource(R.drawable.night_cloud) else painterResource(
-                R.drawable.cloud
-            ),
-            contentDescription = "",
-            contentScale = ContentScale.FillWidth
+    val backgroundBrush = Brush.linearGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.background,
+            MaterialTheme.colorScheme.tertiaryContainer
         )
+    )
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(backgroundBrush)
+    ) {
         Scaffold(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize(),
             containerColor = Color.Transparent,
             snackbarHost = { SnackbarHost(snakeBarHostState) },
         ) { paddings ->

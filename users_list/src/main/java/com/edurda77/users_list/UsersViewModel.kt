@@ -17,7 +17,9 @@ import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,11 +36,16 @@ class UsersViewModel @Inject constructor(
     private val updateUserUseCase: UpdateUserUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(UsersState())
-    val state = _state.asStateFlow()
+    val state = _state
+        .onStart {
+            loadInitialData()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            UsersState()
+        )
 
-    init {
-        loadInitialData()
-    }
 
     fun onEvent(event: UsersEvent) {
         when (event) {

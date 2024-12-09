@@ -101,7 +101,6 @@ fun DirectoriesScreen(
 
     UiBaseScaffold(
         message = state.value.message,
-        configuration = configuration,
         topBarContent = {
             Row(
                 modifier = modifier

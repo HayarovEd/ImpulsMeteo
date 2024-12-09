@@ -1,6 +1,5 @@
 package com.edurda77.device_detail
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -9,9 +8,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,11 +20,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -42,7 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -53,9 +53,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.edurda77.chart.SecondLineChart
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiBaseScaffold
@@ -63,15 +66,16 @@ import com.edurda77.resources.uikit.UiDateContent
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiRowDeviceValueWithClick
 import com.edurda77.resources.uikit.UiText
-import com.edurda77.resources.uikit.asUiIconParam
+import com.edurda77.resources.uikit.asUiImageParam
 import com.edurda77.resources.uikit.asUiTextParam
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortraitScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    configuration: Configuration,
     message: UiText?,
     dateFrom: String,
     dateTo: String,
@@ -95,20 +99,24 @@ fun PortraitScreen(
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onUpdateNotificationClick: () -> Unit,
     onChangeStatusClick: () -> Unit,
+    onClickChangeFavorite: () -> Unit,
     onUpdateClick: (Param) -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
     withoutHistoryParams: List<Param>,
+    isLoadingHistory: Boolean,
+    histories: List<List<ElementHistory>>,
     screenWidth: Dp,
     units: List<UnitMeteo>,
+    historyRowState: LazyListState,
+    scope: CoroutineScope,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
 
     UiBaseScaffold(
         message = message,
-        configuration = configuration,
         topBarContent = {
             if (!isLoading) {
                 Column(
@@ -127,12 +135,19 @@ fun PortraitScreen(
                             onClick = onBackClick
                         )
                         Text(
-                            modifier = modifier,
+                            modifier = modifier
+                                .weight(2f)
+                                .basicMarquee(),
                             text = device?.name ?: "",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = Typography.titleLarge,
                         )
-                        Spacer(modifier = modifier.weight(1f))
+                        UiIconButton(
+                            icon = if (device?.isFavorite == true) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                                R.drawable.baseline_star_border_24
+                            ),
+                            onClick = onClickChangeFavorite
+                        )
                         UiIconButton(
                             modifier = modifier,
                             icon = ImageVector.vectorResource(id = R.drawable.outline_notifications_24),
@@ -146,7 +161,9 @@ fun PortraitScreen(
                             )
                         }
                         Text(
-                            modifier = modifier,
+                            modifier = modifier
+                                .weight(1f)
+                                .basicMarquee(),
                             text = if (device?.status == true) stringResource(R.string.online) else stringResource(
                                 R.string.offline
                             ),
@@ -315,7 +332,7 @@ fun PortraitScreen(
                 }
             }
         },
-        content = { innerPadings ->
+        content = { innerPaddings ->
             if (showBottomSheet) {
                 ModalBottomSheet(
                     modifier = modifier
@@ -375,26 +392,31 @@ fun PortraitScreen(
             } else {
                 Column(
                     modifier = modifier
-                        .padding(innerPadings)
+                        .padding(innerPaddings)
                         .fillMaxSize()
                         .padding(start = 15.dp, end = 15.dp, bottom = 55.dp),
                 ) {
                     LazyRow(
                         modifier = modifier
                             .fillMaxWidth(),
+                        state = historyRowState,
                         horizontalArrangement = Arrangement.spacedBy(15.dp)
                     ) {
-                        items(historyParams) { param ->
+                        itemsIndexed(historyParams) { index, param ->
                             val expandedDialog = remember { mutableStateOf(false) }
-                            Box(
-                                modifier = modifier
-                                    .width(screenWidth * 0.8f)
-                                    .aspectRatio(16 / 9f)
-                                    .background(Color.White),
+                            Column(
+                                modifier = Modifier
+                                    .width(screenWidth * 0.9f)
+                                    .clip(shape = RoundedCornerShape(10.dp))
+                                    //.aspectRatio(16 / 9f)
+                                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                                    .padding(5.dp),
                             ) {
                                 UiRowDeviceValueWithClick(
-                                    modifier = modifier.align(Alignment.TopStart),
-                                    icon = param.idUnit.asUiIconParam(),
+                                    //modifier = modifier.align(Alignment.TopStart),
+                                    image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                                        true
+                                    ) else param.idUnit.asUiImageParam(),
                                     value = param.value,
                                     unit = param.idUnit.asUiTextParam(),
                                     name = param.label,
@@ -419,6 +441,64 @@ fun PortraitScreen(
                                         expandedDialog.value = true
                                     }
                                 )
+                                Spacer(modifier = modifier.height(10.dp))
+                                if (isLoadingHistory) {
+                                    CircularProgressIndicator(
+                                        modifier = modifier.align(Alignment.CenterHorizontally),
+                                    )
+                                } else {
+                                    if (histories.isNotEmpty()) {
+                                        SecondLineChart(
+                                            modifier = modifier
+                                                .fillMaxWidth()
+                                                .aspectRatio(16 / 9f)
+                                                .padding(5.dp),
+                                            infos = histories[index],
+                                            unit = param.idUnit.asUiTextParam(),
+                                            chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                            textColor = MaterialTheme.colorScheme.onBackground,
+                                            maxValue = stringResource(R.string.max_value),
+                                            minValue = stringResource(R.string.min_value)
+                                        )
+                                    } else {
+                                        Text(
+                                            modifier = modifier
+                                                .fillMaxWidth(),
+                                            text = stringResource(R.string.not_data),
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            style = Typography.bodyLarge,
+                                            textAlign = TextAlign.Center,
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = modifier.height(10.dp))
+                                Row(
+                                    modifier = modifier
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    UiIconButton(
+                                        icon = ImageVector.vectorResource(R.drawable.outline_arrow_circle_left_24),
+                                        onClick = {
+                                            if (index != 0) {
+                                                scope.launch {
+                                                    historyRowState.scrollToItem(index - 1)
+                                                }
+                                            }
+                                        }
+                                    )
+                                    UiIconButton(
+                                        icon = ImageVector.vectorResource(R.drawable.outline_arrow_circle_right_24),
+                                        onClick = {
+                                            if (index != historyParams.size - 1) {
+                                                scope.launch {
+                                                    historyRowState.scrollToItem(index + 1)
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -434,7 +514,9 @@ fun PortraitScreen(
                             val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier,
-                                icon = param.idUnit.asUiIconParam(),
+                                image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                                    true
+                                ) else param.idUnit.asUiImageParam(),
                                 value = param.value,
                                 name = param.label,
                                 expandedDialog = expandedDialog.value,

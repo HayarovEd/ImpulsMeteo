@@ -17,14 +17,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Device
+import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 
@@ -33,13 +38,31 @@ fun ItemDevice(
     modifier: Modifier = Modifier,
     device: Device,
     configuration: Configuration,
+    isEnabledDelete: Boolean,
     onClickDevice: () -> Unit,
+    onClickChangeFavorite: () -> Unit,
+    onDeleteClick: (Int) -> Unit,
 ) {
+
+    val expandedDeleteDialog = remember { mutableStateOf(false) }
 
     val gradient = listOf(
         MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
         MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
     )
+
+    if (expandedDeleteDialog.value) {
+        UiAlertDialog(
+            title = stringResource(R.string.sure_delete_device),
+            onClickConfirm = {
+                onDeleteClick(device.id)
+                expandedDeleteDialog.value = false
+            },
+            onClickCancel = {
+                expandedDeleteDialog.value = false
+            }
+        )
+    }
     Box(
         modifier = modifier
             .clip(shape = RoundedCornerShape(10.dp))
@@ -57,12 +80,30 @@ fun ItemDevice(
             .clickable(onClick = onClickDevice)
             .padding(10.dp),
     ) {
-        Text(
+        Column(
             modifier = modifier.align(alignment = Alignment.TopEnd),
-            text = if (device.status) stringResource(R.string.online) else stringResource(R.string.offline),
-            color = if (device.status) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
-            style = Typography.bodyLarge,
-        )
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = if (device.status) stringResource(R.string.online) else stringResource(R.string.offline),
+                color = if (device.status) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.error,
+                style = Typography.bodyLarge,
+            )
+            UiIconButton(
+                icon = if (device.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                    R.drawable.baseline_star_border_24
+                ),
+                onClick = onClickChangeFavorite
+            )
+            if (isEnabledDelete) {
+                UiIconButton(
+                    icon = ImageVector.vectorResource(
+                        R.drawable.baseline_delete_24
+                    ),
+                    onClick = { expandedDeleteDialog.value = true }
+                )
+            }
+        }
         Column(
             modifier = modifier
                 .fillMaxWidth()
@@ -86,7 +127,7 @@ fun ItemDevice(
                     Column {
                         for (i in 0..<steps step 3) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -98,7 +139,9 @@ fun ItemDevice(
                     Column {
                         for (i in 1..<steps step 3) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -110,7 +153,9 @@ fun ItemDevice(
                     Column {
                         for (i in 2..<steps step 3) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -122,7 +167,9 @@ fun ItemDevice(
                     Column {
                         for (i in 0..<steps step 2) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -134,7 +181,9 @@ fun ItemDevice(
                     Column {
                         for (i in 1..<steps step 2) {
                             UiRowDeviceValue(
-                                icon = device.params[i].idUnit.asUiIconParam(),
+                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                    true
+                                ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
                                 name = device.params[i].label
@@ -152,7 +201,9 @@ fun ItemDevice(
                 ) {
                     for (i in 6..<device.params.size) {
                         UiRowDeviceValue(
-                            icon = device.params[i].idUnit.asUiIconParam(),
+                            image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                                true
+                            ) else device.params[i].idUnit.asUiImageParam(),
                             value = device.params[i].value,
                             unit = device.params[i].idUnit.asUiTextParam(),
                             name = device.params[i].label

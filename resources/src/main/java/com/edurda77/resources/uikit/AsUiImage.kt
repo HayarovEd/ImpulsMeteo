@@ -1,12 +1,12 @@
 package com.edurda77.resources.uikit
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import com.edurda77.resources.R
 
-@Composable
+/*@Composable
 fun Int.asUiIconParam(): ImageVector {
     return when (this) {
         1 -> ImageVector.vectorResource(R.drawable.no_icon)
@@ -15,6 +15,17 @@ fun Int.asUiIconParam(): ImageVector {
         4 -> ImageVector.vectorResource(R.drawable.pressure)
         5 -> ImageVector.vectorResource(R.drawable.sea_height)
         else -> ImageVector.vectorResource(R.drawable.no_icon)
+    }
+}*/
+@Composable
+fun Int.asUiImageParam(isHeightZero: Boolean = false): Painter {
+    return when (this) {
+        1 -> painterResource(R.drawable.no_picture)
+        2 -> if (isHeightZero) painterResource(R.drawable.high_temperature) else painterResource(R.drawable.low_temperature)
+        3 -> painterResource(R.drawable.humidity)
+        4 -> painterResource(R.drawable.mist)
+        5 -> painterResource(R.drawable.sea_level)
+        else -> painterResource(R.drawable.no_picture)
     }
 }
 

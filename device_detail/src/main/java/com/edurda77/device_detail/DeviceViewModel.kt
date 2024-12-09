@@ -7,21 +7,30 @@ import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.usecase.AddFavoriteUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
+import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateParamUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.convertToStringDateTime
+import com.edurda77.domain.utils.updateDevice
 import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,14 +46,23 @@ class DeviceViewModel @Inject constructor(
     private val updateDeviceUseCase: UpdateDeviceUseCase,
     private val unitsUseCase: UnitsUseCase,
     private val updateParamUseCase: UpdateParamUseCase,
+    private val addFavoriteUseCase: AddFavoriteUseCase,
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase,
+    private val webSocketUseCase: WebSocketUseCase,
+    private val closeWebsocketUseCase: CloseWebsocketUseCase,
+    private val historyUseCase: HistoryUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
-    val state = _state.asStateFlow()
+    val state = _state
+        .onStart {
+            loadLocalData()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            DeviceState()
+        )
     private var _startGroups = MutableStateFlow<List<GroupDevices>>(emptyList())
-
-    init {
-        loadLocalData()
-    }
 
     fun onEvent(event: DeviceEvent) {
         when (event) {
@@ -63,7 +81,7 @@ class DeviceViewModel @Inject constructor(
             }
 
             is DeviceEvent.GetHistory -> {
-                ////////
+                loadHistory(event.limit)
             }
 
             is DeviceEvent.AddNewNotificationToList -> {
@@ -250,8 +268,23 @@ class DeviceViewModel @Inject constructor(
                     }
                 }
             }
+
+            is DeviceEvent.WorkWithFavorite -> {
+                viewModelScope.launch {
+                    if (state.value.device?.isFavorite == true) {
+                        removeFavoriteUseCase.invoke(
+                            deviceId = state.value.deviceId,
+                        )
+                    } else {
+                        addFavoriteUseCase.invoke(
+                            deviceId = state.value.deviceId,
+                        )
+                    }
+                }
+            }
         }
     }
+
 
     private fun loadLocalData() {
         viewModelScope.launch {
@@ -300,9 +333,19 @@ class DeviceViewModel @Inject constructor(
                     loggedUser = result.data
                 )
                     .updateState()
-                loadDevice()
-                loadGroups()
-                loadUnits()
+                viewModelScope.launch {
+                    loadDevice()
+                }
+                viewModelScope.launch {
+                    loadGroups()
+                    loadUnits()
+                }
+                viewModelScope.launch {
+                    loadUpdateData()
+                }
+                viewModelScope.launch {
+                    loadHistory(limit = 100)
+                }
             }
         }
     }
@@ -310,25 +353,27 @@ class DeviceViewModel @Inject constructor(
     private suspend fun loadDevice() {
         val deviceId = state.value.deviceId
         if (deviceId != NEGATIVE_ID) {
-            when (val result = deviceByIdUseCase.invoke(
+            deviceByIdUseCase.invoke(
                 token = state.value.token,
                 id = deviceId
-            )) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        message = result.error.asUiText()
-                    )
-                        .updateState()
-                }
+            ).collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            message = collector.error.asUiText()
+                        )
+                            .updateState()
+                    }
 
-                is ResultWork.Success -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        device = result.data
-                    )
-                        .updateState()
-                    _startGroups.value = result.data.groups
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            isLoading = false,
+                            device = collector.data
+                        )
+                            .updateState()
+                        _startGroups.value = collector.data.groups
+                    }
                 }
             }
         }
@@ -370,10 +415,79 @@ class DeviceViewModel @Inject constructor(
         }
     }
 
+    private suspend fun loadUpdateData() {
+
+        webSocketUseCase.invoke(
+            token = state.value.token,
+            ids = listOf(state.value.deviceId)
+        ).collect { collector ->
+            when (collector) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        message = collector.error.asUiText()
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    if (state.value.device != null && state.value.device!!.id == collector.data.id) {
+                        _state.value.copy(
+                            device = updateDevice(
+                                device = state.value.device!!,
+                                newDevice = collector.data
+                            )
+                        )
+                            .updateState()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadHistory(limit: Int) {
+        _state.value.copy(
+            isLoadingHistory = true,
+            historyStates = emptyList(),
+        )
+            .updateState()
+        viewModelScope.launch {
+            when (val result = historyUseCase.invoke(
+                token = state.value.token,
+                id = state.value.deviceId,
+                fromDate = convertToStringDateTime(state.value.fromDate),
+                toDate = convertToStringDateTime(state.value.toDate),
+                limit = limit
+            )) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        isLoadingHistory = false,
+                        message = result.error.asUiText()
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoadingHistory = false,
+                        historyStates = result.data
+                    )
+                        .updateState()
+                }
+            }
+        }
+    }
+
 
     private fun DeviceState.updateState() {
         _state.update {
             this
         }
     }
+
+    /* override fun onCleared() {
+         super.onCleared()
+         viewModelScope.launch {
+             closeWebsocketUseCase.invoke()
+         }
+     }*/
 }
