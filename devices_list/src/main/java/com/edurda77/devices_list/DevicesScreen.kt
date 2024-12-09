@@ -61,7 +61,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.utils.DEVICES_CREATE
+import com.edurda77.domain.utils.DEVICES_DELETE
 import com.edurda77.domain.utils.DIRECTORY_LIST
+import com.edurda77.domain.utils.FAVORITE
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
@@ -275,7 +277,6 @@ fun DevicesScreen(
                 }
             }
         },
-        configuration = configuration,
         content = { paddings ->
             PullToRefreshBox(
                 modifier = modifier.padding(paddings),
@@ -327,8 +328,17 @@ fun DevicesScreen(
                                     modifier = modifier,
                                     device = device,
                                     configuration = configuration,
+                                    isEnabledDelete = state.value.loggedUser?.permissions?.contains(
+                                        DEVICES_DELETE
+                                    ) == true,
                                     onClickDevice = {
                                         onGoToDevice(device.id)
+                                    },
+                                    onClickChangeFavorite = {
+                                        onEvent(DevicesEvent.WorkWithFavorite(device))
+                                    },
+                                    onDeleteClick = {
+                                        onEvent(DevicesEvent.OnDeleteDevice(device))
                                     }
                                 )
                             }
@@ -361,6 +371,8 @@ private fun DevicesSelectorGroup(
             count = devices.size
         ) {
             //val index = it % monitors.size
+            val groupName =
+                if (devices.keys.toList()[it].name == FAVORITE) stringResource(R.string.favorite) else devices.keys.toList()[it].name
             Box(
                 modifier = modifier
                     .shadow(elevation = if (it == numberSelectedGroup) 10.dp else 0.dp)
@@ -385,7 +397,7 @@ private fun DevicesSelectorGroup(
                 Text(
                     modifier = modifier
                         .basicMarquee(),
-                    text = devices.keys.toList()[it].name,
+                    text = groupName,
                     style = Typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.primary

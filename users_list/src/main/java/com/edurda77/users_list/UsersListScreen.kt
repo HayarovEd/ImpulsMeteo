@@ -111,7 +111,6 @@ fun UsersListScreen(
     }
     UiBaseScaffold(
         message = state.value.message,
-        configuration = configuration,
         topBarContent = {
             Row(
                 modifier = modifier

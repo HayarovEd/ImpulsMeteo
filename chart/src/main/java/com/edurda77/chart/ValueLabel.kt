@@ -10,9 +10,9 @@ data class ValueLabel(
     fun formatted(): String {
         val formatter = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
             val fractionDigits = when {
-                value > 1000 -> 0
-                value in 2f..999f -> 2
-                else -> 3
+                value > 100 -> 0
+                else -> 2
+                //else -> 3
             }
             maximumFractionDigits = fractionDigits
             minimumFractionDigits = 0

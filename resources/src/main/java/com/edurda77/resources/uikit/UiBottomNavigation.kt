@@ -68,7 +68,10 @@ fun UiBottomNavigation(
                 } == true) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
             Column(
                 modifier = modifier.clickable {
-                    navController.navigate(destination.route)
+                    navController.navigate(destination.route) {
+                        launchSingleTop = true
+                        //restoreState = true
+                    }
                 },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

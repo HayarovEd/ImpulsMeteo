@@ -3,6 +3,7 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
+import com.edurda77.data.mapper.convertToElementsHistory
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToParamDto
@@ -22,6 +23,7 @@ import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
 import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.group.DevicesGropusDto
+import com.edurda77.data.remote.history.ResponseHistory
 import com.edurda77.data.remote.permission.PermissionsDto
 import com.edurda77.data.remote.units.UnitsDto
 import com.edurda77.data.remote.update_devices_group.UpdateDevicesGroupDto
@@ -30,6 +32,7 @@ import com.edurda77.data.remote.update_user.UpdateUserDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Notifications
@@ -49,14 +52,18 @@ import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
+import com.edurda77.domain.utils.FROM_DATE_PARAMETER
+import com.edurda77.domain.utils.LIMIT_PARAMETER
 import com.edurda77.domain.utils.NOTIFICATIONS_POSTFIX
 import com.edurda77.domain.utils.PAGE_PARAMETER
 import com.edurda77.domain.utils.PARAMETER_GROUP
 import com.edurda77.domain.utils.PARAMS_POSTFIX
+import com.edurda77.domain.utils.PARAMS_POSTFIX_MOBILE
 import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.PERMISSIONS_POSTFIX
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.SOCKET_ID_PARAMETER
+import com.edurda77.domain.utils.TO_DATE_PARAMETER
 import com.edurda77.domain.utils.UNITS_POSTFIX
 import com.edurda77.domain.utils.USERS_POSTFIX
 import io.ktor.client.HttpClient
@@ -236,6 +243,23 @@ class RemoteRepositoryImpl @Inject constructor(
                         setBody(
                             device.convertToSingleDeviceDto()
                         )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun deleteDevice(
+        token: String,
+        id: Int
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete("$BASE_URL$DEVICES_POSTFIX/${id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
                     }
                 }.bodyAsText()
                 Unit
@@ -551,25 +575,30 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
-    /* override suspend fun getHistoryDeviceById(
+    override suspend fun getHistoryDeviceById(
          token: String,
          id: Int,
          fromDate: String,
          toDate: String,
          limit: Int,
-     ): ResultWork<SingleDevice, DataError> {
+    ): ResultWork<List<List<ElementHistory>>, DataError> {
          return withContext(Dispatchers.IO) {
              handleResponse {
-                 val responseDevices = httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id/$PARAMS_POSTFIX") {
+                 val responseDevices =
+                     httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id/$PARAMS_POSTFIX_MOBILE") {
+                         /*timeout {
+                             requestTimeoutMillis = 30000
+                         }*/
                      url {
                          bearerAuth(token)
                          parameter(FROM_DATE_PARAMETER, fromDate)
                          parameter(TO_DATE_PARAMETER, toDate)
+                         parameter(LIMIT_PARAMETER, limit)
                      }
                  }.call
-                     .body<BodyDeviceDto>()
-                 responseDevices.convertToSingleDevice()
+                         .body<ResponseHistory>()
+                 responseDevices.convertToElementsHistory()
              }
          }
-     }*/
+    }
 }

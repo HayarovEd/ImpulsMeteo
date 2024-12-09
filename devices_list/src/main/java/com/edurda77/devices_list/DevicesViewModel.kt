@@ -3,12 +3,15 @@ package com.edurda77.devices_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
+import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
+import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
+import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
@@ -17,7 +20,9 @@ import com.edurda77.resources.uikit.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,15 +36,28 @@ class DevicesViewModel @Inject constructor(
     private val addDeviceUseCase: AddDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val webSocketUseCase: WebSocketUseCase,
-    private val closeWebsocketUseCase: CloseWebsocketUseCase
+    private val closeWebsocketUseCase: CloseWebsocketUseCase,
+    private val addFavoriteUseCase: AddFavoriteUseCase,
+    private val removeFavoriteUseCase: RemoveFavoriteUseCase,
+    private val deleteDeviceUseCase: DeleteDeviceUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
-    val state = _state.asStateFlow()
+    val state = _state
+        .onStart {
+            loadLocalData()
+            loadUpdateData()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            DevicesState()
+        )
 
 
-    init {
+    /*init {
         loadLocalData()
-    }
+        loadUpdateData()
+    }*/
 
     fun onEvent(event: DevicesEvent) {
         when (event) {
@@ -74,7 +92,6 @@ class DevicesViewModel @Inject constructor(
                         numberSelectedGroup = event.index
                     )
                         .updateState()
-                    //loadDevices(false)
                 }
             }
 
@@ -121,6 +138,35 @@ class DevicesViewModel @Inject constructor(
                     closeWebsocketUseCase.invoke()
                 }
             }
+
+            is DevicesEvent.WorkWithFavorite -> {
+                viewModelScope.launch {
+                    if (event.device.isFavorite) {
+                        removeFavoriteUseCase.invoke(
+                            deviceId = event.device.id,
+                        )
+                    } else {
+                        addFavoriteUseCase.invoke(
+                            deviceId = event.device.id,
+                        )
+                    }
+                }
+            }
+
+            is DevicesEvent.OnDeleteDevice -> {
+                viewModelScope.launch {
+                    deleteDeviceUseCase.invoke(
+                        token = state.value.token,
+                        isFavorite = event.device.isFavorite,
+                        id = event.device.id
+                    )
+                    _state.value.copy(
+                        isLoading = true,
+                    )
+                        .updateState()
+                    loadDevices(true)
+                }
+            }
         }
     }
 
@@ -144,35 +190,36 @@ class DevicesViewModel @Inject constructor(
                             .updateState()
                         delay(500)
                         loadLoggedUserData(collectedToken.data.accessToken)
-                        //loadUpdateData()
                     }
                 }
             }
         }
     }
 
-    private suspend fun loadUpdateData() {
-
-        webSocketUseCase.invoke(
-            token = state.value.token,
-            ids = state.value.devices.values.flatten().map { it.id }.toSet().toList()
-        ).collect { collector ->
-            when (collector) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        message = collector.error.asUiText()
-                    )
-                        .updateState()
-                }
-
-                is ResultWork.Success -> {
-                    _state.value.copy(
-                        devices = updateDevices(
-                            devices = state.value.devices,
-                            newDevice = collector.data
+    private fun loadUpdateData() {
+        viewModelScope.launch {
+            delay(5000)
+            webSocketUseCase.invoke(
+                token = state.value.token,
+                ids = state.value.devices.values.flatten().map { it.id }.toSet().toList()
+            ).collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            message = collector.error.asUiText()
                         )
-                    )
-                        .updateState()
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            devices = updateDevices(
+                                devices = state.value.devices,
+                                newDevice = collector.data
+                            )
+                        )
+                            .updateState()
+                    }
                 }
             }
         }
@@ -193,34 +240,38 @@ class DevicesViewModel @Inject constructor(
                     loggedUser = result.data
                 )
                     .updateState()
-                loadDevices(true)
-                if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
-                    loadGroups()
+                viewModelScope.launch {
+                    if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
+                        loadGroups()
+                    }
                 }
+                loadDevices(true)
             }
         }
     }
 
     private suspend fun loadDevices(isRefresh: Boolean) {
-        when (val result = groupedDevicesUseCase.invoke(
+        groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = state.value.query,
             isRefresh = isRefresh
-        )) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
+        ).collect { collector ->
+            when (collector) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        message = collector.error.asUiText()
+                    )
+                        .updateState()
+                }
 
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    isLoading = false,
-                    devices = result.data
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        devices = collector.data
+                    )
+                        .updateState()
+                }
             }
         }
     }

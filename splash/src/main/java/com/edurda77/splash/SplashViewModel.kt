@@ -7,7 +7,9 @@ import com.edurda77.domain.usecase.AuthCheckUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,11 +18,18 @@ class SplashViewModel @Inject constructor(
     private val authCheckUseCase: AuthCheckUseCase
 ): ViewModel() {
     private var _state = MutableStateFlow(SplashScreenState.LOADING)
-    val state = _state.asStateFlow()
-
-    init {
+    val state = _state.onStart {
         getSavedLogin()
     }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            SplashScreenState.LOADING
+        )
+
+    /* init {
+         getSavedLogin()
+     }*/
 
     private fun getSavedLogin() {
         viewModelScope.launch {

@@ -32,4 +32,5 @@ sealed class DeviceEvent {
     class UpdateParam(val param: Param) : DeviceEvent()
     class UpdateDevice(val name: String, val key: String, val frequency: String) : DeviceEvent()
     data object BackStartGroups : DeviceEvent()
+    data object WorkWithFavorite : DeviceEvent()
 }

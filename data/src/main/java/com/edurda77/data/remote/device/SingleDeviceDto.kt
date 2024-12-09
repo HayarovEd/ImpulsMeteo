@@ -11,7 +11,7 @@ data class SingleDeviceDto(
     @SerialName("groups")
     val groups: List<GroupDto>,
     @SerialName("host")
-    val host: String,
+    val host: String?,
     @SerialName("id")
     val id: Int,
     @SerialName("key")

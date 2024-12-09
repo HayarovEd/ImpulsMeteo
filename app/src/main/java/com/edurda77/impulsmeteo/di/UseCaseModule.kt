@@ -2,26 +2,31 @@ package com.edurda77.impulsmeteo.di
 
 
 import com.edurda77.domain.repository.DataStoreRepository
+import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
+import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
+import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.GroupedDevicesUseCase
+import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.LoginUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
+import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
@@ -90,9 +95,11 @@ object UseCaseModule {
     @Singleton
     fun providesGroupedDevicesUseCase(
         remoteRepository: RemoteRepository,
+        localRepository: LocalRepository,
     ): GroupedDevicesUseCase {
         return GroupedDevicesUseCase(
             remoteRepository = remoteRepository,
+            localRepository = localRepository
         )
     }
 
@@ -194,8 +201,14 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun providesDeviceByIdUseCase(remoteRepository: RemoteRepository): DeviceByIdUseCase {
-        return DeviceByIdUseCase(remoteRepository = remoteRepository)
+    fun providesDeviceByIdUseCase(
+        remoteRepository: RemoteRepository,
+        localRepository: LocalRepository,
+    ): DeviceByIdUseCase {
+        return DeviceByIdUseCase(
+            remoteRepository = remoteRepository,
+            localRepository = localRepository
+        )
     }
 
     @Provides
@@ -246,6 +259,48 @@ object UseCaseModule {
         remoteRepository: RemoteRepository
     ): UpdateParamUseCase {
         return UpdateParamUseCase(
+            remoteRepository = remoteRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesAddFavoriteUseCase(
+        localRepository: LocalRepository
+    ): AddFavoriteUseCase {
+        return AddFavoriteUseCase(
+            localRepository = localRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesRemoveFavoriteUseCase(
+        localRepository: LocalRepository
+    ): RemoveFavoriteUseCase {
+        return RemoveFavoriteUseCase(
+            localRepository = localRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeleteDeviceUseCase(
+        remoteRepository: RemoteRepository,
+        localRepository: LocalRepository
+    ): DeleteDeviceUseCase {
+        return DeleteDeviceUseCase(
+            remoteRepository = remoteRepository,
+            localRepository = localRepository,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providesHistoryUseCase(
+        remoteRepository: RemoteRepository
+    ): HistoryUseCase {
+        return HistoryUseCase(
             remoteRepository = remoteRepository,
         )
     }
