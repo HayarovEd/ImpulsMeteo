@@ -7,7 +7,6 @@ import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,10 +15,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(
+class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val readLocalAuthorizationUseCase: ReadLocalAuthorizationUseCase,
     private val saveLocalAuthorizationUseCase: SaveLocalAuthorizationUseCase

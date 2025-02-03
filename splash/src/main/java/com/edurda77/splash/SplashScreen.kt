@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,8 +20,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.edurda77.resources.R
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SplashScreen(
@@ -30,7 +29,7 @@ fun SplashScreen(
     onGoToLogin: () -> Unit,
     onGoToListCameras: () -> Unit,
     configuration: Configuration,
-    viewModel: SplashViewModel = hiltViewModel()
+    viewModel: SplashViewModel = koinViewModel()
 ) {
     val state = viewModel.state.collectAsState()
     LaunchedEffect(key1 = state.value) {
@@ -57,16 +56,6 @@ fun SplashScreen(
             .fillMaxSize()
             .background(brush = backgroundBrush),
     ) {
-        val imageModifier =
-            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) modifier.fillMaxWidth() else modifier.fillMaxHeight()
-        /* Image(
-             modifier = imageModifier,
-             painter = if (isSystemInDarkTheme()) painterResource(R.drawable.night_cloud) else painterResource(
-                 R.drawable.cloud
-             ),
-             contentDescription = "",
-             contentScale = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) ContentScale.FillWidth else ContentScale.FillHeight
-         )*/
         Column(
             modifier = modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally

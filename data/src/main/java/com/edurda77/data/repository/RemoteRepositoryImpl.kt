@@ -84,9 +84,8 @@ import io.ktor.http.contentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class RemoteRepositoryImpl @Inject constructor(
+class RemoteRepositoryImpl(
     private val httpClient: HttpClient
 ) : RemoteRepository {
 

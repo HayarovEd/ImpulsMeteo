@@ -5,9 +5,9 @@ import com.edurda77.domain.model.Param
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import javax.inject.Inject
 
-class UpdateParamUseCase @Inject constructor(
+
+class UpdateParamUseCase(
     private val remoteRepository: RemoteRepository,
 ) {
     suspend operator fun invoke(

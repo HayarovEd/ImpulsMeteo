@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DEVICES_EDIT
 import com.edurda77.domain.utils.TAKED_COUNT
@@ -20,12 +19,13 @@ import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiDialog
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeviceScreen(
     onBackClick: () -> Unit,
-    viewModel: DeviceViewModel = hiltViewModel(),
+    viewModel: DeviceViewModel = koinViewModel(),
     configuration: Configuration,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()

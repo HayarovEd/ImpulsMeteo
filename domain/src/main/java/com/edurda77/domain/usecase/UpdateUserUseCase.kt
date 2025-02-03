@@ -4,9 +4,9 @@ import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.isValidEmail
-import javax.inject.Inject
 
-class UpdateUserUseCase @Inject constructor(
+
+class UpdateUserUseCase(
     private val remoteRepository: RemoteRepository,
 ) {
     suspend operator fun invoke(

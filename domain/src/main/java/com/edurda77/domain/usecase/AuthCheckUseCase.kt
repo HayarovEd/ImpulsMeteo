@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import javax.inject.Inject
 
-class AuthCheckUseCase @Inject constructor(
+
+class AuthCheckUseCase(
     private val dataStoreRepository: DataStoreRepository,
 ) {
-    suspend operator fun invoke(): Flow<LocalAuthResult> {
+    operator fun invoke(): Flow<LocalAuthResult> {
         return flow {
             dataStoreRepository.readAuthorization().collect { collectAuth ->
                 when (collectAuth) {

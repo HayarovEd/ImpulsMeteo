@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
@@ -79,10 +77,10 @@ dependencies {
 
     implementation(libs.androidx.work.runtime.ktx)
 
-    //hilt
-    implementation (libs.hilt.android)
-    ksp (libs.google.hilt.compiler)
-    implementation (libs.androidx.hilt.navigation.compose)
+
+    //Koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 
 
 

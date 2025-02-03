@@ -1,7 +1,5 @@
 package com.edurda77.impulsmeteo.di
 
-import android.app.Application
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -13,11 +11,6 @@ import com.edurda77.data.local.MeteoDataBase
 import com.edurda77.domain.utils.APP_PREFERENCES
 import com.edurda77.domain.utils.DATABASE
 import com.edurda77.domain.utils.PING_INTERVAL
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
@@ -31,29 +24,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object ApiModule {
-
-
-    @Singleton
-    @Provides
-    fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
+val baseModule = module {
+    single<DataStore<Preferences>> {
+        PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = { appContext.preferencesDataStoreFile(APP_PREFERENCES) }
+            produceFile = { androidContext().preferencesDataStoreFile(APP_PREFERENCES) }
         )
     }
-
-    @Provides
-    @Singleton
-    fun provideHttpClient(): HttpClient {
-        return HttpClient(OkHttp) {
+    single<HttpClient> {
+        HttpClient(OkHttp) {
             install(HttpTimeout) {
                 connectTimeoutMillis = 100000
                 requestTimeoutMillis = 100000
@@ -72,12 +57,9 @@ object ApiModule {
             }
         }
     }
-
-    @Provides
-    @Singleton
-    fun provideDatabase(app: Application): MeteoDataBase {
-        return Room.databaseBuilder(
-            app,
+    single<MeteoDataBase> {
+        Room.databaseBuilder(
+            androidContext(),
             MeteoDataBase::class.java,
             DATABASE
         )

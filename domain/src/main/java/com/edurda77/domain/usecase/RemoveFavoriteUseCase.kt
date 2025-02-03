@@ -3,9 +3,9 @@ package com.edurda77.domain.usecase
 import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import javax.inject.Inject
 
-class RemoveFavoriteUseCase @Inject constructor(
+
+class RemoveFavoriteUseCase(
     private val localRepository: LocalRepository,
 ) {
     suspend operator fun invoke(

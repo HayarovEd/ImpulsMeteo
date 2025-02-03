@@ -56,7 +56,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
@@ -74,6 +73,7 @@ import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +81,7 @@ fun DevicesScreen(
     modifier: Modifier = Modifier,
     onGoToLogin: () -> Unit,
     onGoToDevice: (Int) -> Unit,
-    viewModel: DevicesViewModel = hiltViewModel(),
+    viewModel: DevicesViewModel = koinViewModel(),
     configuration: Configuration,
     bottomBarContent: @Composable () -> Unit = {},
 ) {

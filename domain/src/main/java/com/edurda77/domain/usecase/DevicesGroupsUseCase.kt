@@ -4,10 +4,9 @@ import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import javax.inject.Inject
 
 
-class DevicesGroupsUseCase @Inject constructor(
+class DevicesGroupsUseCase(
     private val remoteRepository: RemoteRepository,
 ) {
     suspend operator fun invoke(

@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DIRECTORY_EDIT
 import com.edurda77.domain.utils.DIRECTORY_LIST
@@ -40,13 +39,14 @@ import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DirectoriesScreen(
     modifier: Modifier = Modifier,
     onGoToLogin: () -> Unit,
-    viewModel: DirectoriesViewModel = hiltViewModel(),
+    viewModel: DirectoriesViewModel = koinViewModel(),
     configuration: Configuration,
     bottomBarContent: @Composable () -> Unit = {},
 ) {

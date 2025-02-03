@@ -5,9 +5,9 @@ import com.edurda77.domain.model.LastAuthData
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import javax.inject.Inject
 
-class SaveLocalAuthorizationUseCase @Inject constructor(
+
+class SaveLocalAuthorizationUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
     suspend operator fun invoke(

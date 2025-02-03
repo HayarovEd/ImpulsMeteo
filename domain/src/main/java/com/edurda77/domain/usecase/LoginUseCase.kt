@@ -7,9 +7,9 @@ import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.isValidEmail
-import javax.inject.Inject
 
-class LoginUseCase @Inject constructor(
+
+class LoginUseCase(
     private val remoteRepository: RemoteRepository,
     private val dataStoreRepository: DataStoreRepository
 ) {
