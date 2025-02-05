@@ -1,8 +1,12 @@
 package com.edurda77.chart
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -18,9 +22,11 @@ import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +34,15 @@ import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.utils.calculateInterval
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.domain.utils.formatted
+import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
+import com.edurda77.resources.uikit.asUiTextParam
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.random.Random
 
 private const val COUNT_STEPS = 5
 
@@ -227,5 +242,35 @@ fun SecondLineChart(
                 }
             }
         }
+    }
+}
+
+
+@Preview(widthDp = 1000)
+@Composable
+private fun SecondLineChartPreview() {
+    ImpulsMeteoTheme {
+        val coinHistoryRandomized = remember {
+            (1..100).map {
+                ElementHistory(
+                    value = (Random.nextFloat() - 0.5) * 20.0,
+                    time = Clock.System.now()
+                        .plus(1 * it, DateTimeUnit.MINUTE, TimeZone.currentSystemDefault())
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            }
+        }
+        SecondLineChart(
+            modifier = Modifier
+                .width(700.dp)
+                .height(700.dp)
+                .background(Color.White),
+            infos = coinHistoryRandomized,
+            unit = 2.asUiTextParam(),
+            chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            textColor = MaterialTheme.colorScheme.onBackground,
+            maxValue = stringResource(R.string.max_value),
+            minValue = stringResource(R.string.min_value)
+        )
     }
 }
