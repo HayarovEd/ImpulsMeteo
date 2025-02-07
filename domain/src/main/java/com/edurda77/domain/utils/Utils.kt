@@ -3,8 +3,6 @@ package com.edurda77.domain.utils
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.SingleDevice
-import java.text.NumberFormat
-import java.util.Locale
 
 
 fun isValidEmail(email: String): Boolean {
@@ -86,20 +84,26 @@ fun updateDevice(
     )
 }
 
+@Suppress("DefaultLocale")
 fun formatted(
     value: Double,
     unit: String
 ): String {
-    val formatter = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
-        val fractionDigits = when {
-            value > 100 -> 0
-            else -> 2
-            //else -> 3
-        }
-        maximumFractionDigits = fractionDigits
-        minimumFractionDigits = 0
+    val formattedValue = if (value > 100.0) {
+        ((value * 100).toInt() / 100.0).toString()
+    } else {
+        String.format("%.2f", value)
     }
-    return "${formatter.format(value)}$unit"
+    /* val formatter = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+         val fractionDigits = when {
+             value > 100 -> 0
+             else -> 2
+             //else -> 3
+         }
+         maximumFractionDigits = fractionDigits
+         minimumFractionDigits = 0
+     }*/
+    return "${formattedValue}$unit"
 }
 
 fun calculateInterval(size: Int): Int {
