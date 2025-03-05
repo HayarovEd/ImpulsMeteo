@@ -1,5 +1,7 @@
 package com.edurda77.resources.uikit
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,11 +16,14 @@ import androidx.compose.material3.TextFieldDefaults.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +47,12 @@ fun UiTextField(
     val interactionSource = remember { MutableInteractionSource() }
     BasicTextField(
         value = content,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = Color.Transparent,
+                shape = MaterialTheme.shapes.medium
+            ),
         onValueChange = { text ->
             if (isOnlyDigit) {
                 if (text.all { it.isDigit() }) {
@@ -66,6 +76,7 @@ fun UiTextField(
         decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.DecorationBox(
                 enabled = enabled,
+                shape = MaterialTheme.shapes.medium,
                 innerTextField = innerTextField,
                 interactionSource = interactionSource,
                 singleLine = true,
@@ -87,11 +98,73 @@ fun UiTextField(
                 },
                 contentPadding = PaddingValues(vertical = 4.dp, horizontal = 10.dp),
                 colors = colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
+                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(),
                     cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.outline
                 )
             )
         }
     )
+}
+
+@Preview(
+    showBackground = true
+)
+@Composable
+private fun UiTextFieldView() {
+    ImpulsMeteoTheme {
+        UiTextField(
+            content = "",
+            label = "hallo",
+            onClickContent = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true
+)
+@Composable
+private fun UiTextFieldView2() {
+    ImpulsMeteoTheme {
+        UiTextField(
+            content = "world!",
+            label = "hallo",
+            onClickContent = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun UiTextFieldView3() {
+    ImpulsMeteoTheme {
+        UiTextField(
+            content = "",
+            label = "hallo",
+            onClickContent = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun UiTextFieldView4() {
+    ImpulsMeteoTheme {
+        UiTextField(
+            content = "world!",
+            label = "hallo",
+            onClickContent = {}
+        )
+    }
 }
