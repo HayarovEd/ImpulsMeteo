@@ -34,5 +34,6 @@ val Typography = Typography(
 )
 
 val Shapes = Shapes(
-    medium = RoundedCornerShape(12.dp)
+    medium = RoundedCornerShape(12.dp),
+    small = RoundedCornerShape(8.dp),
 )

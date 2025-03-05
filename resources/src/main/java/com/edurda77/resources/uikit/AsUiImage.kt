@@ -20,12 +20,12 @@ fun Int.asUiIconParam(): ImageVector {
 @Composable
 fun Int.asUiImageParam(isHeightZero: Boolean = false): Painter {
     return when (this) {
-        1 -> painterResource(R.drawable.no_picture)
-        2 -> if (isHeightZero) painterResource(R.drawable.high_temperature) else painterResource(R.drawable.low_temperature)
+        1 -> painterResource(R.drawable.not_available)
+        2 -> if (isHeightZero) painterResource(R.drawable.thermometer) else painterResource(R.drawable.thermometer_exterior)
         3 -> painterResource(R.drawable.humidity)
-        4 -> painterResource(R.drawable.mist)
+        4 -> painterResource(R.drawable.pressure)
         5 -> painterResource(R.drawable.sea_level)
-        else -> painterResource(R.drawable.no_picture)
+        else -> painterResource(R.drawable.not_available)
     }
 }
 
