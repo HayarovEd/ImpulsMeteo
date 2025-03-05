@@ -1,5 +1,6 @@
 package com.edurda77.resources.uikit
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 
 @Composable
@@ -69,13 +71,31 @@ fun UiRowDeviceValueWithClick(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xF0F5E388)
+@Preview(showBackground = true)
 @Composable
 private fun Sample() {
-    UiRowDeviceValue(
-        image = painterResource(R.drawable.no_picture),
-        value = 0.3,
-        unit = stringResource(R.string.unit_temperature),
-        name = "t° Улица 2"
-    )
+    ImpulsMeteoTheme {
+        UiRowDeviceValue(
+            image = painterResource(R.drawable.no_picture),
+            value = 0.3,
+            unit = stringResource(R.string.unit_temperature),
+            name = "t° Улица 2"
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun Sample2() {
+    ImpulsMeteoTheme {
+        UiRowDeviceValue(
+            image = painterResource(R.drawable.no_picture),
+            value = 0.3,
+            unit = stringResource(R.string.unit_temperature),
+            name = "t° Улица 2"
+        )
+    }
 }
