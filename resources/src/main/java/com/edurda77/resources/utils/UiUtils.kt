@@ -32,8 +32,8 @@ private fun hexToColor(
     val updatedGreen = green + 15 * amount
     val updatedBlue = blue + 10 * amount
     return Color(
-        if (updatedRed > 255) 255 else updatedRed,
-        if (updatedGreen > 255) 255 else updatedGreen,
-        if (updatedBlue > 255) 255 else updatedBlue
+        if (updatedRed > 255) 255 else if (updatedRed < 0) 0 else updatedRed,
+        if (updatedGreen > 255) 255 else if (updatedGreen < 0) 0 else updatedGreen,
+        if (updatedBlue > 255) 255 else if (updatedBlue < 0) 0 else updatedBlue
     )
 }

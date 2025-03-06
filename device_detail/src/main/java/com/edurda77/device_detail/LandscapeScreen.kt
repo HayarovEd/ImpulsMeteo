@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -170,9 +172,11 @@ fun LandscapeScreen(
             } else {
                 Row(
                     modifier = modifier
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
                         .padding(innerPadding)
                         .fillMaxSize()
-                        .padding(start = 15.dp, end = 15.dp, bottom = 55.dp, top = 50.dp),
+                        .padding(horizontal = 15.dp),
                 ) {
                     Column(
                         modifier = modifier.weight(1f),
@@ -442,7 +446,7 @@ fun LandscapeScreen(
                                         .padding(5.dp),
                                 ) {
                                     UiRowDeviceValueWithClick(
-                                        //modifier = modifier.align(Alignment.TopStart),
+                                        modifier = modifier.width(screenWidth / 8),
                                         image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
                                             true
                                         ) else param.idUnit.asUiImageParam(),

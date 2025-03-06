@@ -413,7 +413,7 @@ fun PortraitScreen(
                                     .padding(5.dp),
                             ) {
                                 UiRowDeviceValueWithClick(
-                                    //modifier = modifier.align(Alignment.TopStart),
+                                    modifier = modifier.fillMaxWidth(0.4f),
                                     image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
                                         true
                                     ) else param.idUnit.asUiImageParam(),

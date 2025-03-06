@@ -6,6 +6,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,6 +48,7 @@ fun UiRowDeviceValueWithClick(
         )
     }
     Card(
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ),
@@ -57,29 +59,30 @@ fun UiRowDeviceValueWithClick(
         )*/
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
+                .fillMaxWidth()
                 .background(brush = hexToBrush(hexColor))
                 .padding(5.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                modifier = modifier.size(24.dp),
+                modifier = Modifier.size(24.dp),
                 painter = image,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = "",
             )
-            Spacer(modifier = modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text(
-                    modifier = modifier
+                    modifier = Modifier
                         .basicMarquee(),
                     text = "$value $unit",
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     style = Typography.bodyLarge,
                 )
-                Spacer(modifier = modifier.width(5.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    modifier = modifier
+                    modifier = Modifier
                         .basicMarquee(),
                     text = name,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
