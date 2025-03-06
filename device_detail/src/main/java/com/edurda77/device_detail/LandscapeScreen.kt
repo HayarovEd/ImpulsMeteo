@@ -293,6 +293,7 @@ fun LandscapeScreen(
                                     name = param.label,
                                     expandedDialog = expandedDialog.value,
                                     unit = param.idUnit.asUiTextParam(),
+                                    hexColor = param.color,
                                     content = {
                                         UpdateParamDialog(
                                             param = param,
@@ -448,6 +449,7 @@ fun LandscapeScreen(
                                         value = param.value,
                                         unit = param.idUnit.asUiTextParam(),
                                         name = param.label,
+                                        hexColor = param.color,
                                         content = {
                                             UpdateParamDialog(
                                                 param = param,

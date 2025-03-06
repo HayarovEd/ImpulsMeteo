@@ -1,6 +1,7 @@
 package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.utils.hexToBrush
 
 @Composable
 fun UiRowDeviceValueWithClick(
@@ -32,6 +34,7 @@ fun UiRowDeviceValueWithClick(
     value: Double,
     unit: String,
     name: String,
+    hexColor: String,
     content: @Composable () -> Unit,
     onOpenClick: () -> Unit,
     onCloseClick: () -> Unit,
@@ -49,12 +52,14 @@ fun UiRowDeviceValueWithClick(
         ),
         shape = MaterialTheme.shapes.small,
         onClick = onOpenClick,
-        colors = CardDefaults.cardColors(
+        /*colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        )*/
     ) {
         Row(
-            modifier = modifier.padding(5.dp),
+            modifier = modifier
+                .background(brush = hexToBrush(hexColor))
+                .padding(5.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -97,7 +102,8 @@ private fun Sample() {
             content = {},
             onCloseClick = {},
             onOpenClick = {},
-            expandedDialog = false
+            expandedDialog = false,
+            hexColor = "#50e3c2",
         )
     }
 }
@@ -116,6 +122,7 @@ private fun Sample2() {
             content = {},
             onCloseClick = {},
             onOpenClick = {},
+            hexColor = "#50e3c2",
             expandedDialog = false
         )
     }

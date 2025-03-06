@@ -420,6 +420,7 @@ fun PortraitScreen(
                                     value = param.value,
                                     unit = param.idUnit.asUiTextParam(),
                                     name = param.label,
+                                    hexColor = param.color,
                                     content = {
                                         UpdateParamDialog(
                                             param = param,
@@ -519,6 +520,7 @@ fun PortraitScreen(
                                 ) else param.idUnit.asUiImageParam(),
                                 value = param.value,
                                 name = param.label,
+                                hexColor = param.color,
                                 expandedDialog = expandedDialog.value,
                                 unit = param.idUnit.asUiTextParam(),
                                 content = {
