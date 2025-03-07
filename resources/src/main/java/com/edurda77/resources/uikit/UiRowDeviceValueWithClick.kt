@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.utils.getContrastColor
 import com.edurda77.resources.utils.hexToBrush
 
 @Composable
@@ -41,6 +42,7 @@ fun UiRowDeviceValueWithClick(
     onCloseClick: () -> Unit,
     expandedDialog: Boolean
 ) {
+    val textColor = getContrastColor(hexColor)
     if (expandedDialog) {
         UiDialog(
             content = content,
@@ -54,9 +56,6 @@ fun UiRowDeviceValueWithClick(
         ),
         shape = MaterialTheme.shapes.small,
         onClick = onOpenClick,
-        /*colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )*/
     ) {
         Row(
             modifier = Modifier
@@ -68,7 +67,7 @@ fun UiRowDeviceValueWithClick(
             Icon(
                 modifier = Modifier.size(24.dp),
                 painter = image,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                tint = textColor,
                 contentDescription = "",
             )
             Spacer(modifier = Modifier.width(10.dp))
@@ -77,7 +76,7 @@ fun UiRowDeviceValueWithClick(
                     modifier = Modifier
                         .basicMarquee(),
                     text = "$value $unit",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = textColor,
                     style = Typography.bodyLarge,
                 )
                 Spacer(modifier = Modifier.width(5.dp))
@@ -85,7 +84,7 @@ fun UiRowDeviceValueWithClick(
                     modifier = Modifier
                         .basicMarquee(),
                     text = name,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = textColor,
                     style = Typography.labelSmall,
                 )
             }
