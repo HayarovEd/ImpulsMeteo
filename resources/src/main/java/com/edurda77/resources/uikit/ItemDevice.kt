@@ -124,19 +124,24 @@ fun ItemDevice(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    Column {
+                    Column(
+                        modifier = modifier.weight(1f)
+                    ) {
                         for (i in 0..<steps step 3) {
                             UiRowDeviceValue(
                                 image = device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label
+                                name = device.params[i].label,
+                                hexColor = device.params[i].color,
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
                     }
                     Spacer(modifier = modifier.width(5.dp))
-                    Column {
+                    Column(
+                        modifier = modifier.weight(1f)
+                    ) {
                         for (i in 1..<steps step 3) {
                             UiRowDeviceValue(
                                 image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
@@ -144,13 +149,16 @@ fun ItemDevice(
                                 ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label
+                                name = device.params[i].label,
+                                hexColor = device.params[i].color,
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
                     }
                     Spacer(modifier = modifier.width(5.dp))
-                    Column {
+                    Column(
+                        modifier = modifier.weight(1f)
+                    ) {
                         for (i in 2..<steps step 3) {
                             UiRowDeviceValue(
                                 image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
@@ -158,13 +166,16 @@ fun ItemDevice(
                                 ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label
+                                name = device.params[i].label,
+                                hexColor = device.params[i].color,
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
                     }
                 } else {
-                    Column {
+                    Column(
+                        modifier = modifier.weight(1f)
+                    ) {
                         for (i in 0..<steps step 2) {
                             UiRowDeviceValue(
                                 image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
@@ -172,13 +183,16 @@ fun ItemDevice(
                                 ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label
+                                name = device.params[i].label,
+                                hexColor = device.params[i].color,
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
                     }
                     Spacer(modifier = modifier.width(10.dp))
-                    Column {
+                    Column(
+                        modifier = modifier.weight(1f)
+                    ) {
                         for (i in 1..<steps step 2) {
                             UiRowDeviceValue(
                                 image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
@@ -186,7 +200,8 @@ fun ItemDevice(
                                 ) else device.params[i].idUnit.asUiImageParam(),
                                 value = device.params[i].value,
                                 unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label
+                                name = device.params[i].label,
+                                hexColor = device.params[i].color,
                             )
                             Spacer(modifier = modifier.height(3.dp))
                         }
@@ -206,7 +221,8 @@ fun ItemDevice(
                             ) else device.params[i].idUnit.asUiImageParam(),
                             value = device.params[i].value,
                             unit = device.params[i].idUnit.asUiTextParam(),
-                            name = device.params[i].label
+                            name = device.params[i].label,
+                            hexColor = device.params[i].color,
                         )
                         Spacer(modifier = modifier.width(3.dp))
                     }
