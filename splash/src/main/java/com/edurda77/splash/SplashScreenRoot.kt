@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.edurda77.resources.R
@@ -22,11 +23,13 @@ import org.koin.androidx.compose.koinViewModel
 fun SplashScreenRoot(
     onGoToLogin: () -> Unit,
     onGoToListCameras: () -> Unit,
-    viewModel: SplashViewModel = koinViewModel()
+    viewModel: SplashViewModel = koinViewModel(),
+    configuration: Configuration
 ) {
     val state = viewModel.state.collectAsState()
     SplashScreen(
         state = state.value,
+        configuration = configuration,
         onGoToLogin = onGoToLogin,
         onGoToListCameras = onGoToListCameras
     )
@@ -38,6 +41,7 @@ fun SplashScreen(
     state: SplashScreenState,
     onGoToLogin: () -> Unit,
     onGoToListCameras: () -> Unit,
+    configuration: Configuration,
 ) {
     LaunchedEffect(key1 = state) {
         when (state) {
@@ -60,7 +64,7 @@ fun SplashScreen(
             modifier = modifier.fillMaxSize(),
             painter = painterResource(id = R.drawable.meteo_bk),
             contentDescription = "",
-            contentScale = ContentScale.FillHeight
+            contentScale = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) ContentScale.FillWidth else ContentScale.FillHeight
         )
         LinearProgressIndicator(
             modifier = modifier
@@ -77,7 +81,8 @@ private fun SplashScreenView1() {
         SplashScreen(
             state = SplashScreenState.LOADING,
             onGoToLogin = {},
-            onGoToListCameras = {}
+            onGoToListCameras = {},
+            configuration = LocalConfiguration.current
         )
     }
 }
@@ -91,7 +96,8 @@ private fun SplashScreenView2() {
         SplashScreen(
             state = SplashScreenState.LOADING,
             onGoToLogin = {},
-            onGoToListCameras = {}
+            onGoToListCameras = {},
+            configuration = LocalConfiguration.current
         )
     }
 }
