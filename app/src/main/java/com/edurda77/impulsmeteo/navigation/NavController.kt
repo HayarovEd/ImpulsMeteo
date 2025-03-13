@@ -11,7 +11,7 @@ import com.edurda77.directories.DirectoriesScreen
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
 import com.edurda77.resources.uikit.UiBottomNavigation
-import com.edurda77.splash.SplashScreen
+import com.edurda77.splash.SplashScreenRoot
 import com.edurda77.users_list.UsersListScreen
 
 
@@ -24,8 +24,7 @@ fun NavController(
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable<NavigationRoute.Splash> {
-            SplashScreen(
-                configuration = configuration,
+            SplashScreenRoot(
                 onGoToListCameras = {
                     navController.navigate(NavigationRoute.Devices)
                 },
