@@ -92,7 +92,8 @@ fun UiTextField(
                     if (trailingIcon != null) {
                         UiIconButton(
                             icon = trailingIcon,
-                            onClick = onClickTrailingIcon
+                            onClick = onClickTrailingIcon,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 },

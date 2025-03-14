@@ -1,7 +1,7 @@
 package com.edurda77.login_screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,18 +23,23 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiTextField
 
@@ -45,93 +50,128 @@ fun LandscapeLoginScreen(
     isLoading: Boolean,
     email: String,
     password: String,
-    onEvent: (LoginEvent) -> Unit,
+    isShowPassword: Boolean,
+    onSetEmail: (String) -> Unit,
+    onSetPassword: (String) -> Unit,
+    onLogin: () -> Unit,
+    onClickShowPassword: () -> Unit,
 ) {
-    val backgroundBrush = Brush.linearGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.background,
-            MaterialTheme.colorScheme.tertiaryContainer
-        )
-    )
-    Box(
+    Scaffold(
         modifier = modifier
-            .fillMaxSize()
-            .background(backgroundBrush)
-    ) {
-        Scaffold(
-            modifier = modifier
-                .fillMaxSize(),
-            containerColor = Color.Transparent,
-            snackbarHost = { SnackbarHost(snakeBarHostState) },
-        ) { paddings ->
-            if (isLoading) {
-                Box(
+            .fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(snakeBarHostState) },
+    ) { paddings ->
+        if (isLoading) {
+            Box(
+                modifier = modifier
+                    .padding(paddings)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = modifier.size(100.dp)
+                )
+            }
+        } else {
+            Row(
+                modifier = modifier
+                    .padding(paddings)
+                    .fillMaxSize()
+                    .padding(horizontal = 15.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
                     modifier = modifier
-                        .padding(paddings)
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = modifier.size(100.dp)
-                    )
-                }
-            } else {
-                Row(
+                        .clip(shape = MaterialTheme.shapes.medium)
+                        .fillMaxHeight()
+                        .weight(1f),
+                    painter = painterResource(id = R.drawable.meteo_bk),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillHeight
+                )
+                Spacer(modifier = modifier.width(10.dp))
+                Column(
                     modifier = modifier
-                        .padding(paddings)
-                        .fillMaxSize()
-                        .padding(horizontal = 15.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        modifier = modifier
-                            .fillMaxHeight(0.4f)
-                            .weight(1f),
-                        painter = painterResource(id = R.drawable.favicon_3),
-                        contentDescription = "",
-                        contentScale = ContentScale.FillHeight
-                    )
-                    Spacer(modifier = modifier.width(10.dp))
-                    Column(
-                        modifier = modifier
-                            .weight(1f),
-                        verticalArrangement = Arrangement.Center
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center
 
-                    ) {
-                        UiTextField(
-                            content = email,
-                            label = stringResource(id = R.string.email_required),
-                            keyboardType = KeyboardType.Email,
-                            imeAction = ImeAction.Next,
-                            onClickContent = {
-                                onEvent(LoginEvent.SetEmail(it))
-                            }
-                        )
-                        Spacer(modifier = modifier.height(10.dp))
-                        UiTextField(
-                            content = password,
-                            label = stringResource(id = R.string.password_required),
-                            keyboardType = KeyboardType.Password,
-                            visualTransformation = PasswordVisualTransformation(),
-                            onClickContent = {
-                                onEvent(LoginEvent.SetPassword(it))
-                            }
-                        )
-                        Spacer(modifier = modifier.height(15.dp))
-                        Button(
-                            modifier = modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
-                            onClick = {
-                                onEvent(LoginEvent.OnLogin)
-                            }) {
-                            Text(
-                                text = stringResource(id = R.string.enter),
-                                style = Typography.bodyLarge,
-                            )
+                ) {
+                    UiTextField(
+                        content = email,
+                        label = stringResource(id = R.string.email_required),
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next,
+                        onClickContent = {
+                            onSetEmail(it)
                         }
+                    )
+                    Spacer(modifier = modifier.height(10.dp))
+                    UiTextField(
+                        content = password,
+                        label = stringResource(id = R.string.password_required),
+                        keyboardType = KeyboardType.Password,
+                        visualTransformation = if (isShowPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                        onClickContent = {
+                            onSetPassword(it)
+                        },
+                        trailingIcon = if (isShowPassword) ImageVector.vectorResource(R.drawable.baseline_visibility_off_24) else ImageVector.vectorResource(
+                            R.drawable.baseline_visibility_24
+                        ),
+                        onClickTrailingIcon = onClickShowPassword
+                    )
+                    Spacer(modifier = modifier.height(15.dp))
+                    Button(
+                        modifier = modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                        onClick = {
+                            onLogin()
+                        }) {
+                        Text(
+                            text = stringResource(id = R.string.enter),
+                            style = Typography.bodyLarge,
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun LandscapeLoginScreenView1() {
+    ImpulsMeteoTheme {
+        LandscapeLoginScreen(
+            snakeBarHostState = remember { SnackbarHostState() },
+            isLoading = false,
+            email = "ert@ya.ru",
+            password = "1234",
+            isShowPassword = true,
+            onClickShowPassword = {},
+            onLogin = {},
+            onSetEmail = {},
+            onSetPassword = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LandscapeLoginScreenView2() {
+    ImpulsMeteoTheme {
+        LandscapeLoginScreen(
+            snakeBarHostState = remember { SnackbarHostState() },
+            isLoading = false,
+            email = "ert@ya.ru",
+            password = "1234",
+            isShowPassword = false,
+            onClickShowPassword = {},
+            onLogin = {},
+            onSetEmail = {},
+            onSetPassword = {}
+        )
     }
 }
