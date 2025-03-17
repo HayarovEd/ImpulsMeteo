@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.edurda77.device_detail.DeviceScreen
-import com.edurda77.devices_list.DevicesScreen
+import com.edurda77.devices_list.DevicesScreenRoot
 import com.edurda77.directories.DirectoriesScreen
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
@@ -43,7 +43,7 @@ fun NavController(
             )
         }
         composable<NavigationRoute.Devices> {
-            DevicesScreen(
+            DevicesScreenRoot(
                 configuration = configuration,
                 onGoToDevice = {
                     navController.navigate(NavigationRoute.Device(it.toString()))

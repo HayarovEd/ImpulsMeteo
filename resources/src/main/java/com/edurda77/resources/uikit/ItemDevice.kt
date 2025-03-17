@@ -66,9 +66,9 @@ fun ItemDevice(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
-        ),
+        /* elevation = CardDefaults.cardElevation(
+             defaultElevation = 10.dp
+         ),*/
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
         ),
@@ -285,7 +285,6 @@ fun ItemDevice(
 }
 
 @Preview(
-    showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
@@ -406,7 +405,6 @@ private fun ItemDeviceView1() {
 }
 
 @Preview(
-    showBackground = true,
 )
 @Composable
 private fun ItemDeviceView2() {
