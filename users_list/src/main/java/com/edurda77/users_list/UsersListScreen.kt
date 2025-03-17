@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
@@ -179,7 +179,7 @@ fun UsersListScreen(
                             verticalItemSpacing = 5.dp,
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            items(state.value.users) { user ->
+                            itemsIndexed(state.value.users) { index, user ->
                                 ItemUser(
                                     user = user,
                                     onDeleteClick = {
@@ -201,6 +201,7 @@ fun UsersListScreen(
                                     permissions = state.value.permissions,
                                     selectedDevices = state.value.selectedDevices,
                                     selectedPermissions = state.value.selectedPermissions,
+                                    isExpanded = user.isExpanded,
                                     onUpdatePermissions = {
                                         onEvent(UsersEvent.UpdateSelectedPermission(it))
                                     },
@@ -219,6 +220,9 @@ fun UsersListScreen(
                                             )
                                         )
                                     },
+                                    onClickExpanded = {
+                                        onEvent(UsersEvent.ExpandUser(index))
+                                    }
                                 )
                             }
                         }

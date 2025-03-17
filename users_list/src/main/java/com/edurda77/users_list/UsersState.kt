@@ -4,8 +4,8 @@ package com.edurda77.users_list
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.PermissionUser
-import com.edurda77.domain.model.User
 import com.edurda77.resources.uikit.UiText
+import com.edurda77.users_list.model.UserUi
 
 data class UsersState(
     val message: UiText? = null,
@@ -16,5 +16,5 @@ data class UsersState(
     val devices: List<DeviceUser> = emptyList(),
     val selectedPermissions: List<PermissionUser> = emptyList(),
     val selectedDevices: List<DeviceUser> = emptyList(),
-    val users: List<User> = emptyList(),
+    val users: List<UserUi> = emptyList(),
 )

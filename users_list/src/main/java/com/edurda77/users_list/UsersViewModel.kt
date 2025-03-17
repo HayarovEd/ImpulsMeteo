@@ -14,6 +14,7 @@ import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
+import com.edurda77.users_list.mapper.convertToUi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -147,6 +148,18 @@ class UsersViewModel(
                 )
                     .updateState()
             }
+
+            is UsersEvent.ExpandUser -> {
+                val newExpandedUser = state.value.users[event.index].copy(
+                    isExpanded = !state.value.users[event.index].isExpanded
+                )
+                val newList = state.value.users.toMutableList()
+                newList[event.index] = newExpandedUser
+                _state.value.copy(
+                    users = newList
+                )
+                    .updateState()
+            }
         }
     }
 
@@ -272,7 +285,7 @@ class UsersViewModel(
             is ResultWork.Success -> {
                 _state.value.copy(
                     isLoading = false,
-                    users = result.data
+                    users = result.data.map { it.convertToUi() }
                 )
                     .updateState()
             }

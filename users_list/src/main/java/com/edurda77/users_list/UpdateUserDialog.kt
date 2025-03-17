@@ -29,15 +29,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.PermissionUser
-import com.edurda77.domain.model.User
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiTextField
+import com.edurda77.users_list.model.UserUi
 
 @Composable
 fun UpdateUserDialog(
     modifier: Modifier = Modifier,
-    user: User,
+    user: UserUi,
     devices: List<DeviceUser>,
     permissions: List<PermissionUser>,
     selectedPermissions: List<PermissionUser>,
