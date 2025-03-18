@@ -226,59 +226,6 @@ fun ItemUser(
                     }
                 }
             }
-            /*Spacer(modifier = modifier.height(10.dp))
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = modifier.weight(1f),
-                    text = stringResource(R.string.access),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = Typography.bodyLarge,
-                )
-                Spacer(modifier = modifier.width(10.dp))
-                Column(modifier = modifier.weight(2f)) {
-                    user.permissions.forEach {
-                        Text(
-                            modifier = modifier,
-                            text = it.displayName,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = Typography.labelSmall,
-                        )
-                        Spacer(modifier = modifier.height(2.dp))
-                    }
-                }
-            }
-            HorizontalDivider(
-                modifier = modifier.fillMaxWidth(),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-            Spacer(modifier = modifier.height(2.dp))
-            Row(
-                modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = modifier.weight(1f),
-                    text = stringResource(R.string.devices),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = Typography.bodyLarge,
-                )
-                Spacer(modifier = modifier.width(10.dp))
-                Column(modifier = modifier.weight(2f)) {
-                    user.devices.forEach {
-                        Text(
-                            modifier = modifier,
-                            text = it.name,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = Typography.labelSmall,
-                        )
-                        Spacer(modifier = modifier.height(2.dp))
-                    }
-                }
-            }*/
         }
     }
 }
