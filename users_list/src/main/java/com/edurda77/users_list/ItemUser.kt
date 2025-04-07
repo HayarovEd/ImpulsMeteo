@@ -19,6 +19,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,10 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.PermissionUser
@@ -64,8 +71,12 @@ fun ItemUser(
     onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
     onClickExpanded: () -> Unit,
 ) {
+    val localDensity = LocalDensity.current
     val expandedDeleteDialog = remember { mutableStateOf(false) }
     val expandedUpdateDialog = remember { mutableStateOf(false) }
+    val expandedDropDownloads = remember { mutableStateOf(false) }
+    val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
+
     if (expandedDeleteDialog.value) {
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_user),
@@ -156,26 +167,71 @@ fun ItemUser(
                     )
                 }
                 Spacer(modifier = modifier.weight(1f))
-                if (isEnabledUpdate) {
+                if (isEnabledUpdate || isEnabledDelete) {
                     UiIconButton(
-                        icon = ImageVector.vectorResource(R.drawable.pencil),
-                        color = MaterialTheme.colorScheme.background,
-                        buttonColor = MaterialTheme.colorScheme.primary,
+                        modifier = modifier
+                            .onGloballyPositioned { coordinates ->
+                                offsetXDropDownMenu.value =
+                                    with(localDensity) { coordinates.positionInRoot().x.toDp() }
+                            },
+                        icon = ImageVector.vectorResource(R.drawable.three_dots),
+                        color = MaterialTheme.colorScheme.onBackground,
                         onClick = {
-                            expandedUpdateDialog.value = true
-                            onUpdateSelected(user.id)
+                            expandedDropDownloads.value = true
                         }
                     )
-                }
-                if (isEnabledDelete) {
-                    UiIconButton(
-                        icon = ImageVector.vectorResource(R.drawable.trashcan),
-                        color = MaterialTheme.colorScheme.background,
-                        buttonColor = MaterialTheme.colorScheme.error,
-                        onClick = {
-                            expandedDeleteDialog.value = true
+                    DropdownMenu(
+                        expanded = expandedDropDownloads.value,
+                        containerColor = MaterialTheme.colorScheme.background,
+                        offset = DpOffset(x = offsetXDropDownMenu.value * 0.6f, y = 0.dp),
+                        onDismissRequest = {
+                            expandedDropDownloads.value = false
                         }
-                    )
+                    ) {
+                        if (isEnabledUpdate) {
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.pencil),
+                                        contentDescription = ""
+                                    )
+                                },
+                                onClick = {
+                                    expandedUpdateDialog.value = true
+                                    onUpdateSelected(user.id)
+                                },
+                                text = {
+                                    Text(
+                                        modifier = modifier,
+                                        text = stringResource(R.string.update_value),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        style = Typography.labelSmall,
+                                    )
+                                }
+                            )
+                        }
+                        if (isEnabledDelete) {
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.trashcan),
+                                        contentDescription = ""
+                                    )
+                                },
+                                onClick = {
+                                    expandedDeleteDialog.value = true
+                                },
+                                text = {
+                                    Text(
+                                        modifier = modifier,
+                                        text = stringResource(R.string.delete_value),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        style = Typography.labelSmall,
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
                 UiIconButton(
                     icon = if (isExpanded) ImageVector.vectorResource(R.drawable.arrow_top) else ImageVector.vectorResource(

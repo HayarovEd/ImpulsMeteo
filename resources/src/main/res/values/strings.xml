@@ -86,5 +86,7 @@
     <string name="request_timeout">Превышен интервал ожидания</string>
     <string name="max_value">Макс. значение</string>
     <string name="min_value">Мин. значение</string>
+    <string name="update_value">Изменить</string>
+    <string name="delete_value">Удалить</string>
 
 </resources>
