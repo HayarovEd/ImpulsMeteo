@@ -295,7 +295,9 @@ private fun UpdateUserDialogView1() {
     }
 }
 
-@Preview
+@Preview(
+    showBackground = true
+)
 @Composable
 private fun UpdateUserDialog2() {
     ImpulsMeteoTheme {

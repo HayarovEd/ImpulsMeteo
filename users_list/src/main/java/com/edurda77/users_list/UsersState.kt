@@ -17,4 +17,5 @@ data class UsersState(
     val selectedPermissions: List<PermissionUser> = emptyList(),
     val selectedDevices: List<DeviceUser> = emptyList(),
     val users: List<UserUi> = emptyList(),
+    val query: String = "",
 )

@@ -15,6 +15,7 @@ import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
 import com.edurda77.users_list.mapper.convertToUi
+import com.edurda77.users_list.model.UserUi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,6 +45,7 @@ class UsersViewModel(
             UsersState()
         )
 
+    private val baseUsers = mutableListOf<UserUi>()
 
     fun onEvent(event: UsersEvent) {
         when (event) {
@@ -157,6 +159,19 @@ class UsersViewModel(
                 newList[event.index] = newExpandedUser
                 _state.value.copy(
                     users = newList
+                )
+                    .updateState()
+            }
+
+            is UsersEvent.SearchUser -> {
+                _state.value.copy(
+                    query = event.query,
+                    users = baseUsers.filter {
+                        it.name.contains(
+                            other = event.query,
+                            ignoreCase = true
+                        )
+                    }
                 )
                     .updateState()
             }
@@ -283,9 +298,16 @@ class UsersViewModel(
             }
 
             is ResultWork.Success -> {
+                baseUsers.clear()
+                baseUsers.addAll(result.data.map { it.convertToUi() })
                 _state.value.copy(
                     isLoading = false,
-                    users = result.data.map { it.convertToUi() }
+                    users = baseUsers.filter {
+                        it.name.contains(
+                            other = state.value.query,
+                            ignoreCase = true
+                        )
+                    }
                 )
                     .updateState()
             }

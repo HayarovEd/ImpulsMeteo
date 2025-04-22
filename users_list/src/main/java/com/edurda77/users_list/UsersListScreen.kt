@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -28,9 +26,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.USERS_CREATE
@@ -38,17 +38,18 @@ import com.edurda77.domain.utils.USERS_DELETE
 import com.edurda77.domain.utils.USERS_EDIT
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
+import com.edurda77.resources.uikit.UiTextField
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun UsersListScreen(
-    modifier: Modifier = Modifier,
+fun UsersListScreenRoot(
     onGoToLogin: () -> Unit,
     viewModel: UsersViewModel = koinViewModel(),
     configuration: Configuration,
@@ -56,6 +57,27 @@ fun UsersListScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
+    UsersListScreen(
+        state = state.value,
+        configuration = configuration,
+        bottomBarContent = bottomBarContent,
+        onGoToLogin = onGoToLogin,
+        onEvent = onEvent
+    )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UsersListScreen(
+    modifier: Modifier = Modifier,
+    onGoToLogin: () -> Unit,
+    configuration: Configuration,
+    state: UsersState,
+    onEvent: (UsersEvent) -> Unit = {},
+    bottomBarContent: @Composable () -> Unit = {},
+) {
+
     val isShowDialogLogOff = remember { mutableStateOf(false) }
     val expandedAddDialog = remember { mutableStateOf(false) }
     if (isShowDialogLogOff.value) {
@@ -80,10 +102,10 @@ fun UsersListScreen(
             },
             content = {
                 AddUserDialog(
-                    devices = state.value.devices,
-                    permissions = state.value.permissions,
-                    selectedDevices = state.value.selectedDevices,
-                    selectedPermissions = state.value.selectedPermissions,
+                    devices = state.devices,
+                    permissions = state.permissions,
+                    selectedDevices = state.selectedDevices,
+                    selectedPermissions = state.selectedPermissions,
                     onCloseClick = {
                         expandedAddDialog.value = false
                         onEvent(UsersEvent.ClearSelected)
@@ -110,16 +132,24 @@ fun UsersListScreen(
         )
     }
     UiBaseScaffold(
-        message = state.value.message,
+        message = state.message,
         topBarContent = {
             Row(
                 modifier = modifier
                     .padding(top = 50.dp, start = 15.dp, end = 15.dp)
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                UiTextField(
+                    modifier = modifier.weight(6f),
+                    content = state.query,
+                    label = stringResource(id = R.string.search),
+                    onClickContent = {
+                        onEvent(UsersEvent.SearchUser(it))
+                    })
                 UiIconButton(
-                    modifier = modifier,
+                    modifier = modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onBackground,
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
                     onClick = { isShowDialogLogOff.value = true }
                 )
@@ -127,15 +157,15 @@ fun UsersListScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.value.loggedUser?.permissions?.contains(USERS_CREATE) == true) {
+            if (state.loggedUser?.permissions?.contains(USERS_CREATE) == true) {
                 FloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    containerColor = MaterialTheme.colorScheme.outlineVariant,
                     onClick = { expandedAddDialog.value = true }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = ImageVector.vectorResource(R.drawable.plus),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = MaterialTheme.colorScheme.background
                     )
                 }
             }
@@ -143,10 +173,10 @@ fun UsersListScreen(
         content = { paddings ->
             PullToRefreshBox(
                 modifier = modifier.padding(paddings),
-                isRefreshing = state.value.isLoading,
+                isRefreshing = state.isLoading,
                 onRefresh = { onEvent(UsersEvent.Refresh) },
                 indicator = {
-                    if (state.value.isLoading) {
+                    if (state.isLoading) {
                         Column(
                             modifier = modifier
                                 .fillMaxSize(),
@@ -167,8 +197,8 @@ fun UsersListScreen(
                     }
                 }
             ) {
-                if (state.value.loggedUser?.permissions?.contains(USERS_LIST) == true) {
-                    if (state.value.users.isNotEmpty() && !state.value.isLoading) {
+                if (state.loggedUser?.permissions?.contains(USERS_LIST) == true) {
+                    if (state.users.isNotEmpty() && !state.isLoading) {
                         val cellsCount =
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
                         LazyVerticalStaggeredGrid(
@@ -179,28 +209,28 @@ fun UsersListScreen(
                             verticalItemSpacing = 5.dp,
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            itemsIndexed(state.value.users) { index, user ->
+                            itemsIndexed(state.users) { index, user ->
                                 ItemUser(
                                     user = user,
                                     onDeleteClick = {
                                         onEvent(UsersEvent.DeleteUser(it))
                                     },
-                                    isEnabledDelete = state.value.loggedUser?.permissions?.contains(
+                                    isEnabledDelete = state.loggedUser.permissions.contains(
                                         USERS_DELETE
-                                    ) == true,
-                                    isEnabledUpdate = state.value.loggedUser?.permissions?.contains(
+                                    ),
+                                    isEnabledUpdate = state.loggedUser.permissions.contains(
                                         USERS_EDIT
-                                    ) == true,
+                                    ),
                                     onClearSelected = {
                                         onEvent(UsersEvent.ClearSelected)
                                     },
                                     onUpdateSelected = {
                                         onEvent(UsersEvent.UpdateSelected(user))
                                     },
-                                    devices = state.value.devices,
-                                    permissions = state.value.permissions,
-                                    selectedDevices = state.value.selectedDevices,
-                                    selectedPermissions = state.value.selectedPermissions,
+                                    devices = state.devices,
+                                    permissions = state.permissions,
+                                    selectedDevices = state.selectedDevices,
+                                    selectedPermissions = state.selectedPermissions,
                                     isExpanded = user.isExpanded,
                                     onUpdatePermissions = {
                                         onEvent(UsersEvent.UpdateSelectedPermission(it))
@@ -228,7 +258,7 @@ fun UsersListScreen(
                         }
                     }
                 } else {
-                    if (state.value.loggedUser != null) {
+                    if (state.loggedUser != null) {
                         Box(
                             modifier = modifier
                                 .padding(paddings)
@@ -249,4 +279,36 @@ fun UsersListScreen(
             }
         }
     )
+}
+
+
+@Preview(
+showSystemUi = true
+)
+@Composable
+private fun UsersListScreenView() {
+    ImpulsMeteoTheme {
+        UsersListScreen(
+            onGoToLogin = {},
+            bottomBarContent = {},
+            configuration = LocalConfiguration.current,
+            state = UsersState()
+        )
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun UsersListScreenView2() {
+    ImpulsMeteoTheme {
+        UsersListScreen(
+            onGoToLogin = {},
+            bottomBarContent = {},
+            configuration = LocalConfiguration.current,
+            state = UsersState()
+        )
+    }
 }

@@ -31,4 +31,5 @@ sealed class UsersEvent {
     class DeleteUser(val id: Int) : UsersEvent()
     class UpdateSelected(val user: UserUi) : UsersEvent()
     class ExpandUser(val index: Int) : UsersEvent()
+    class SearchUser(val query:String) : UsersEvent()
 }

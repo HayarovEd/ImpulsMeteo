@@ -12,7 +12,7 @@ import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
 import com.edurda77.resources.uikit.UiBottomNavigation
 import com.edurda77.splash.SplashScreenRoot
-import com.edurda77.users_list.UsersListScreen
+import com.edurda77.users_list.UsersListScreenRoot
 
 
 @Composable
@@ -59,7 +59,7 @@ fun NavController(
             )
         }
         composable<NavigationRoute.Users> {
-            UsersListScreen(
+            UsersListScreenRoot(
                 configuration = configuration,
                 onGoToLogin = {
                     navController.navigate(NavigationRoute.Login)
