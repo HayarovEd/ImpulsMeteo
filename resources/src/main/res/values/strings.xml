@@ -88,5 +88,10 @@
     <string name="min_value">Мин. значение</string>
     <string name="update_value">Изменить</string>
     <string name="delete_value">Удалить</string>
+    <string name="short_desc">Сокращенно</string>
+    <string name="update_group">Изменить группу устройств</string>
+    <string name="update_unit">Изменить единицу измерения</string>
+
+
 
 </resources>
