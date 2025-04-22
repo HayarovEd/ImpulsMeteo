@@ -2,6 +2,8 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
@@ -46,6 +48,9 @@ class DirectoriesViewModel(
             SharingStarted.WhileSubscribed(5000L),
             DirectoriesState()
         )
+
+    private val baseGroups = mutableListOf<GroupDevices>()
+    private val baseUnits = mutableListOf<UnitMeteo>()
 
     fun onEvent(event: DirectoriesEvent) {
         when (event) {
@@ -123,6 +128,15 @@ class DirectoriesViewModel(
                     )
                 }
             }
+
+            is DirectoriesEvent.OnSearch -> {
+                _state.value.copy(
+                    query = event.query,
+                    groups = baseGroups.filter { it.name.contains(event.query, ignoreCase = true) },
+                    units = baseUnits.filter { it.name.contains(event.query, ignoreCase = true) }
+                )
+                    .updateState()
+            }
         }
     }
 
@@ -188,9 +202,11 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
+                baseUnits.clear()
+                baseUnits.addAll(result.data)
                 _state.value.copy(
                     isLoading = false,
-                    units = result.data
+                    units = baseUnits
                 )
                     .updateState()
             }
@@ -212,9 +228,11 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
+                baseGroups.clear()
+                baseGroups.addAll(result.data)
                 _state.value.copy(
                     isLoading = false,
-                    groups = result.data
+                    groups = baseGroups
                 )
                     .updateState()
             }

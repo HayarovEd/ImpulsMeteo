@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
@@ -74,7 +75,7 @@ private fun UsersListScreen(
     onGoToLogin: () -> Unit,
     configuration: Configuration,
     state: UsersState,
-    onEvent: (UsersEvent) -> Unit = {},
+    onEvent: (UsersEvent) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
 ) {
 
@@ -136,8 +137,9 @@ private fun UsersListScreen(
         topBarContent = {
             Row(
                 modifier = modifier
-                    .padding(top = 50.dp, start = 15.dp, end = 15.dp)
-                    .fillMaxWidth(),
+                    .statusBarsPadding()
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 UiTextField(
@@ -292,7 +294,8 @@ private fun UsersListScreenView() {
             onGoToLogin = {},
             bottomBarContent = {},
             configuration = LocalConfiguration.current,
-            state = UsersState()
+            state = UsersState(),
+            onEvent = {}
         )
     }
 }
@@ -308,7 +311,8 @@ private fun UsersListScreenView2() {
             onGoToLogin = {},
             bottomBarContent = {},
             configuration = LocalConfiguration.current,
-            state = UsersState()
+            state = UsersState(),
+            onEvent = {}
         )
     }
 }

@@ -58,8 +58,8 @@
     <string name="sure_delete_user">Действительно удалить пользователя</string>
     <string name="sure_delete_unit">Действительно удалить единицу измерения?</string>
     <string name="sure_delete_group">Действительно удалить группу?</string>
-    <string name="group_devices">ГРУППЫ УСТРОЙСТВ</string>
-    <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
+    <string name="group_devices">Группы устройств</string>
+    <string name="units">Единицы измерения</string>
     <string name="short_title">Сокращенное название</string>
     <string name="updated_data">Данные получены:</string>
     <string name="key_l">Ключ:</string>
@@ -91,7 +91,8 @@
     <string name="short_desc">Сокращенно</string>
     <string name="update_group">Изменить группу устройств</string>
     <string name="update_unit">Изменить единицу измерения</string>
-
+    <string name="add_group">Добавить группу устройств</string>
+    <string name="add_unit">Добавить единицу измерения</string>
 
 
 </resources>
