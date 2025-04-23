@@ -77,7 +77,7 @@
     <string name="conditions">Условия</string>
     <string name="value">Значение</string>
     <string name="save">СОХРАНИТЬ</string>
-    <string name="update_device">Изменить</string>
+    <string name="update_device">Изменить устройство</string>
     <string name="update_param">Изменить параметр</string>
     <string name="units_lower_case">Единицы измерения</string>
     <string name="hite_parameter">Скрыть параметр</string>

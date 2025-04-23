@@ -1,8 +1,11 @@
 package com.edurda77.device_detail
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +28,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiTextField
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UpdateDeviceDialog(
     modifier: Modifier = Modifier,
@@ -47,13 +53,17 @@ fun UpdateDeviceDialog(
     val currentName = remember { mutableStateOf(label) }
     val currentKey = remember { mutableStateOf(key) }
     val currentFrequency = remember { mutableStateOf(frequency.toString()) }
-    val expandedGroupMenu = remember { mutableStateOf(false) }
     val selectedGroupsText = remember { mutableStateOf("") }
     LaunchedEffect(selectedGroups.size) {
         selectedGroupsText.value = selectedGroups.joinToString { it.name }
     }
 
-    Column {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp)
+    ) {
         Text(
             modifier = modifier,
             text = stringResource(id = R.string.update_device),
@@ -86,73 +96,69 @@ fun UpdateDeviceDialog(
             isOnlyDigit = true
         )
         Spacer(modifier = modifier.height(5.dp))
-        UiTextField(
-            content = selectedGroupsText.value,
-            label = stringResource(id = R.string.group),
-            onClickContent = {},
-            trailingIcon = if (expandedGroupMenu.value) ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24)
-            else ImageVector.vectorResource(
-                id = R.drawable.baseline_arrow_drop_up_24
-            ),
-            readOnly = true,
-            onClickTrailingIcon = {
-                expandedGroupMenu.value = true
-            },
-            maxLines = 4
+        Text(
+            modifier = modifier,
+            text = stringResource(id = R.string.group),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = Typography.bodyLarge,
         )
-        DropdownMenu(
-            expanded = expandedGroupMenu.value,
-            onDismissRequest = {
-                expandedGroupMenu.value = false
-            }) {
-            groups.forEach {
-                DropdownMenuItem(
-                    text = {
+        Spacer(modifier = modifier.height(5.dp))
+        FlowRow(
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            groups.forEach { group ->
+                FilterChip(
+                    label = {
                         Text(
-                            modifier = modifier
-                                .background(if (selectedGroups.contains(it)) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-                                .padding(4.dp),
-                            text = it.name,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = modifier,
+                            text = group.name,
                             style = Typography.labelSmall,
                         )
                     },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        selectedLabelColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.outline
+                    ),
+
+                    selected = selectedGroups.contains(group),
                     onClick = {
-                        onUpdateGroups(it)
-                    },
+                        onUpdateGroups(group)
+                    }
                 )
             }
         }
+        Spacer(modifier = modifier.height(5.dp))
         Row(
             modifier = modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
         ) {
             Button(
-                modifier = modifier.weight(1f),
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent
                 ),
+                shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 onClick = onCloseClick
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.primary,
                     text = stringResource(id = R.string.cancel),
-                    style = Typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = Typography.bodySmall,
                 )
             }
             Spacer(modifier = modifier.width(10.dp))
             Button(
-                modifier = modifier.weight(1f),
-                contentPadding = PaddingValues(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                enabled = currentName.value.isNotBlank() && currentKey.value.isNotBlank() && currentFrequency.value.isNotBlank() && selectedGroups.isNotEmpty(),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                shape = MaterialTheme.shapes.medium,
                 onClick = {
                     onCloseClick()
                     onUpdateClick(
@@ -163,11 +169,77 @@ fun UpdateDeviceDialog(
                 }
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.background,
                     text = stringResource(id = R.string.ok),
-                    style = Typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    style = Typography.bodySmall,
                 )
             }
         }
+    }
+}
+
+@Preview(
+    showBackground = true
+)
+@Composable
+private fun UpdateDeviceDialogView() {
+    ImpulsMeteoTheme {
+        UpdateDeviceDialog(
+            onCloseClick = {},
+            label = "label",
+            key = "key",
+            frequency = 60000,
+            groups = listOf(
+                GroupDevices(
+                    id = 1,
+                    name = "Perm"
+                ),
+                GroupDevices(
+                    id = 2,
+                    name = "All"
+                )
+            ),
+            onUpdateClick = { _, _, _ -> },
+            onUpdateGroups = {},
+            selectedGroups = listOf(
+                GroupDevices(
+                    id = 1,
+                    name = "Perm"
+                )
+            ),
+        )
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun UpdateDeviceDialogView2() {
+    ImpulsMeteoTheme {
+        UpdateDeviceDialog(
+            onCloseClick = {},
+            label = "label",
+            key = "key",
+            frequency = 60000,
+            groups = listOf(
+                GroupDevices(
+                    id = 1,
+                    name = "Perm"
+                ),
+                GroupDevices(
+                    id = 2,
+                    name = "All"
+                )
+            ),
+            onUpdateClick = { _, _, _ -> },
+            onUpdateGroups = {},
+            selectedGroups = listOf(
+                GroupDevices(
+                    id = 1,
+                    name = "Perm"
+                )
+            ),
+        )
     }
 }
