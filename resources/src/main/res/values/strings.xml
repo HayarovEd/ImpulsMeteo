@@ -70,7 +70,7 @@
     <string name="date_from">Дата от:</string>
     <string name="date_to">Дата до:</string>
     <string name="count_records">Количество записей</string>
-    <string name="edit_notification_of_device">Редактирование уведомлений устройства</string>
+    <string name="edit_notification_of_device">Уведомления устройства</string>
     <string name="notificate_to_change_status">Уведомлять при изменении статуса</string>
     <string name="parameters">Параметры</string>
     <string name="parameter">Параметр</string>
@@ -94,6 +94,7 @@
     <string name="add_group">Добавить группу устройств</string>
     <string name="add_unit">Добавить единицу измерения</string>
     <string name="add_device">Добавить устройство</string>
+    <string name="notifications">Уведомления</string>
 
 
 </resources>

@@ -103,7 +103,7 @@ fun formatted(
          maximumFractionDigits = fractionDigits
          minimumFractionDigits = 0
      }*/
-    return "${formattedValue}$unit"
+    return formattedValue
 }
 
 fun calculateInterval(size: Int): Int {

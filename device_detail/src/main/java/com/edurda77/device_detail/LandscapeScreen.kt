@@ -135,7 +135,6 @@ fun LandscapeScreen(
                             onDeleteNotificationFromListClick(it)
                         },
                         notifications = device?.notifications,
-                        name = device?.name,
                         params = device?.params ?: emptyList(),
                         onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
                             onUpdateNotificationInListClick(
@@ -489,7 +488,7 @@ fun LandscapeScreen(
                                                     .padding(5.dp),
                                                 infos = histories[index],
                                                 unit = param.idUnit.asUiTextParam(),
-                                                chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                                chartColor = MaterialTheme.colorScheme.outlineVariant,
                                                 textColor = MaterialTheme.colorScheme.onBackground,
                                                 maxValue = stringResource(R.string.max_value),
                                                 minValue = stringResource(R.string.min_value)

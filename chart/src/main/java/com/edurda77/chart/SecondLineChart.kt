@@ -267,7 +267,7 @@ private fun SecondLineChartPreview() {
                 .background(Color.White),
             infos = coinHistoryRandomized,
             unit = 2.asUiTextParam(),
-            chartColor = MaterialTheme.colorScheme.onTertiaryContainer,
+            chartColor = MaterialTheme.colorScheme.outlineVariant,
             textColor = MaterialTheme.colorScheme.onBackground,
             maxValue = stringResource(R.string.max_value),
             minValue = stringResource(R.string.min_value)
