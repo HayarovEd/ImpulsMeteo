@@ -93,6 +93,7 @@
     <string name="update_unit">Изменить единицу измерения</string>
     <string name="add_group">Добавить группу устройств</string>
     <string name="add_unit">Добавить единицу измерения</string>
+    <string name="add_device">Добавить устройство</string>
 
 
 </resources>

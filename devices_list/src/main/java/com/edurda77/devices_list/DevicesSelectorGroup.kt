@@ -1,8 +1,10 @@
 package com.edurda77.devices_list
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +53,7 @@ fun DevicesSelectorGroup(
     LazyRow(
         modifier = modifier
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
         state = listState,
     ) {
         items(
@@ -63,11 +64,19 @@ fun DevicesSelectorGroup(
                 if (devices.keys.toList()[it].name == FAVORITE) stringResource(R.string.favorite) else devices.keys.toList()[it].name
             Box(
                 modifier = modifier
-                    .shadow(elevation = if (it == numberSelectedGroup) 10.dp else 0.dp)
                     .width(screenWidth / 3)
-                    .clip(shape = RoundedCornerShape(3.dp))
+                    .border(
+                        border = BorderStroke(
+                            width = 1.dp,
+                            if (it == numberSelectedGroup) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                        ),
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .clip(shape = RoundedCornerShape(20.dp))
                     .background(
-                        color = if (it == numberSelectedGroup) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                        color = if (it == numberSelectedGroup) MaterialTheme.colorScheme.primary.copy(
+                            alpha = 0.2f
+                        ) else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
                     )
                     .clickable {
                         onClick(it)
@@ -77,7 +86,7 @@ fun DevicesSelectorGroup(
                             pagerState.animateScrollToPage(it)
                         }
                     }
-                    .padding(vertical = 3.dp),
+                    .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -86,7 +95,7 @@ fun DevicesSelectorGroup(
                     text = groupName,
                     style = Typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    color = if (it == numberSelectedGroup) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
+                    color = if (it == numberSelectedGroup) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                 )
             }
         }
@@ -230,7 +239,7 @@ private fun DevicesSelectorGroupView1() {
                     emptyList()
                 )
             ),
-            numberSelectedGroup = 1,
+            numberSelectedGroup = 0,
             onClick = {},
             scope = rememberCoroutineScope(),
             pagerState = rememberPagerState(
@@ -270,7 +279,7 @@ private fun DevicesSelectorGroupView2() {
                     emptyList()
                 )
             ),
-            numberSelectedGroup = 1,
+            numberSelectedGroup = 0,
             onClick = {},
             scope = rememberCoroutineScope(),
             pagerState = rememberPagerState(
