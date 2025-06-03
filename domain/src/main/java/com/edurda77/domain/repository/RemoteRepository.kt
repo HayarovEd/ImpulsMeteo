@@ -3,6 +3,7 @@ package com.edurda77.domain.repository
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.Favorite
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Notifications
@@ -97,4 +98,8 @@ interface RemoteRepository {
         toDate: String,
         limit: Int
     ): ResultWork<List<List<ElementHistory>>, DataError>
+
+    suspend fun getFavorites(token: String): ResultWork<List<Favorite>, DataError>
+    suspend fun addFavorite(token: String, deviceId: Int): ResultWork<Favorite, DataError>
+    suspend fun deleteFavorite(token: String, deviceId: Int): ResultWork<Unit, DataError>
 }

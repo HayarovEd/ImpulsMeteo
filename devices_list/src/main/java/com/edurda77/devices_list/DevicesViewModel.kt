@@ -68,7 +68,9 @@ class DevicesViewModel(
                         query = event.query
                     )
                         .updateState()
-                    loadDevices(false)
+                    loadDevices(
+                        isRefresh = false,
+                        query = event.query)
                 }
             }
 
@@ -79,7 +81,9 @@ class DevicesViewModel(
                     .updateState()
                 viewModelScope.launch {
                     delay(1000)
-                    loadDevices(true)
+                    loadDevices(
+                        isRefresh = true,
+                        query = state.value.query)
                 }
             }
 
@@ -161,7 +165,10 @@ class DevicesViewModel(
                         isLoading = true,
                     )
                         .updateState()
-                    loadDevices(true)
+                    loadDevices(
+                        isRefresh = true,
+                        query = state.value.query
+                    )
                 }
             }
         }
@@ -242,33 +249,37 @@ class DevicesViewModel(
                         loadGroups()
                     }
                 }
-                loadDevices(true)
+                loadDevices(
+                    isRefresh = true,
+                    query = state.value.query
+                )
             }
         }
     }
 
-    private suspend fun loadDevices(isRefresh: Boolean) {
-        groupedDevicesUseCase.invoke(
+    private suspend fun loadDevices(
+        isRefresh: Boolean,
+        query: String
+    ) {
+        when (val result = groupedDevicesUseCase.invoke(
             token = state.value.token,
-            query = state.value.query,
+            query = query,
             isRefresh = isRefresh
-        ).collect { collector ->
-            when (collector) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        message = collector.error.asUiText()
-                    )
-                        .updateState()
-                }
+        )) {
+            is ResultWork.Error -> {
+                _state.value.copy(
+                    isLoading = false,
+                    message = result.error.asUiText()
+                )
+                    .updateState()
+            }
 
-                is ResultWork.Success -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        devices = collector.data
-                    )
-                        .updateState()
-                }
+            is ResultWork.Success -> {
+                _state.value.copy(
+                    isLoading = false,
+                    devices = result.data
+                )
+                    .updateState()
             }
         }
     }
@@ -294,7 +305,10 @@ class DevicesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadDevices(true)
+                loadDevices(
+                    isRefresh = true,
+                    query = state.value.query
+                )
             }
         }
     }

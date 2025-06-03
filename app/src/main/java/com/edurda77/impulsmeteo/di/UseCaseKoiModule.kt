@@ -40,7 +40,7 @@ val useCaseKoiModule = module {
     single<ReadLocalAuthorizationUseCase> { ReadLocalAuthorizationUseCase(get()) }
     single<SaveLocalAuthorizationUseCase> { SaveLocalAuthorizationUseCase(get()) }
     single<LoggedUserUseCase> { LoggedUserUseCase(get()) }
-    single<GroupedDevicesUseCase> { GroupedDevicesUseCase(get(), get()) }
+    single<GroupedDevicesUseCase> { GroupedDevicesUseCase(get()) }
     single<LocalTokenUseCase> { LocalTokenUseCase(get()) }
     single<LogOffUseCase> { LogOffUseCase(get()) }
     single<AddDeviceUseCase> { AddDeviceUseCase(get()) }

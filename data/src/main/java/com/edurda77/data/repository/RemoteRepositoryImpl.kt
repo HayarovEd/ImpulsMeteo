@@ -4,6 +4,7 @@ import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
 import com.edurda77.data.mapper.convertToElementsHistory
+import com.edurda77.data.mapper.convertToFavorite
 import com.edurda77.data.mapper.convertToGroups
 import com.edurda77.data.mapper.convertToLoggedUser
 import com.edurda77.data.mapper.convertToParamDto
@@ -22,6 +23,8 @@ import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
 import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
+import com.edurda77.data.remote.favorite.FavoriteDto
+import com.edurda77.data.remote.favorite.FavoriteRequest
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.history.ResponseHistory
 import com.edurda77.data.remote.permission.PermissionsDto
@@ -33,6 +36,7 @@ import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.Favorite
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Notifications
@@ -52,6 +56,7 @@ import com.edurda77.domain.utils.DEVICES_GROUPS_POSTFIX
 import com.edurda77.domain.utils.DEVICES_POSTFIX
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
+import com.edurda77.domain.utils.FAVORITE_POSTFIX
 import com.edurda77.domain.utils.FROM_DATE_PARAMETER
 import com.edurda77.domain.utils.LIMIT_PARAMETER
 import com.edurda77.domain.utils.NOTIFICATIONS_POSTFIX
@@ -575,29 +580,88 @@ class RemoteRepositoryImpl(
     }
 
     override suspend fun getHistoryDeviceById(
-         token: String,
-         id: Int,
-         fromDate: String,
-         toDate: String,
-         limit: Int,
+        token: String,
+        id: Int,
+        fromDate: String,
+        toDate: String,
+        limit: Int,
     ): ResultWork<List<List<ElementHistory>>, DataError> {
-         return withContext(Dispatchers.IO) {
-             handleResponse {
-                 val responseDevices =
-                     httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id/$PARAMS_POSTFIX_MOBILE") {
-                         /*timeout {
-                             requestTimeoutMillis = 30000
-                         }*/
-                     url {
-                         bearerAuth(token)
-                         parameter(FROM_DATE_PARAMETER, fromDate)
-                         parameter(TO_DATE_PARAMETER, toDate)
-                         parameter(LIMIT_PARAMETER, limit)
-                     }
-                 }.call
-                         .body<ResponseHistory>()
-                 responseDevices.convertToElementsHistory()
-             }
-         }
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val responseDevices =
+                    httpClient.get("$BASE_URL$DEVICES_POSTFIX/$id/$PARAMS_POSTFIX_MOBILE") {
+                        /*timeout {
+                            requestTimeoutMillis = 30000
+                        }*/
+                        url {
+                            bearerAuth(token)
+                            parameter(FROM_DATE_PARAMETER, fromDate)
+                            parameter(TO_DATE_PARAMETER, toDate)
+                            parameter(LIMIT_PARAMETER, limit)
+                        }
+                    }.call
+                        .body<ResponseHistory>()
+                responseDevices.convertToElementsHistory()
+            }
+        }
+    }
+
+    override suspend fun getFavorites(
+        token: String,
+    ): ResultWork<List<Favorite>, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val response = httpClient.get(BASE_URL + FAVORITE_POSTFIX) {
+                    url {
+                        bearerAuth(token)
+                    }
+                }.call
+                    .body<List<FavoriteDto>>()
+                response.map {
+                    it.convertToFavorite()
+                }
+            }
+        }
+    }
+
+
+    override suspend fun addFavorite(
+        token: String,
+        deviceId: Int,
+    ): ResultWork<Favorite, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val response = httpClient.post(BASE_URL + FAVORITE_POSTFIX) {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            FavoriteRequest(
+                                deviceId = deviceId
+                            )
+                        )
+                    }
+                }.call
+                    .body<FavoriteDto>()
+                response.convertToFavorite()
+            }
+        }
+    }
+
+    override suspend fun deleteFavorite(
+        token: String,
+        deviceId: Int,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete("$BASE_URL$FAVORITE_POSTFIX/$deviceId") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
     }
 }
