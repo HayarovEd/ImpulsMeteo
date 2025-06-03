@@ -13,6 +13,7 @@ data class DirectoriesState(
     val directoriesType: DirectoriesType = DirectoriesType.GROUPS,
     val groups: List<GroupDevices> = emptyList(),
     val units: List<UnitMeteo> = emptyList(),
+    val query: String = "",
 )
 
 

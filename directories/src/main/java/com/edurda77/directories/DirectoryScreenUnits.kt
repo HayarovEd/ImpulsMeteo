@@ -2,7 +2,6 @@ package com.edurda77.directories
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -26,8 +25,7 @@ fun DirectoryScreenUnits(
     if (units.isNotEmpty() && !isLoading) {
         LazyVerticalStaggeredGrid(
             modifier = modifier
-                .fillMaxSize()
-                .padding(15.dp),
+                .fillMaxSize(),
             columns = StaggeredGridCells.Fixed(cellsCount),
             verticalItemSpacing = 5.dp,
             horizontalArrangement = Arrangement.spacedBy(5.dp)

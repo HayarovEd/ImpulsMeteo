@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -24,34 +24,58 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DIRECTORY_EDIT
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
+import com.edurda77.resources.uikit.UiTextField
+import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DirectoriesScreen(
-    modifier: Modifier = Modifier,
+fun DirectoriesScreenRoot(
     onGoToLogin: () -> Unit,
-    viewModel: DirectoriesViewModel = hiltViewModel(),
+    viewModel: DirectoriesViewModel = koinViewModel(),
     configuration: Configuration,
     bottomBarContent: @Composable () -> Unit = {},
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
+    DirectoriesScreen(
+        state = state.value,
+        configuration = configuration,
+        bottomBarContent = bottomBarContent,
+        onEvent = onEvent,
+        onGoToLogin = onGoToLogin
+    )
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DirectoriesScreen(
+    modifier: Modifier = Modifier,
+    state: DirectoriesState,
+    configuration: Configuration,
+    bottomBarContent: @Composable () -> Unit = {},
+    onEvent: (DirectoriesEvent) -> Unit,
+    onGoToLogin: () -> Unit,
+) {
+
+
     val isShowDialogLogOff = remember { mutableStateOf(false) }
     val expandedAddDialog = remember { mutableStateOf(false) }
 
@@ -75,7 +99,7 @@ fun DirectoriesScreen(
                 expandedAddDialog.value = false
             },
             content = {
-                when (state.value.directoriesType) {
+                when (state.directoriesType) {
                     DirectoriesType.GROUPS -> {
                         AddDevicesGroupDialog(
                             onCloseClick = { expandedAddDialog.value = false },
@@ -100,16 +124,25 @@ fun DirectoriesScreen(
 
 
     UiBaseScaffold(
-        message = state.value.message,
+        message = state.message,
         topBarContent = {
             Row(
                 modifier = modifier
-                    .padding(top = 50.dp, start = 15.dp, end = 15.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                    .statusBarsPadding()
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
+                UiTextField(
+                    modifier = modifier.weight(6f),
+                    content = state.query,
+                    label = stringResource(id = R.string.search),
+                    onClickContent = {
+                        onEvent(DirectoriesEvent.OnSearch(it))
+                    })
                 UiIconButton(
-                    modifier = modifier,
+                    modifier = modifier.weight(1f),
+                    color = MaterialTheme.colorScheme.onBackground,
                     icon = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
                     onClick = { isShowDialogLogOff.value = true }
                 )
@@ -117,15 +150,15 @@ fun DirectoriesScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.value.loggedUser?.permissions?.contains(DIRECTORY_EDIT) == true) {
+            if (state.loggedUser?.permissions?.contains(DIRECTORY_EDIT) == true) {
                 FloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    containerColor = MaterialTheme.colorScheme.outlineVariant,
                     onClick = { expandedAddDialog.value = true }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = ImageVector.vectorResource(R.drawable.plus),
                         contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        tint = MaterialTheme.colorScheme.background
                     )
                 }
             }
@@ -134,6 +167,7 @@ fun DirectoriesScreen(
             Column(
                 modifier
                     .padding(paddings)
+                    .padding(15.dp)
                     .fillMaxWidth()
             ) {
                 Row(
@@ -145,28 +179,30 @@ fun DirectoriesScreen(
                     ItemTitleDirectory(
                         modifier = modifier.weight(1f),
                         title = stringResource(R.string.group_devices),
-                        color = if (state.value.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
-                        colorDivider = if (state.value.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
+                        color = if (state.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
+                        backgroundColor = if (state.directoriesType == DirectoriesType.GROUPS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                         onClick = {
                             onEvent(DirectoriesEvent.SwitchDirectoriesType(DirectoriesType.GROUPS))
                         }
                     )
+                    Spacer(modifier = modifier.width(10.dp))
                     ItemTitleDirectory(
                         modifier = modifier.weight(1f),
                         title = stringResource(R.string.units),
-                        color = if (state.value.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onTertiaryContainer,
-                        colorDivider = if (state.value.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent,
+                        color = if (state.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary,
+                        backgroundColor = if (state.directoriesType == DirectoriesType.UNITS) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                         onClick = {
                             onEvent(DirectoriesEvent.SwitchDirectoriesType(DirectoriesType.UNITS))
                         }
                     )
                 }
+                Spacer(modifier = modifier.height(10.dp))
                 PullToRefreshBox(
                     modifier = modifier,
-                    isRefreshing = state.value.isLoading,
+                    isRefreshing = state.isLoading,
                     onRefresh = { onEvent(DirectoriesEvent.Refresh) },
                     indicator = {
-                        if (state.value.isLoading) {
+                        if (state.isLoading) {
                             Column(
                                 modifier = modifier
                                     .fillMaxSize(),
@@ -187,17 +223,17 @@ fun DirectoriesScreen(
                         }
                     }
                 ) {
-                    if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
+                    if (state.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
                         val cellsCount =
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        when (state.value.directoriesType) {
+                        when (state.directoriesType) {
                             DirectoriesType.GROUPS -> {
                                 DirectoryScreenGroups(
-                                    isLoading = state.value.isLoading,
-                                    isEnableUpdate = state.value.loggedUser?.permissions?.contains(
+                                    isLoading = state.isLoading,
+                                    isEnableUpdate = state.loggedUser.permissions.contains(
                                         DIRECTORY_EDIT
-                                    ) == true,
-                                    groups = state.value.groups,
+                                    ),
+                                    groups = state.groups,
                                     cellsCount = cellsCount,
                                     onDeleteClick = {
                                         onEvent(DirectoriesEvent.DeleteDevicesGroup(it))
@@ -216,11 +252,11 @@ fun DirectoriesScreen(
 
                             DirectoriesType.UNITS -> {
                                 DirectoryScreenUnits(
-                                    isLoading = state.value.isLoading,
-                                    isEnableUpdate = state.value.loggedUser?.permissions?.contains(
+                                    isLoading = state.isLoading,
+                                    isEnableUpdate = state.loggedUser.permissions.contains(
                                         DIRECTORY_EDIT
-                                    ) == true,
-                                    units = state.value.units,
+                                    ),
+                                    units = state.units,
                                     cellsCount = cellsCount,
                                     onDeleteClick = {
                                         onEvent(DirectoriesEvent.DeleteUnit(it))
@@ -239,7 +275,7 @@ fun DirectoriesScreen(
                             }
                         }
                     } else {
-                        if (state.value.loggedUser != null) {
+                        if (state.loggedUser != null) {
                             Box(
                                 modifier = modifier
                                     .padding(paddings)
@@ -261,4 +297,37 @@ fun DirectoriesScreen(
             }
         }
     )
+}
+
+@Preview(
+    showSystemUi = true
+)
+@Composable
+private fun DirectoriesScreenView() {
+    ImpulsMeteoTheme {
+        DirectoriesScreen(
+            onGoToLogin = {},
+            bottomBarContent = {},
+            configuration = LocalConfiguration.current,
+            state = DirectoriesState(),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun DirectoriesScreenView2() {
+    ImpulsMeteoTheme {
+        DirectoriesScreen(
+            onGoToLogin = {},
+            bottomBarContent = {},
+            configuration = LocalConfiguration.current,
+            state = DirectoriesState(),
+            onEvent = {}
+        )
+    }
 }

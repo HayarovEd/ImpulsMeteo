@@ -22,4 +22,6 @@ sealed class DirectoriesEvent {
         val name: String,
         val short: String,
     ) : DirectoriesEvent()
+
+    class OnSearch(val query:String) : DirectoriesEvent()
 }

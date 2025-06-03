@@ -7,7 +7,7 @@ import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.serialization.JsonConvertException
-import java.net.UnknownHostException
+import io.ktor.util.network.UnresolvedAddressException
 
 suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> {
     return try {
@@ -25,7 +25,7 @@ suspend fun <D> handleResponse(data: suspend () -> D): ResultWork<D, DataError> 
     } catch (e: HttpRequestTimeoutException) {
         e.printStackTrace()
         ResultWork.Error(DataError.Network.REQUEST_TIMEOUT)
-    } catch (e: UnknownHostException) {
+    } catch (e: UnresolvedAddressException) {
         e.printStackTrace()
         ResultWork.Error(DataError.Network.NO_INTERNET)
     } catch (e: JsonConvertException) {

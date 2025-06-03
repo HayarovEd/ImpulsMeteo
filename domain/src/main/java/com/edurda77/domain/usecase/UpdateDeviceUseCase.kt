@@ -5,9 +5,9 @@ import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import javax.inject.Inject
 
-class UpdateDeviceUseCase @Inject constructor(
+
+class UpdateDeviceUseCase(
     private val remoteRepository: RemoteRepository,
 ) {
     suspend operator fun invoke(

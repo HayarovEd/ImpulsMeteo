@@ -11,9 +11,9 @@ import com.edurda77.domain.utils.filterGroupedDevices
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
-class GroupedDevicesUseCase @Inject constructor(
+
+class GroupedDevicesUseCase(
     private val remoteRepository: RemoteRepository,
     private val localRepository: LocalRepository,
 ) {

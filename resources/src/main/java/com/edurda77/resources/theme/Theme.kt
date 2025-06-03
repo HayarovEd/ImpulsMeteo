@@ -95,13 +95,14 @@ fun ImpulsMeteoTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }*/
 
-        darkTheme -> darkScheme
-        else -> lightScheme
+        darkTheme -> darkScheme2
+        else -> lightScheme2
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

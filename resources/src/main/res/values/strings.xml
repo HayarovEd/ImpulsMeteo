@@ -39,11 +39,12 @@
     <string name="cancel">Отмена</string>
     <string name="ok">Ладушки</string>
     <string name="sure_exit">Действительно выйти?</string>
-    <string name="title">Название</string>
+    <string name="title">Имя</string>
     <string name="key">Ключ</string>
     <string name="update_frequency">Частота обновления</string>
     <string name="add">Добавить</string>
     <string name="add_user">Добавить пользователя</string>
+    <string name="update_user">Изменить пользователя</string>
     <string name="group">Группы</string>
     <string name="name">Имя</string>
 
@@ -57,26 +58,27 @@
     <string name="sure_delete_user">Действительно удалить пользователя</string>
     <string name="sure_delete_unit">Действительно удалить единицу измерения?</string>
     <string name="sure_delete_group">Действительно удалить группу?</string>
-    <string name="group_devices">ГРУППЫ УСТРОЙСТВ</string>
-    <string name="units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
+    <string name="group_devices">Группы устройств</string>
+    <string name="units">Единицы измерения</string>
     <string name="short_title">Сокращенное название</string>
-    <string name="updated_data">Данные получены:</string>
+    <string name="updated_data">Данные от:</string>
     <string name="key_l">Ключ:</string>
-    <string name="update">Обновления:</string>
+    <string name="update">Обновление раз в</string>
+    <string name="sec_unit">сек.</string>
     <string name="choose_from_date">Начало периода</string>
     <string name="choose_to_date">Конец периода</string>
     <string name="filter">Фильтр</string>
     <string name="date_from">Дата от:</string>
     <string name="date_to">Дата до:</string>
     <string name="count_records">Количество записей</string>
-    <string name="edit_notification_of_device">Редактирование уведомлений устройства</string>
+    <string name="edit_notification_of_device">Уведомления устройства</string>
     <string name="notificate_to_change_status">Уведомлять при изменении статуса</string>
     <string name="parameters">Параметры</string>
     <string name="parameter">Параметр</string>
     <string name="conditions">Условия</string>
     <string name="value">Значение</string>
     <string name="save">СОХРАНИТЬ</string>
-    <string name="update_device">Изменить</string>
+    <string name="update_device">Изменить устройство</string>
     <string name="update_param">Изменить параметр</string>
     <string name="units_lower_case">Единицы измерения</string>
     <string name="hite_parameter">Скрыть параметр</string>
@@ -85,5 +87,15 @@
     <string name="request_timeout">Превышен интервал ожидания</string>
     <string name="max_value">Макс. значение</string>
     <string name="min_value">Мин. значение</string>
+    <string name="update_value">Изменить</string>
+    <string name="delete_value">Удалить</string>
+    <string name="short_desc">Сокращенно</string>
+    <string name="update_group">Изменить группу устройств</string>
+    <string name="update_unit">Изменить единицу измерения</string>
+    <string name="add_group">Добавить группу устройств</string>
+    <string name="add_unit">Добавить единицу измерения</string>
+    <string name="add_device">Добавить устройство</string>
+    <string name="notifications">Уведомления</string>
+
 
 </resources>

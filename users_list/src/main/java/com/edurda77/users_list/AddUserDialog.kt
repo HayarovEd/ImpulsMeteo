@@ -1,8 +1,11 @@
 package com.edurda77.users_list
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,29 +13,40 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.PermissionUser
 import com.edurda77.resources.R
+import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiTextField
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddUserDialog(
     modifier: Modifier = Modifier,
@@ -48,18 +62,22 @@ fun AddUserDialog(
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
-    val expandedPermissionsMenu = remember { mutableStateOf(false) }
     val selectedPermissionsText = remember { mutableStateOf("") }
+    var hidePassword by remember { mutableStateOf(true) }
     LaunchedEffect(selectedPermissions.size) {
         selectedPermissionsText.value = selectedPermissions.joinToString { it.displayName }
     }
-    val expandedDevicesMenu = remember { mutableStateOf(false) }
     val selectedDevicessText = remember { mutableStateOf("") }
     LaunchedEffect(selectedDevices.size) {
         selectedDevicessText.value = selectedDevices.joinToString { it.name }
     }
 
-    Column {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp)
+    ) {
         Text(
             modifier = modifier,
             text = stringResource(id = R.string.add_user),
@@ -89,113 +107,98 @@ fun AddUserDialog(
             onClickContent = {
                 password.value = it
             },
-            isOnlyDigit = true
+            visualTransformation = if (hidePassword) VisualTransformation.None else PasswordVisualTransformation(),
+            imeAction = ImeAction.Done,
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    hidePassword = !hidePassword
+                }
+            ),
+            trailingIcon = if (hidePassword) ImageVector.vectorResource(R.drawable.baseline_visibility_off_24) else ImageVector.vectorResource(
+                R.drawable.baseline_visibility_24
+            ),
         )
         Spacer(modifier = modifier.height(5.dp))
-        UiTextField(
-            content = selectedPermissionsText.value,
-            label = stringResource(id = R.string.access_rights),
-            onClickContent = {},
-            trailingIcon = if (expandedPermissionsMenu.value) ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24)
-            else ImageVector.vectorResource(
-                id = R.drawable.baseline_arrow_drop_up_24
-            ),
-            readOnly = true,
-            onClickTrailingIcon = {
-                expandedPermissionsMenu.value = true
-            },
-            maxLines = 4
+        Text(
+            modifier = modifier,
+            text = stringResource(id = R.string.access_rights),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = Typography.bodyLarge,
         )
-        DropdownMenu(
-            expanded = expandedPermissionsMenu.value,
-            onDismissRequest = {
-                expandedPermissionsMenu.value = false
-            }) {
-            permissions.forEach {
-                DropdownMenuItem(
-                    text = {
+        Spacer(modifier = modifier.height(5.dp))
+        permissions.forEach { permission ->
+            AccessRow(
+                title = permission.displayName,
+                isAccess = selectedPermissions.contains(permission),
+                onClickAccess = {
+                    onUpdatePermissions(permission)
+                }
+            )
+        }
+        Spacer(modifier = modifier.height(5.dp))
+        Text(
+            modifier = modifier,
+            text = stringResource(id = R.string.devices),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            style = Typography.bodyLarge,
+        )
+        Spacer(modifier = modifier.height(5.dp))
+        FlowRow(
+            modifier = modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            devices.forEach { device ->
+                FilterChip(
+                    label = {
                         Text(
-                            modifier = modifier
-                                .background(if (selectedPermissions.contains(it)) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-                                .padding(4.dp),
-                            text = it.displayName,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = modifier,
+                            text = device.name,
                             style = Typography.labelSmall,
                         )
                     },
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        selectedLabelColor = MaterialTheme.colorScheme.primary,
+                        labelColor = MaterialTheme.colorScheme.outline
+                    ),
+
+                    selected = selectedDevices.contains(device),
                     onClick = {
-                        onUpdatePermissions(it)
-                    },
+                        onUpdateDevices(device)
+                    }
                 )
             }
         }
         Spacer(modifier = modifier.height(5.dp))
-        UiTextField(
-            content = selectedDevicessText.value,
-            label = stringResource(id = R.string.devices),
-            onClickContent = {},
-            trailingIcon = if (expandedPermissionsMenu.value) ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24)
-            else ImageVector.vectorResource(
-                id = R.drawable.baseline_arrow_drop_up_24
-            ),
-            readOnly = true,
-            onClickTrailingIcon = {
-                expandedDevicesMenu.value = true
-            },
-            maxLines = 4
-        )
-        DropdownMenu(
-            expanded = expandedDevicesMenu.value,
-            onDismissRequest = {
-                expandedDevicesMenu.value = false
-            }) {
-            devices.forEach {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            modifier = modifier
-                                .background(if (selectedDevices.contains(it)) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
-                                .padding(4.dp),
-                            text = it.name,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            style = Typography.labelSmall,
-                        )
-                    },
-                    onClick = {
-                        onUpdateDevices(it)
-                    },
-                )
-            }
-        }
         Row(
             modifier = modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
         ) {
             Button(
-                modifier = modifier.weight(1f),
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent
                 ),
+                shape = MaterialTheme.shapes.medium,
                 border = BorderStroke(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 onClick = onCloseClick
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.primary,
                     text = stringResource(id = R.string.cancel),
-                    style = Typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    style = Typography.bodySmall,
                 )
             }
             Spacer(modifier = modifier.width(10.dp))
             Button(
-                modifier = modifier.weight(1f),
-                contentPadding = PaddingValues(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                shape = MaterialTheme.shapes.medium,
                 onClick = {
                     onCloseClick()
                     onAddClick(
@@ -208,11 +211,106 @@ fun AddUserDialog(
                 }
             ) {
                 Text(
+                    color = MaterialTheme.colorScheme.background,
                     text = stringResource(id = R.string.ok),
-                    style = Typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    style = Typography.bodySmall,
                 )
             }
         }
+    }
+}
+
+
+@Preview(
+    showBackground = true
+)
+@Composable
+private fun AddUserDialogView() {
+    ImpulsMeteoTheme {
+        AddUserDialog(
+            devices = listOf(
+                DeviceUser(
+                    id = 1,
+                    name = "Device 1"
+                ),
+                DeviceUser(
+                    id = 2,
+                    name = "Device 2"
+                )
+            ),
+            permissions = listOf(
+                PermissionUser(
+                    id = 1,
+                    displayName = "prm1"
+                ),
+                PermissionUser(
+                    id = 1,
+                    displayName = "prm1"
+                )
+            ),
+            selectedPermissions = listOf(
+                PermissionUser(
+                    id = 1,
+                    displayName = "prm1"
+                ),
+            ),
+            selectedDevices = listOf(
+                DeviceUser(
+                    id = 2,
+                    name = "Device 2"
+                )
+            ),
+            onAddClick = {_, _, _, _, _ ->},
+            onCloseClick = {},
+            onUpdatePermissions = {},
+            onUpdateDevices = {}
+        )
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun AddUserDialogView2() {
+    ImpulsMeteoTheme{
+        AddUserDialog(
+            devices = listOf(
+                DeviceUser(
+                    id = 1,
+                    name = "Device 1"
+                ),
+                DeviceUser(
+                    id = 2,
+                    name = "Device 2"
+                )
+            ),
+            permissions = listOf(
+                PermissionUser(
+                    id = 1,
+                    displayName = "prm1"
+                ),
+                PermissionUser(
+                    id = 1,
+                    displayName = "prm1"
+                )
+            ),
+            selectedPermissions = listOf(
+                PermissionUser(
+                    id = 1,
+                    displayName = "prm1"
+                ),
+            ),
+            selectedDevices = listOf(
+                DeviceUser(
+                    id = 2,
+                    name = "Device 2"
+                )
+            ),
+            onAddClick = {_, _, _, _, _ ->},
+            onCloseClick = {},
+            onUpdatePermissions = {},
+            onUpdateDevices = {}
+        )
     }
 }

@@ -1,9 +1,12 @@
 package com.edurda77.resources.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 // Set of Material typography styles to start with
@@ -28,4 +31,10 @@ val Typography = Typography(
         fontWeight = FontWeight(400),
         fontSize = 10.sp,
     ),
+)
+
+val Shapes = Shapes(
+    medium = RoundedCornerShape(12.dp),
+    small = RoundedCornerShape(8.dp),
+    extraSmall = RoundedCornerShape(4.dp),
 )

@@ -2,6 +2,8 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
@@ -15,7 +17,6 @@ import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,10 +24,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class DirectoriesViewModel @Inject constructor(
+class DirectoriesViewModel(
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
@@ -49,6 +48,9 @@ class DirectoriesViewModel @Inject constructor(
             SharingStarted.WhileSubscribed(5000L),
             DirectoriesState()
         )
+
+    private val baseGroups = mutableListOf<GroupDevices>()
+    private val baseUnits = mutableListOf<UnitMeteo>()
 
     fun onEvent(event: DirectoriesEvent) {
         when (event) {
@@ -126,6 +128,15 @@ class DirectoriesViewModel @Inject constructor(
                     )
                 }
             }
+
+            is DirectoriesEvent.OnSearch -> {
+                _state.value.copy(
+                    query = event.query,
+                    groups = baseGroups.filter { it.name.contains(event.query, ignoreCase = true) },
+                    units = baseUnits.filter { it.name.contains(event.query, ignoreCase = true) }
+                )
+                    .updateState()
+            }
         }
     }
 
@@ -191,9 +202,11 @@ class DirectoriesViewModel @Inject constructor(
             }
 
             is ResultWork.Success -> {
+                baseUnits.clear()
+                baseUnits.addAll(result.data)
                 _state.value.copy(
                     isLoading = false,
-                    units = result.data
+                    units = baseUnits
                 )
                     .updateState()
             }
@@ -215,9 +228,11 @@ class DirectoriesViewModel @Inject constructor(
             }
 
             is ResultWork.Success -> {
+                baseGroups.clear()
+                baseGroups.addAll(result.data)
                 _state.value.copy(
                     isLoading = false,
-                    groups = result.data
+                    groups = baseGroups
                 )
                     .updateState()
             }

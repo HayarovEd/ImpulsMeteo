@@ -28,9 +28,8 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 
-class WebSocketRepositoryImpl @Inject constructor(
+class WebSocketRepositoryImpl(
     private val client: HttpClient
 ) : WebSocketRepository {
     private var session: WebSocketSession? = null

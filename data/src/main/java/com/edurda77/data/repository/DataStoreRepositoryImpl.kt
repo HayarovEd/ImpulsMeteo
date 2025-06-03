@@ -22,9 +22,8 @@ import com.edurda77.domain.utils.convertToLocalDateTime
 import com.edurda77.domain.utils.convertToStringDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class DataStoreRepositoryImpl @Inject constructor(
+class DataStoreRepositoryImpl(
     private val dataStore: DataStore<Preferences>
 ) : DataStoreRepository {
 

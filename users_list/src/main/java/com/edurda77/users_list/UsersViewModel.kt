@@ -14,7 +14,8 @@ import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.edurda77.users_list.mapper.convertToUi
+import com.edurda77.users_list.model.UserUi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,10 +23,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class UsersViewModel @Inject constructor(
+class UsersViewModel(
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
@@ -46,6 +45,7 @@ class UsersViewModel @Inject constructor(
             UsersState()
         )
 
+    private val baseUsers = mutableListOf<UserUi>()
 
     fun onEvent(event: UsersEvent) {
         when (event) {
@@ -147,6 +147,31 @@ class UsersViewModel @Inject constructor(
                 _state.value.copy(
                     selectedDevices = event.user.devices,
                     selectedPermissions = event.user.permissions
+                )
+                    .updateState()
+            }
+
+            is UsersEvent.ExpandUser -> {
+                val newExpandedUser = state.value.users[event.index].copy(
+                    isExpanded = !state.value.users[event.index].isExpanded
+                )
+                val newList = state.value.users.toMutableList()
+                newList[event.index] = newExpandedUser
+                _state.value.copy(
+                    users = newList
+                )
+                    .updateState()
+            }
+
+            is UsersEvent.SearchUser -> {
+                _state.value.copy(
+                    query = event.query,
+                    users = baseUsers.filter {
+                        it.name.contains(
+                            other = event.query,
+                            ignoreCase = true
+                        )
+                    }
                 )
                     .updateState()
             }
@@ -273,9 +298,16 @@ class UsersViewModel @Inject constructor(
             }
 
             is ResultWork.Success -> {
+                baseUsers.clear()
+                baseUsers.addAll(result.data.map { it.convertToUi() })
                 _state.value.copy(
                     isLoading = false,
-                    users = result.data
+                    users = baseUsers.filter {
+                        it.name.contains(
+                            other = state.value.query,
+                            ignoreCase = true
+                        )
+                    }
                 )
                     .updateState()
             }

@@ -1,9 +1,9 @@
 package com.edurda77.domain.usecase
 
 import com.edurda77.domain.repository.WebSocketRepository
-import javax.inject.Inject
 
-class CloseWebsocketUseCase @Inject constructor(
+
+class CloseWebsocketUseCase(
     private val webSocketRepository: WebSocketRepository,
 ) {
     suspend operator fun invoke() {

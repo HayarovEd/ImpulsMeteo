@@ -7,9 +7,9 @@ import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class ReadLocalAuthorizationUseCase @Inject constructor(
+
+class ReadLocalAuthorizationUseCase(
     private val dataStoreRepository: DataStoreRepository
 ) {
     operator fun invoke(

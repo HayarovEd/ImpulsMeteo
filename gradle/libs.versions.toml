@@ -1,36 +1,30 @@
 [versions]
-agp = "8.7.0"
-coilCompose = "3.0.2"
+agp = "8.7.3"
+coilCompose = "3.1.0"
 kmpDateTimePicker = "1.0.5"
-kotlin = "2.0.20"
-coreKtx = "1.13.1"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-kotlinxDatetime = "0.6.1"
-lifecycleRuntimeKtx = "2.8.6"
-activityCompose = "1.9.2"
-composeBom = "2024.09.03"
-firebaseCrashlytics = "19.2.0"
+koinVersion = "4.0.2"
+kotlin = "2.1.0"
+coreKtx = "1.16.0"
+kotlinxDatetime = "0.6.2"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.10.1"
+composeBom = "2025.04.01"
+firebaseCrashlytics = "19.4.2"
 googleGmsGoogleServices = "4.4.2"
-googleFirebaseCrashlytics = "3.0.2"
+googleFirebaseCrashlytics = "3.0.3"
 
-hilt-android = "2.51.1"
-hiltNavigationCompose = "1.2.0"
-datastorePreferences = "1.1.1"
-ktorVersion = "2.3.12"
-materialVersion = "1.7.4"
-roomRuntime = "2.6.1"
-workRuntimeKtx = "2.9.1"
-navigationCompose = "2.8.3"
-javaxVersion = "1"
-kotlinxCoroutinesAndroid = "1.9.0"
+datastorePreferences = "1.1.4"
+ktorVersion = "3.1.1"
+roomRuntime = "2.7.1"
+workRuntimeKtx = "2.10.1"
+navigationCompose = "2.8.9"
+kotlinxCoroutinesAndroid = "1.10.1"
 
 minSdk = "26"
-compileSdk = "34"
-targetSdk = "34"
+compileSdk = "35"
+targetSdk = "35"
 versionCode = "1"
-versionName = "1.0"
+versionName = "1.01"
 
 jvmTarget = "17"
 kotlinCompilerExtensionVersion = "1.5.10"
@@ -48,20 +42,15 @@ namespacechart = "com.edurda77.chart"
 namespaceData = "com.edurda77.data"
 
 appcompat = "1.7.0"
-material = "1.12.0"
-uiTooling = "1.7.3"
+uiTooling = "1.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -70,14 +59,10 @@ androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-android" }
-google-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt-android" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref="navigationCompose"}
 kmp-date-time-picker = { module = "network.chaintech:kmp-date-time-picker", version.ref = "kmpDateTimePicker" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
@@ -88,11 +73,13 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-client-andriod = { module = "io.ktor:ktor-client-android", version.ref = "ktorVersion" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktorVersion" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
-javax-inject = {group = "javax.inject", name = "javax.inject", version.ref = "javaxVersion"}
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinVersion" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinVersion" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinVersion" }
 
 
 [plugins]
@@ -101,9 +88,8 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.0.20-1.0.25" }
+ksp = { id = "com.google.devtools.ksp", version = "2.1.0-1.0.29" }
 

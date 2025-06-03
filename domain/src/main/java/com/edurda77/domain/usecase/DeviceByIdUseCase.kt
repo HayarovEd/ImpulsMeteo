@@ -7,9 +7,9 @@ import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
-class DeviceByIdUseCase @Inject constructor(
+
+class DeviceByIdUseCase(
     private val remoteRepository: RemoteRepository,
     private val localRepository: LocalRepository,
 ) {

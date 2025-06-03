@@ -17,7 +17,6 @@ import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.updateDevices
 import com.edurda77.resources.uikit.asUiText
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,10 +24,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class DevicesViewModel @Inject constructor(
+class DevicesViewModel(
     private val groupedDevicesUseCase: GroupedDevicesUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,

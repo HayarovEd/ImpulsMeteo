@@ -4,9 +4,9 @@ import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import javax.inject.Inject
 
-class DeleteDeviceUseCase @Inject constructor(
+
+class DeleteDeviceUseCase(
     private val remoteRepository: RemoteRepository,
     private val localRepository: LocalRepository,
 ) {

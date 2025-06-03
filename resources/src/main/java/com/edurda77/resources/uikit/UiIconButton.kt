@@ -2,6 +2,7 @@ package com.edurda77.resources.uikit
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,10 +15,14 @@ fun UiIconButton(
     icon: ImageVector,
     enabled: Boolean = true,
     color: Color = MaterialTheme.colorScheme.secondary,
+    buttonColor: Color = Color.Transparent,
     onClick: () -> Unit
 ) {
     IconButton(
         modifier = modifier,
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = buttonColor
+        ),
         enabled = enabled,
         onClick = onClick
     ) {

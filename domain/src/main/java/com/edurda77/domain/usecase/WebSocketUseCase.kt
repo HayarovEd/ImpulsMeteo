@@ -10,9 +10,9 @@ import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.SUBSCRIBE_EVENT
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
-class WebSocketUseCase @Inject constructor(
+
+class WebSocketUseCase(
     private val webSocketRepository: WebSocketRepository,
     private val remoteRepository: RemoteRepository,
 ) {

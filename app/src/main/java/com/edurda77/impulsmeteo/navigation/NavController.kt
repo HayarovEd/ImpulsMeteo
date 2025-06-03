@@ -6,13 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.edurda77.device_detail.DeviceScreen
-import com.edurda77.devices_list.DevicesScreen
-import com.edurda77.directories.DirectoriesScreen
+import com.edurda77.devices_list.DevicesScreenRoot
+import com.edurda77.directories.DirectoriesScreenRoot
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.login_screen.LoginScreen
 import com.edurda77.resources.uikit.UiBottomNavigation
-import com.edurda77.splash.SplashScreen
-import com.edurda77.users_list.UsersListScreen
+import com.edurda77.splash.SplashScreenRoot
+import com.edurda77.users_list.UsersListScreenRoot
 
 
 @Composable
@@ -24,7 +24,7 @@ fun NavController(
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable<NavigationRoute.Splash> {
-            SplashScreen(
+            SplashScreenRoot(
                 configuration = configuration,
                 onGoToListCameras = {
                     navController.navigate(NavigationRoute.Devices)
@@ -43,7 +43,7 @@ fun NavController(
             )
         }
         composable<NavigationRoute.Devices> {
-            DevicesScreen(
+            DevicesScreenRoot(
                 configuration = configuration,
                 onGoToDevice = {
                     navController.navigate(NavigationRoute.Device(it.toString()))
@@ -59,7 +59,7 @@ fun NavController(
             )
         }
         composable<NavigationRoute.Users> {
-            UsersListScreen(
+            UsersListScreenRoot(
                 configuration = configuration,
                 onGoToLogin = {
                     navController.navigate(NavigationRoute.Login)
@@ -72,7 +72,7 @@ fun NavController(
             )
         }
         composable<NavigationRoute.Directory> {
-            DirectoriesScreen(
+            DirectoriesScreenRoot(
                 configuration = configuration,
                 onGoToLogin = {
                     navController.navigate(NavigationRoute.Login)

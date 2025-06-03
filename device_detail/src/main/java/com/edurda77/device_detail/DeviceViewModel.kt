@@ -8,7 +8,6 @@ import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.AddFavoriteUseCase
-import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.HistoryUseCase
@@ -25,7 +24,6 @@ import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.convertToStringDateTime
 import com.edurda77.domain.utils.updateDevice
 import com.edurda77.resources.uikit.asUiText
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,10 +31,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class DeviceViewModel @Inject constructor(
+class DeviceViewModel(
     private val deviceByIdUseCase: DeviceByIdUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
     private val localTokenUseCase: LocalTokenUseCase,
@@ -49,7 +45,6 @@ class DeviceViewModel @Inject constructor(
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val removeFavoriteUseCase: RemoveFavoriteUseCase,
     private val webSocketUseCase: WebSocketUseCase,
-    private val closeWebsocketUseCase: CloseWebsocketUseCase,
     private val historyUseCase: HistoryUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())

@@ -10,9 +10,8 @@ import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class LocalRepositoryImpl @Inject constructor(
+class LocalRepositoryImpl(
     db: MeteoDataBase
 ) : LocalRepository {
     private val dao = db.meteoDao
