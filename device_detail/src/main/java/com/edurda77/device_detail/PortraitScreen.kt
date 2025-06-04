@@ -371,7 +371,6 @@ fun PortraitScreen(
                         }
                     }
                     Spacer(modifier = modifier.height(10.dp))
-                    val expandedDialog = remember { mutableStateOf(false) }
                     LazyVerticalGrid(
                         modifier = modifier
                             .height(configuration.screenHeightDp.dp/2)
@@ -381,6 +380,7 @@ fun PortraitScreen(
                         columns = GridCells.Fixed(2)
                     ) {
                         items(historyParams) { param->
+                            val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier.fillMaxWidth(0.4f),
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -397,9 +397,9 @@ fun PortraitScreen(
                                         onCloseClick = {
                                             expandedDialog.value = false
                                         },
-                                        onUpdateClick = { param ->
+                                        onUpdateClick = { it ->
                                             expandedDialog.value = false
-                                            onUpdateClick(param)
+                                            onUpdateClick(it)
                                         }
                                     )
                                 },
@@ -413,6 +413,7 @@ fun PortraitScreen(
                             )
                         }
                         items(withoutHistoryParams) { param ->
+                            val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier,
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -432,7 +433,7 @@ fun PortraitScreen(
                                         },
                                         onUpdateClick = {
                                             expandedDialog.value = false
-                                            onUpdateClick(param)
+                                            onUpdateClick(it)
                                         }
                                     )
                                 },
