@@ -99,8 +99,8 @@ fun UiTextField(
                 },
                 contentPadding = PaddingValues(vertical = 4.dp, horizontal = 10.dp),
                 colors = colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(),
+                    focusedContainerColor = MaterialTheme.colorScheme.tertiary.copy(),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary.copy(),
                     cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,

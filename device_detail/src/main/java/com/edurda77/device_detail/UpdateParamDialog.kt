@@ -75,27 +75,6 @@ fun UpdateParamDialog(
             }
         )
         Spacer(modifier = modifier.height(5.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Switch(
-                checked = isHidden.value,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color.White
-                ),
-                onCheckedChange = {
-                    isHidden.value = !isHidden.value
-                }
-            )
-            Spacer(modifier = modifier.width(5.dp))
-            Text(
-                modifier = modifier,
-                text = stringResource(id = R.string.hite_parameter),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = Typography.bodyLarge,
-            )
-        }
-        Spacer(modifier = modifier.height(5.dp))
         UiTextField(
             content = selectedUnit.value,
             label = stringResource(id = R.string.units_lower_case),
@@ -132,6 +111,27 @@ fun UpdateParamDialog(
                     },
                 )
             }
+        }
+        Spacer(modifier = modifier.height(5.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Switch(
+                checked = isHidden.value,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White
+                ),
+                onCheckedChange = {
+                    isHidden.value = !isHidden.value
+                }
+            )
+            Spacer(modifier = modifier.width(5.dp))
+            Text(
+                modifier = modifier,
+                text = stringResource(id = R.string.hite_parameter),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                style = Typography.bodyLarge,
+            )
         }
         Spacer(modifier = modifier.height(5.dp))
         Row(
