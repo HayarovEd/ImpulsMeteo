@@ -44,7 +44,7 @@ fun DeviceScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val scope = rememberCoroutineScope()
 
-    val historyParams = state.value.device?.params?.take(TAKED_COUNT) ?: emptyList()
+    val historyParams = state.value.device?.let { if (it.params.size<TAKED_COUNT) it.params else it.params.take(TAKED_COUNT) }?: emptyList()
     val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
 
     WheelDateTimePickerView(

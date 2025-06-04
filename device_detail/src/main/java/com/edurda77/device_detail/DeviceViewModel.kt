@@ -266,14 +266,44 @@ class DeviceViewModel(
 
             is DeviceEvent.WorkWithFavorite -> {
                 viewModelScope.launch {
-                    if (state.value.device?.isFavorite == true) {
-                        removeFavoriteUseCase.invoke(
-                            deviceId = state.value.deviceId,
-                        )
-                    } else {
-                        addFavoriteUseCase.invoke(
-                            deviceId = state.value.deviceId,
-                        )
+                    state.value.device?.let { device->
+                        if (device.isFavorite) {
+                            when (val result = removeFavoriteUseCase.invoke(
+                                deviceId = device.id,
+                                token = state.value.token
+                            )) {
+                                is ResultWork.Error -> {
+                                    _state.value.copy(
+                                        message = result.error.asUiText(),
+                                    )
+                                        .updateState()
+                                }
+                                is ResultWork.Success -> {
+                                    _state.value.copy(
+                                        device = device.copy(isFavorite = false),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                        } else {
+                            when (val result = addFavoriteUseCase.invoke(
+                                deviceId = device.id,
+                                token = state.value.token
+                            )) {
+                                is ResultWork.Error -> {
+                                    _state.value.copy(
+                                        message = result.error.asUiText(),
+                                    )
+                                        .updateState()
+                                }
+                                is ResultWork.Success -> {
+                                    _state.value.copy(
+                                        device = device.copy(isFavorite = true),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                        }
                     }
                 }
             }

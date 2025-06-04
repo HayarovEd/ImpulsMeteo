@@ -1,6 +1,8 @@
 package com.edurda77.device_detail
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -83,6 +85,7 @@ import com.edurda77.resources.uikit.asUiText
 import com.edurda77.resources.uikit.asUiTextParam
 import kotlinx.coroutines.CoroutineScope
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortraitScreen(
@@ -532,12 +535,13 @@ fun PortraitScreen(
                                     )
                                 }
                             }
-                            Spacer(modifier = modifier.height(5.dp))
+                            Spacer(modifier = modifier.height(35.dp))
                             LazyColumn (
                                 modifier = modifier
                                     .height(configuration.screenHeightDp.dp/2)
                                     .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(35.dp)
                             ){
                                 itemsIndexed(historyParams) { index, param ->
                                     if (isLoadingHistory) {
@@ -546,10 +550,16 @@ fun PortraitScreen(
                                         )
                                     } else {
                                         if (histories.isNotEmpty()) {
-                                            Box(
+                                            Column (
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
+                                                Text(
+                                                    modifier = modifier,
+                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    style = Typography.titleLarge,
+                                                )
                                                 SecondLineChart(
                                                     modifier = modifier
                                                         .fillMaxWidth()
@@ -561,12 +571,6 @@ fun PortraitScreen(
                                                     textColor = MaterialTheme.colorScheme.onBackground,
                                                     maxValue = stringResource(R.string.max_value),
                                                     minValue = stringResource(R.string.min_value)
-                                                )
-                                                Text(
-                                                    modifier = modifier.align(Alignment.TopStart),
-                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    style = Typography.titleLarge,
                                                 )
                                             }
                                         } else {

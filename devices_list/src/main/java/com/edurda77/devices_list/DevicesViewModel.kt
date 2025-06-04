@@ -50,12 +50,6 @@ class DevicesViewModel(
             DevicesState()
         )
 
-
-    /*init {
-        loadLocalData()
-        loadUpdateData()
-    }*/
-
     fun onEvent(event: DevicesEvent) {
         when (event) {
             DevicesEvent.Logoff -> {
@@ -141,15 +135,47 @@ class DevicesViewModel(
             }
 
             is DevicesEvent.WorkWithFavorite -> {
+                _state.value.copy(
+                    isLoading = true,
+                )
+                    .updateState()
                 viewModelScope.launch {
                     if (event.device.isFavorite) {
-                        removeFavoriteUseCase.invoke(
+                        when (val result = removeFavoriteUseCase.invoke(
                             deviceId = event.device.id,
-                        )
+                            token = state.value.token
+                        )) {
+                            is ResultWork.Error -> {
+                                _state.value.copy(
+                                    message = result.error.asUiText(),
+                                )
+                                    .updateState()
+                            }
+                            is ResultWork.Success -> {
+                                loadDevices(
+                                    isRefresh = true,
+                                    query = state.value.query
+                                )
+                            }
+                        }
                     } else {
-                        addFavoriteUseCase.invoke(
+                        when (val result = addFavoriteUseCase.invoke(
                             deviceId = event.device.id,
-                        )
+                            token = state.value.token
+                        )) {
+                            is ResultWork.Error -> {
+                                _state.value.copy(
+                                    message = result.error.asUiText(),
+                                )
+                                    .updateState()
+                            }
+                            is ResultWork.Success -> {
+                                loadDevices(
+                                    isRefresh = true,
+                                    query = state.value.query
+                                )
+                            }
+                        }
                     }
                 }
             }
