@@ -16,9 +16,7 @@ fun DataError.asUiText(): UiText {
             R.string.server_error
         )
 
-        DataError.Network.UNKNOWN -> UiText.StringResource(
-            R.string.unknown_error
-        )
+        DataError.Network.UNKNOWN -> UiText.DynamicString("")
 
         DataError.EmailError.EMAIL_BLANK -> UiText.StringResource(
             R.string.email_empty
