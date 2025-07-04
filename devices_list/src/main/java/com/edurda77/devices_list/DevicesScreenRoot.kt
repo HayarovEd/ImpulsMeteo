@@ -1,6 +1,10 @@
 package com.edurda77.devices_list
 
+import android.Manifest
 import android.content.res.Configuration
+import android.os.Build
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -27,6 +31,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -37,6 +43,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -95,6 +103,7 @@ fun DevicesScreen(
 ) {
     val localDensity = LocalDensity.current
     val screenWidth = configuration.screenWidthDp.dp
+    val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
     val pagerState =
         rememberPagerState(
@@ -112,6 +121,13 @@ fun DevicesScreen(
             }
         }
     }
+
+    LaunchedEffect(state.isShowSearch) {
+        if (state.isShowSearch) {
+            focusRequester.requestFocus()
+        }
+    }
+
     val isShowDialogLogOff = remember { mutableStateOf(false) }
 
     if (isShowDialogLogOff.value) {
@@ -237,11 +253,37 @@ fun DevicesScreen(
                             exit = slideOutVertically() + shrinkVertically() + fadeOut()
                         ) {
                             UiTextField(
+                                modifier = modifier.focusRequester(focusRequester),
                                 content = state.query,
                                 label = stringResource(id = R.string.search),
                                 onClickContent = {
                                     onEvent(DevicesEvent.OnSearch(it))
                                 })
+                        }
+                        if (state.enableUpdate) {
+                            IconButton(
+                                enabled = !state.isUpdating,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                ),
+                                onClick = { onEvent(DevicesEvent.onUpdateApp) }
+                            ) {
+                                if (state.isUpdating) {
+                                    Text(
+                                        modifier = modifier,
+                                        text = "${state.percentUpdate}%",
+                                        style = Typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                } else  {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.outline_update_24),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+
                         }
                         UiIconButton(
                             modifier = modifierByVisibilitySearch,

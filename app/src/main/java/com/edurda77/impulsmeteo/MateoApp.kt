@@ -8,6 +8,7 @@ import com.edurda77.impulsmeteo.di.useCaseKoiModule
 import com.edurda77.impulsmeteo.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 
 class MateoApp : Application() {
@@ -19,6 +20,7 @@ class MateoApp : Application() {
             modules(
                 baseModule, repoModule, useCaseKoiModule, viewModelModule, downloadUpdateModule
             )
+            workManagerFactory()
         }
     }
 }
