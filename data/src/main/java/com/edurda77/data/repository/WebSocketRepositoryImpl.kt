@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class WebSocketRepositoryImpl(
@@ -69,7 +68,7 @@ class WebSocketRepositoryImpl(
                     }
                 }
         }.catch {
-            emit(ResultWork.Error(DataError.WebSocketError.NOT_CONNECT))
+            //emit(ResultWork.Error(DataError.WebSocketError.NOT_CONNECT))
         }
     }
 

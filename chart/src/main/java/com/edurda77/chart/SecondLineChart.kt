@@ -214,7 +214,7 @@ fun SecondLineChart(
             ),
             topLeft = Offset(
                 x = size.width * 0.7f,
-                y = -spacing,
+                y = 0f,
             ),
             color = textColor
         )
@@ -235,7 +235,7 @@ fun SecondLineChart(
                         ),
                         topLeft = Offset(
                             x = size.width / 2,
-                            y = -spacing,
+                            y = 0f,
                         ),
                         color = textColor
                     )

@@ -1,5 +1,6 @@
 package com.edurda77.device_detail
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,15 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
@@ -43,7 +40,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -81,8 +77,8 @@ import com.edurda77.resources.uikit.UiText
 import com.edurda77.resources.uikit.asUiImageParam
 import com.edurda77.resources.uikit.asUiText
 import com.edurda77.resources.uikit.asUiTextParam
-import kotlinx.coroutines.CoroutineScope
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PortraitScreen(
@@ -91,10 +87,8 @@ fun PortraitScreen(
     message: UiText?,
     dateFrom: String,
     dateTo: String,
-    isOpenFilter: Boolean,
     openFromDateDialog: () -> Unit,
     openToDateDialog: () -> Unit,
-    openFilter: (Boolean) -> Unit,
     isLoading: Boolean,
     device: SingleDevice?,
     currentLimit: Int,
@@ -121,8 +115,6 @@ fun PortraitScreen(
     histories: List<List<ElementHistory>>,
     screenWidth: Dp,
     units: List<UnitMeteo>,
-    historyRowState: LazyListState,
-    scope: CoroutineScope,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -326,7 +318,7 @@ fun PortraitScreen(
                         .padding(innerPaddings)
                         .navigationBarsPadding()
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
+                    //    .verticalScroll(rememberScrollState())
                         .padding(horizontal = 15.dp),
                 ) {
                     Row(
@@ -368,16 +360,16 @@ fun PortraitScreen(
                         }
                     }
                     Spacer(modifier = modifier.height(10.dp))
-                    val expandedDialog = remember { mutableStateOf(false) }
                     LazyVerticalGrid(
                         modifier = modifier
-                            .height(configuration.screenHeightDp.dp/2)
+                            .height(configuration.screenHeightDp.dp/3)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(15.dp),
                         verticalArrangement = Arrangement.spacedBy(15.dp),
                         columns = GridCells.Fixed(2)
                     ) {
-                        items(historyParams) { param->
+                        items(historyParams+withoutHistoryParams) { param->
+                            val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier.fillMaxWidth(0.4f),
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -394,9 +386,9 @@ fun PortraitScreen(
                                         onCloseClick = {
                                             expandedDialog.value = false
                                         },
-                                        onUpdateClick = { param ->
+                                        onUpdateClick = {
                                             expandedDialog.value = false
-                                            onUpdateClick(param)
+                                            onUpdateClick(it)
                                         }
                                     )
                                 },
@@ -409,7 +401,8 @@ fun PortraitScreen(
                                 }
                             )
                         }
-                        items(withoutHistoryParams) { param ->
+                        /*items(withoutHistoryParams) { param ->
+                            val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier,
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -429,7 +422,7 @@ fun PortraitScreen(
                                         },
                                         onUpdateClick = {
                                             expandedDialog.value = false
-                                            onUpdateClick(param)
+                                            onUpdateClick(it)
                                         }
                                     )
                                 },
@@ -440,7 +433,7 @@ fun PortraitScreen(
                                     expandedDialog.value = true
                                 }
                             )
-                        }
+                        }*/
                     }
                     Spacer(modifier = modifier.height(10.dp))
                     Card (
@@ -532,12 +525,13 @@ fun PortraitScreen(
                                     )
                                 }
                             }
-                            Spacer(modifier = modifier.height(5.dp))
+                            Spacer(modifier = modifier.height(35.dp))
                             LazyColumn (
                                 modifier = modifier
                                     .height(configuration.screenHeightDp.dp/2)
                                     .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(35.dp)
                             ){
                                 itemsIndexed(historyParams) { index, param ->
                                     if (isLoadingHistory) {
@@ -546,10 +540,16 @@ fun PortraitScreen(
                                         )
                                     } else {
                                         if (histories.isNotEmpty()) {
-                                            Box(
+                                            Column (
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
+                                                Text(
+                                                    modifier = modifier,
+                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    style = Typography.titleLarge,
+                                                )
                                                 SecondLineChart(
                                                     modifier = modifier
                                                         .fillMaxWidth()
@@ -561,12 +561,6 @@ fun PortraitScreen(
                                                     textColor = MaterialTheme.colorScheme.onBackground,
                                                     maxValue = stringResource(R.string.max_value),
                                                     minValue = stringResource(R.string.min_value)
-                                                )
-                                                Text(
-                                                    modifier = modifier.align(Alignment.TopStart),
-                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    style = Typography.titleLarge,
                                                 )
                                             }
                                         } else {
@@ -625,7 +619,6 @@ private fun PortraitScreenView() {
             onUpdateClick = {},
             onClickChangeFavorite = {},
             onClickRequestHistory = {},
-            openFilter = {},
             onClickLimit = {},
             onBackClick = {},
             message = DataError.DataStore.ERROR_READ_DATA.asUiText(),
@@ -633,7 +626,6 @@ private fun PortraitScreenView() {
             dateTo = "21.04.2025",
             isLoading = false,
             isEnableEdit = true,
-            isOpenFilter = false,
             openFromDateDialog = {},
             openToDateDialog = {},
             device = SingleDevice(
@@ -773,8 +765,6 @@ private fun PortraitScreenView() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
-            historyRowState = rememberLazyListState(),
-            scope = rememberCoroutineScope()
         )
     }
 }
@@ -815,7 +805,6 @@ private fun DirectoriesScreenView2() {
             onUpdateClick = {},
             onClickChangeFavorite = {},
             onClickRequestHistory = {},
-            openFilter = {},
             onClickLimit = {},
             onBackClick = {},
             message = DataError.DataStore.ERROR_READ_DATA.asUiText(),
@@ -823,7 +812,6 @@ private fun DirectoriesScreenView2() {
             dateTo = "21.04.2025",
             isLoading = false,
             isEnableEdit = true,
-            isOpenFilter = false,
             openFromDateDialog = {},
             openToDateDialog = {},
             device = SingleDevice(
@@ -963,8 +951,6 @@ private fun DirectoriesScreenView2() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
-            historyRowState = rememberLazyListState(),
-            scope = rememberCoroutineScope()
         )
     }
 }

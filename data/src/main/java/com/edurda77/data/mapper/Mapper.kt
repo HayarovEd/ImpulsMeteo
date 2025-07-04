@@ -5,6 +5,7 @@ import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.devices.ParamDto
+import com.edurda77.data.remote.favorite.FavoriteDto
 import com.edurda77.data.remote.group.DevicesGropusDto
 import com.edurda77.data.remote.history.ResponseHistory
 import com.edurda77.data.remote.permission.PermissionsDto
@@ -20,6 +21,7 @@ import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.Favorite
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationDevice
@@ -276,4 +278,9 @@ fun ResponseHistory.convertToElementsHistory(): List<List<ElementHistory>> {
         }
     }
 }
+
+fun FavoriteDto.convertToFavorite(): Favorite {
+    return Favorite(deviceId = this.deviceId)
+}
+
 

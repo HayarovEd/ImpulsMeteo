@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,9 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -363,15 +361,13 @@ fun LandscapeScreen(
                     }
                     Spacer(modifier = modifier.height(10.dp))
                     val expandedDialog = remember { mutableStateOf(false) }
-                    LazyVerticalGrid(
+                    LazyRow (
                         modifier = modifier
-                            .height(configuration.screenHeightDp.dp/5)
+                            .height(configuration.screenHeightDp.dp/8)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(15.dp),
-                        verticalArrangement = Arrangement.spacedBy(15.dp),
-                        columns = GridCells.Fixed(6)
                     ) {
-                        items(historyParams) { param->
+                        items(historyParams+withoutHistoryParams) { param->
                             UiRowDeviceValueWithClick(
                                 modifier = modifier,
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -403,7 +399,7 @@ fun LandscapeScreen(
                                 }
                             )
                         }
-                        items(withoutHistoryParams) { param ->
+                        /*items(withoutHistoryParams) { param ->
                             UiRowDeviceValueWithClick(
                                 modifier = modifier,
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -434,7 +430,7 @@ fun LandscapeScreen(
                                     expandedDialog.value = true
                                 }
                             )
-                        }
+                        }*/
                     }
                     Spacer(modifier = modifier.height(10.dp))
                     Card (
@@ -539,14 +535,20 @@ fun LandscapeScreen(
                                         )
                                     } else {
                                         if (histories.isNotEmpty()) {
-                                            Box(
+                                            Column (
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
+                                                Text(
+                                                    modifier = modifier,
+                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                    style = Typography.titleLarge,
+                                                )
                                                 SecondLineChart(
                                                     modifier = modifier
                                                         .fillMaxWidth()
-                                                        .aspectRatio(16 / 9f)
+                                                        .height(300.dp)
                                                         .padding(5.dp),
                                                     infos = histories[index],
                                                     unit = param.idUnit.asUiTextParam(),
@@ -554,12 +556,6 @@ fun LandscapeScreen(
                                                     textColor = MaterialTheme.colorScheme.onBackground,
                                                     maxValue = stringResource(R.string.max_value),
                                                     minValue = stringResource(R.string.min_value)
-                                                )
-                                                Text(
-                                                    modifier = modifier.align(Alignment.TopStart),
-                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    style = Typography.titleLarge,
                                                 )
                                             }
                                         } else {

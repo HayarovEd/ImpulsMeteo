@@ -25,7 +25,7 @@ fun UiBaseScaffold(
     val snakeBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     LaunchedEffect(key1 = message) {
-        if (message != null) {
+        if (message != null && message.asString(context).isNotBlank()) {
             snakeBarHostState.showSnackbar(
                 message = message.asString(context),
                 duration = SnackbarDuration.Short
