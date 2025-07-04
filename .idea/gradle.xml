@@ -17,13 +17,13 @@
             <option value="$PROJECT_DIR$/devices_list" />
             <option value="$PROJECT_DIR$/directories" />
             <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/download_install" />
             <option value="$PROJECT_DIR$/login_screen" />
             <option value="$PROJECT_DIR$/resources" />
             <option value="$PROJECT_DIR$/splash" />
             <option value="$PROJECT_DIR$/users_list" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

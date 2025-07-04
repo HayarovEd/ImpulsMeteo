@@ -2,6 +2,7 @@ package com.edurda77.impulsmeteo
 
 import android.app.Application
 import com.edurda77.impulsmeteo.di.baseModule
+import com.edurda77.impulsmeteo.di.downloadUpdateModule
 import com.edurda77.impulsmeteo.di.repoModule
 import com.edurda77.impulsmeteo.di.useCaseKoiModule
 import com.edurda77.impulsmeteo.di.viewModelModule
@@ -16,7 +17,7 @@ class MateoApp : Application() {
             androidLogger()
             androidContext(this@MateoApp)
             modules(
-                baseModule, repoModule, useCaseKoiModule, viewModelModule
+                baseModule, repoModule, useCaseKoiModule, viewModelModule, downloadUpdateModule
             )
         }
     }

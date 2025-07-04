@@ -21,4 +21,5 @@ sealed class DevicesEvent {
     data object OnCloseWebSocket : DevicesEvent()
     class WorkWithFavorite(val device: Device) : DevicesEvent()
     class OnDeleteDevice(val device: Device) : DevicesEvent()
+    data object onUpdateApp:DevicesEvent()
 }

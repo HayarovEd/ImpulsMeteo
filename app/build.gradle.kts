@@ -31,18 +31,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
-    }
+
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
-    }
+
     packaging {
         resources {
             excludes += libs.versions.excludes.get()
@@ -62,6 +58,7 @@ dependencies {
     implementation(project(":directories"))
     implementation(project(":device_detail"))
     implementation(project(":chart"))
+    implementation(project(":download_install"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -81,6 +78,7 @@ dependencies {
     //Koin
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.workmanager)
 
 
 
