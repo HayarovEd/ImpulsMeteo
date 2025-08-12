@@ -212,7 +212,20 @@ class DevicesViewModel(
                 }
             }
 
-            DevicesEvent.onUpdateApp -> updateApk()
+            DevicesEvent.UpdateApp -> updateApk()
+            DevicesEvent.SortDevicesByStatus -> {
+                viewModelScope.launch {
+                    _state.value.copy(
+                        isSorted = !state.value.isSorted,
+                    )
+                        .updateState()
+                    delay(300)
+                    loadDevices(
+                        isRefresh = false,
+                        query = state.value.query,
+                    )
+                }
+            }
         }
     }
 
@@ -301,12 +314,13 @@ class DevicesViewModel(
 
     private suspend fun loadDevices(
         isRefresh: Boolean,
-        query: String
+        query: String,
     ) {
         when (val result = groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = query,
-            isRefresh = isRefresh
+            isRefresh = isRefresh,
+            isSorted = state.value.isSorted,
         )) {
             is ResultWork.Error -> {
                 _state.value.copy(

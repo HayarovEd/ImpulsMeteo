@@ -22,4 +22,5 @@ data class DevicesState(
     val isUpdating: Boolean = false,
     val percentUpdate: Int = 0,
     val release: LastVersionApp? = null,
+    val isSorted: Boolean = false,
 )

@@ -41,16 +41,20 @@ fun convertToMapGroupedDevices(
 fun filterGroupedDevices(
     devices: Map<GroupDevices, List<Device>>,
     query: String,
+    isSorted: Boolean,
 ): Map<GroupDevices, List<Device>> {
     return devices
         .mapValues { (_, current) ->
-            current.filter {
+            val searched = current.filter {
                 it.name
                     .contains(
                         other = query,
                         ignoreCase = true
                     )
             }
+            if (isSorted) {
+                searched.sortedByDescending { it.status }
+            } else searched
         }
 }
 

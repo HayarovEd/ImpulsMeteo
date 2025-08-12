@@ -1,10 +1,6 @@
 package com.edurda77.devices_list
 
-import android.Manifest
 import android.content.res.Configuration
-import android.os.Build
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -266,7 +262,7 @@ fun DevicesScreen(
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer
                                 ),
-                                onClick = { onEvent(DevicesEvent.onUpdateApp) }
+                                onClick = { onEvent(DevicesEvent.UpdateApp) }
                             ) {
                                 if (state.isUpdating) {
                                     Text(
