@@ -200,7 +200,7 @@ fun DevicesScreen(
                             }
                         )
                         DevicesSelectorGroup(
-                            modifier = modifier.weight(5f),
+                            modifier = modifier.weight(4f),
                             listState = listState,
                             devices = state.devices,
                             numberSelectedGroup = state.numberSelectedGroup,
@@ -210,6 +210,11 @@ fun DevicesScreen(
                             onClick = {
                                 DevicesEvent.SelectGroup(it)
                             }
+                        )
+                        UiIconButton(
+                            modifier = modifierByVisibilitySearch,
+                            icon = ImageVector.vectorResource(id = R.drawable.outline_arrows_outward_24),
+                            onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
                         )
                         UiIconButton(
                             modifier = modifierByVisibilitySearch,
@@ -281,6 +286,12 @@ fun DevicesScreen(
                             }
 
                         }
+                        UiIconButton(
+                            modifier = modifierByVisibilitySearch,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            icon = ImageVector.vectorResource(id = R.drawable.outline_arrows_outward_24),
+                            onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
+                        )
                         UiIconButton(
                             modifier = modifierByVisibilitySearch,
                             color = MaterialTheme.colorScheme.onBackground,
@@ -363,7 +374,10 @@ fun DevicesScreen(
                             verticalItemSpacing = 5.dp,
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            items(currentDevices) { device ->
+                            items(items = currentDevices,
+                                key = {
+                                    it.id
+                                }) { device ->
                                 ItemDevice(
                                     modifier = modifier,
                                     device = device,
