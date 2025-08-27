@@ -21,10 +21,10 @@ navigationCompose = "2.9.1"
 kotlinxCoroutinesAndroid = "1.10.2"
 
 minSdk = "26"
-compileSdk = "35"
-targetSdk = "35"
+compileSdk = "36"
+targetSdk = "36"
 versionCode = "1"
-versionName = "1.03"
+versionName = "1.04"
 
 jvmTarget = "17"
 kotlinCompilerExtensionVersion = "1.5.10"
