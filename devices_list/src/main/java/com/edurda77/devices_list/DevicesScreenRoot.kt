@@ -88,7 +88,6 @@ fun DevicesScreen(
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DevicesEvent) -> Unit
 ) {
-    val localDensity = LocalDensity.current
     val screenWidth = configuration.screenWidthDp.dp
     // val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
@@ -331,17 +330,17 @@ fun DevicesScreen(
                                 onEvent(DevicesEvent.OnSearch(""))
                             }
                         )
-                        UiTextField(
+                        if (!state.isShowSearch) {
+                            Spacer(modifier = modifier.weight(1f))
+                        } else UiTextField(
                             modifier = modifier.weight(1f),
                             // modifier = modifier.focusRequester(focusRequester),
                             content = state.query,
                             label = stringResource(id = R.string.search),
                             onClickContent = {
                                 onEvent(DevicesEvent.OnSearch(it))
-                            })
-                        if (!state.isShowSearch) {
-                            Spacer(modifier = modifier.weight(1f))
-                        }
+                            }
+                        )
                         if (state.enableUpdate) {
                             IconButton(
                                 enabled = !state.isUpdating,
