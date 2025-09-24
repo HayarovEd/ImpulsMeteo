@@ -23,4 +23,10 @@ data class DevicesState(
     val percentUpdate: Int = 0,
     val release: LastVersionApp? = null,
     val isSorted: Boolean = false,
-)
+) {
+    val nonHiddenDevices = devices.mapValues { (_, devices) ->
+        devices.map { device ->
+            device.copy(params = device.params.filter { !it.isHidden })
+        }
+    }
+}
