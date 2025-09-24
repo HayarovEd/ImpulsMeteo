@@ -1,30 +1,30 @@
 [versions]
-agp = "8.7.3"
-coilCompose = "3.1.0"
-kmpDateTimePicker = "1.0.5"
-koinVersion = "4.0.2"
-kotlin = "2.1.0"
+agp = "8.11.0"
+coilCompose = "3.2.0"
+kmpDateTimePicker = "1.0.9"
+koinVersion = "4.1.0"
+kotlin = "2.2.0"
 coreKtx = "1.16.0"
 kotlinxDatetime = "0.6.2"
-lifecycleRuntimeKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.04.01"
-firebaseCrashlytics = "19.4.2"
-googleGmsGoogleServices = "4.4.2"
-googleFirebaseCrashlytics = "3.0.3"
+composeBom = "2025.06.01"
+firebaseCrashlytics = "19.4.4"
+googleGmsGoogleServices = "4.4.3"
+googleFirebaseCrashlytics = "3.0.4"
 
-datastorePreferences = "1.1.4"
+datastorePreferences = "1.1.7"
 ktorVersion = "3.1.1"
-roomRuntime = "2.7.1"
-workRuntimeKtx = "2.10.1"
-navigationCompose = "2.8.9"
-kotlinxCoroutinesAndroid = "1.10.1"
+roomRuntime = "2.7.2"
+workRuntimeKtx = "2.10.2"
+navigationCompose = "2.9.1"
+kotlinxCoroutinesAndroid = "1.10.2"
 
 minSdk = "26"
-compileSdk = "35"
-targetSdk = "35"
+compileSdk = "36"
+targetSdk = "36"
 versionCode = "1"
-versionName = "1.02"
+versionName = "1.04"
 
 jvmTarget = "17"
 kotlinCompilerExtensionVersion = "1.5.10"
@@ -41,8 +41,8 @@ namespaceDEviceDetailScreen = "com.edurda77.device_detail"
 namespacechart = "com.edurda77.chart"
 namespaceData = "com.edurda77.data"
 
-appcompat = "1.7.0"
-uiTooling = "1.8.0"
+appcompat = "1.7.1"
+uiTooling = "1.8.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -80,6 +80,7 @@ ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref =
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinVersion" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinVersion" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinVersion" }
+koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koinVersion" }
 
 
 [plugins]
@@ -91,5 +92,5 @@ google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.1.0-1.0.29" }
+ksp = { id = "com.google.devtools.ksp", version = "2.2.0-2.0.2" }
 

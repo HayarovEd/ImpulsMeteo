@@ -4,6 +4,7 @@ package com.edurda77.devices_list
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.download_install.model.LastVersionApp
 import com.edurda77.resources.uikit.UiText
 
 data class DevicesState(
@@ -17,4 +18,9 @@ data class DevicesState(
     val isShowSearch: Boolean = false,
     val selectedGroups: List<GroupDevices> = emptyList(),
     val groups: List<GroupDevices> = emptyList(),
+    val enableUpdate: Boolean = false,
+    val isUpdating: Boolean = false,
+    val percentUpdate: Int = 0,
+    val release: LastVersionApp? = null,
+    val isSorted: Boolean = false,
 )

@@ -1,13 +1,6 @@
 package com.edurda77.devices_list
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +20,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -93,8 +88,8 @@ fun DevicesScreen(
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DevicesEvent) -> Unit
 ) {
-    val localDensity = LocalDensity.current
     val screenWidth = configuration.screenWidthDp.dp
+    // val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
     val pagerState =
         rememberPagerState(
@@ -112,6 +107,13 @@ fun DevicesScreen(
             }
         }
     }
+    /*
+        LaunchedEffect(state.isShowSearch) {
+            if (state.isShowSearch) {
+                focusRequester.requestFocus()
+            }
+        }*/
+
     val isShowDialogLogOff = remember { mutableStateOf(false) }
 
     if (isShowDialogLogOff.value) {
@@ -168,53 +170,157 @@ fun DevicesScreen(
                     .padding(horizontal = 15.dp)
                     .fillMaxWidth(),
             ) {
-                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && !state.isShowSearch) {
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = if (state.isShowSearch) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
-                    ) {
-                        val modifierByVisibilitySearch =
-                            if (state.isShowSearch) modifier.weight(1f) else modifier
-                        UiIconButton(
-                            modifier = modifierByVisibilitySearch,
-                            icon = if (state.isShowSearch) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
-                                id = R.drawable.baseline_search_24
-                            ),
-                            onClick = {
-                                onEvent(DevicesEvent.ShowSearchField)
-                                onEvent(DevicesEvent.OnSearch(""))
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    if (!state.isShowSearch) {
+                        Row(
+                            modifier = modifier
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            UiIconButton(
+                                //    modifier = modifierByVisibilitySearch,
+                                icon = ImageVector.vectorResource(
+                                    id = R.drawable.baseline_search_24
+                                ),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                onClick = {
+                                    onEvent(DevicesEvent.ShowSearchField)
+                                    onEvent(DevicesEvent.OnSearch(""))
+                                }
+                            )
+                            DevicesSelectorGroup(
+                                modifier = modifier.weight(1f),
+                                listState = listState,
+                                devices = state.devices,
+                                numberSelectedGroup = state.numberSelectedGroup,
+                                pagerState = pagerState,
+                                scope = scope,
+                                screenWidth = screenWidth,
+                                onClick = {
+                                    DevicesEvent.SelectGroup(it)
+                                }
+                            )
+                            if (state.enableUpdate) {
+                                IconButton(
+                                    enabled = !state.isUpdating,
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                                    ),
+                                    onClick = { onEvent(DevicesEvent.UpdateApp) }
+                                ) {
+                                    if (state.isUpdating) {
+                                        Text(
+                                            modifier = modifier,
+                                            text = "${state.percentUpdate}%",
+                                            style = Typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.outline_update_24),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
+
                             }
-                        )
+                            UiIconButton(
+                                // modifier = modifierByVisibilitySearch,
+                                icon = ImageVector.vectorResource(id = R.drawable.outline_sort_24),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
+                            )
+                            UiIconButton(
+                                //  modifier = modifierByVisibilitySearch,
+                                icon = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                onClick = { isShowDialogLogOff.value = true }
+                            )
+                        }
+                    } else {
+                        Row(
+                            modifier = modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            UiIconButton(
+                                //modifier = modifierByVisibilitySearch,
+                                icon = ImageVector.vectorResource(id = R.drawable.baseline_search_off_24),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                onClick = {
+                                    onEvent(DevicesEvent.ShowSearchField)
+                                    onEvent(DevicesEvent.OnSearch(""))
+                                }
+                            )
+                            UiTextField(
+                                modifier = modifier.weight(1f),
+                                // modifier = modifier.focusRequester(focusRequester),
+                                content = state.query,
+                                label = stringResource(id = R.string.search),
+                                onClickContent = {
+                                    onEvent(DevicesEvent.OnSearch(it))
+                                })
+                            if (state.enableUpdate) {
+                                IconButton(
+                                    enabled = !state.isUpdating,
+                                    colors = IconButtonDefaults.iconButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                                    ),
+                                    onClick = { onEvent(DevicesEvent.UpdateApp) }
+                                ) {
+                                    if (state.isUpdating) {
+                                        Text(
+                                            modifier = modifier,
+                                            text = "${state.percentUpdate}%",
+                                            style = Typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(R.drawable.outline_update_24),
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
+
+                            }
+                            UiIconButton(
+                                //modifier = modifierByVisibilitySearch,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                icon = ImageVector.vectorResource(id = R.drawable.outline_sort_24),
+                                onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
+                            )
+                            UiIconButton(
+                                // modifier = modifierByVisibilitySearch,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                icon = ImageVector.vectorResource(id = R.drawable.logout),
+                                onClick = { isShowDialogLogOff.value = true }
+                            )
+                        }
+                        Spacer(modifier = modifier.height(10.dp))
                         DevicesSelectorGroup(
-                            modifier = modifier.weight(5f),
                             listState = listState,
                             devices = state.devices,
                             numberSelectedGroup = state.numberSelectedGroup,
-                            pagerState = pagerState,
-                            scope = scope,
-                            screenWidth = screenWidth,
                             onClick = {
                                 DevicesEvent.SelectGroup(it)
-                            }
-                        )
-                        UiIconButton(
-                            modifier = modifierByVisibilitySearch,
-                            icon = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
-                            onClick = { isShowDialogLogOff.value = true }
+                            },
+                            scope = scope,
+                            pagerState = pagerState,
+                            screenWidth = screenWidth,
                         )
                     }
                 } else {
                     Row(
                         modifier = modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = if (state.isShowSearch) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
+                        //  horizontalArrangement = if (state.isShowSearch) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
                     ) {
-                        val modifierByVisibilitySearch =
-                            if (state.isShowSearch) modifier.weight(1f) else modifier
+                        /* val modifierByVisibilitySearch =
+                             if (state.isShowSearch) modifier.weight(1f) else modifier*/
                         UiIconButton(
-                            modifier = modifierByVisibilitySearch,
+                            //modifier = modifierByVisibilitySearch,
                             icon = if (state.isShowSearch) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
                                 id = R.drawable.baseline_search_24
                             ),
@@ -224,27 +330,50 @@ fun DevicesScreen(
                                 onEvent(DevicesEvent.OnSearch(""))
                             }
                         )
-                        AnimatedVisibility(
-                            modifier = modifier.weight(7f),
-                            visible = state.isShowSearch,
-                            enter = slideInVertically {
-                                with(localDensity) { -40.dp.roundToPx() }
-                            } + expandVertically(
-                                expandFrom = Alignment.Top
-                            ) + fadeIn(
-                                initialAlpha = 0.3f
-                            ),
-                            exit = slideOutVertically() + shrinkVertically() + fadeOut()
-                        ) {
-                            UiTextField(
-                                content = state.query,
-                                label = stringResource(id = R.string.search),
-                                onClickContent = {
-                                    onEvent(DevicesEvent.OnSearch(it))
-                                })
+                        if (!state.isShowSearch) {
+                            Spacer(modifier = modifier.weight(1f))
+                        } else UiTextField(
+                            modifier = modifier.weight(1f),
+                            // modifier = modifier.focusRequester(focusRequester),
+                            content = state.query,
+                            label = stringResource(id = R.string.search),
+                            onClickContent = {
+                                onEvent(DevicesEvent.OnSearch(it))
+                            }
+                        )
+                        if (state.enableUpdate) {
+                            IconButton(
+                                enabled = !state.isUpdating,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                ),
+                                onClick = { onEvent(DevicesEvent.UpdateApp) }
+                            ) {
+                                if (state.isUpdating) {
+                                    Text(
+                                        modifier = modifier,
+                                        text = "${state.percentUpdate}%",
+                                        style = Typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.outline_update_24),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+
                         }
                         UiIconButton(
-                            modifier = modifierByVisibilitySearch,
+                            //modifier = modifierByVisibilitySearch,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            icon = ImageVector.vectorResource(id = R.drawable.outline_sort_24),
+                            onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
+                        )
+                        UiIconButton(
+                            // modifier = modifierByVisibilitySearch,
                             color = MaterialTheme.colorScheme.onBackground,
                             icon = ImageVector.vectorResource(id = R.drawable.logout),
                             onClick = { isShowDialogLogOff.value = true }
@@ -325,7 +454,11 @@ fun DevicesScreen(
                             verticalItemSpacing = 5.dp,
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
-                            items(currentDevices) { device ->
+                            items(
+                                items = currentDevices,
+                                key = {
+                                    it.id
+                                }) { device ->
                                 ItemDevice(
                                     modifier = modifier,
                                     device = device,

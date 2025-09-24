@@ -25,18 +25,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = libs.versions.jvmTarget.get()
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
 }
 
@@ -44,6 +38,7 @@ dependencies {
 
     implementation(project(":resources"))
     implementation(project(":domain"))
+    implementation(project(":download_install"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
