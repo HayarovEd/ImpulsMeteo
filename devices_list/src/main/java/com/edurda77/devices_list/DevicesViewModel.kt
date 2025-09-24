@@ -1,5 +1,6 @@
 package com.edurda77.devices_list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.usecase.AddDeviceUseCase
@@ -16,6 +17,11 @@ import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.updateDevices
+import com.edurda77.download_install.refresher.Refresher
+import com.edurda77.download_install.utils.APK_EXT
+import com.edurda77.download_install.utils.DownloadStatus
+import com.edurda77.download_install.utils.ResultDownloadWork
+import com.edurda77.download_install.utils.asUiResultText
 import com.edurda77.resources.uikit.asUiText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +30,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+const val DOWNLOAD_VERSION_URL =
+    "https://apps.kvadroks.ru/api/links/fd383935-944f-4a81-bb06-d31da0554d4a/version"
+
+const val DOWNLOAD_FILE_URL =
+    "https://apps.kvadroks.ru/api/links/fd383935-944f-4a81-bb06-d31da0554d4a/file"
 
 class DevicesViewModel(
     private val groupedDevicesUseCase: GroupedDevicesUseCase,
@@ -37,12 +49,14 @@ class DevicesViewModel(
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val removeFavoriteUseCase: RemoveFavoriteUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
+    private val refresher: Refresher,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state
         .onStart {
             loadLocalData()
             loadUpdateData()
+            checkEnableUpdates()
         }
         .stateIn(
             viewModelScope,
@@ -197,6 +211,21 @@ class DevicesViewModel(
                     )
                 }
             }
+
+            DevicesEvent.UpdateApp -> updateApk()
+            DevicesEvent.SortDevicesByStatus -> {
+                viewModelScope.launch {
+                    _state.value.copy(
+                        isSorted = !state.value.isSorted,
+                    )
+                        .updateState()
+                    delay(300)
+                    loadDevices(
+                        isRefresh = false,
+                        query = state.value.query,
+                    )
+                }
+            }
         }
     }
 
@@ -285,12 +314,13 @@ class DevicesViewModel(
 
     private suspend fun loadDevices(
         isRefresh: Boolean,
-        query: String
+        query: String,
     ) {
         when (val result = groupedDevicesUseCase.invoke(
             token = state.value.token,
             query = query,
-            isRefresh = isRefresh
+            isRefresh = isRefresh,
+            isSorted = state.value.isSorted,
         )) {
             is ResultWork.Error -> {
                 _state.value.copy(
@@ -353,6 +383,78 @@ class DevicesViewModel(
                     groups = result.data
                 )
                     .updateState()
+            }
+        }
+    }
+
+    private fun checkEnableUpdates() {
+        viewModelScope.launch {
+            when (val result =
+                refresher.getLastVersion(DOWNLOAD_VERSION_URL)) {
+                is ResultDownloadWork.Error -> {
+                    Log.d(
+                        "TEST UPDATE METEO",
+                        "error check update ${result.error.asUiResultText()}"
+                    )
+                }
+
+                is ResultDownloadWork.Success -> {
+                    _state.value.copy(
+                        release = result.data
+                    )
+                        .updateState()
+                    Log.d("TEST UPDATE METEO", "name ${result.data.name}")
+                    Log.d("TEST UPDATE METEO", "version ${result.data.lastVersion}")
+                    val currentVersion = refresher.getCurrentVersion()
+                    currentVersion?.let {
+                        _state.value.copy(
+                            enableUpdate = currentVersion < result.data.lastVersion
+                        )
+                            .updateState()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateApk() {
+        viewModelScope.launch {
+            state.value.release?.let { release ->
+                refresher.updateInBackground(
+                    url = DOWNLOAD_FILE_URL,
+                    downloadedFileName = "${release.name}-${release.lastVersion}.$APK_EXT"
+                ).collect { collector ->
+                    when (collector) {
+                        is DownloadStatus.Error -> {
+                            Log.d(
+                                "TEST UPDATE METEO",
+                                "error update ${collector.error.asUiResultText()}"
+                            )
+                        }
+
+                        is DownloadStatus.InProgress -> {
+                            _state.value.copy(
+                                percentUpdate = collector.percentage
+                            )
+                                .updateState()
+                        }
+
+                        DownloadStatus.Started -> {
+                            Log.d("TEST UPDATE METEO", "update started")
+                            _state.value.copy(
+                                isUpdating = true
+                            )
+                                .updateState()
+                        }
+
+                        DownloadStatus.Success -> {
+                            _state.value.copy(
+                                isUpdating = false
+                            )
+                                .updateState()
+                        }
+                    }
+                }
             }
         }
     }

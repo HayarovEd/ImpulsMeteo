@@ -2,11 +2,13 @@ package com.edurda77.impulsmeteo
 
 import android.app.Application
 import com.edurda77.impulsmeteo.di.baseModule
+import com.edurda77.impulsmeteo.di.downloadUpdateModule
 import com.edurda77.impulsmeteo.di.repoModule
 import com.edurda77.impulsmeteo.di.useCaseKoiModule
 import com.edurda77.impulsmeteo.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 
 class MateoApp : Application() {
@@ -16,8 +18,9 @@ class MateoApp : Application() {
             androidLogger()
             androidContext(this@MateoApp)
             modules(
-                baseModule, repoModule, useCaseKoiModule, viewModelModule
+                baseModule, repoModule, useCaseKoiModule, viewModelModule, downloadUpdateModule
             )
+            workManagerFactory()
         }
     }
 }
