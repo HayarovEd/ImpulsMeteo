@@ -41,7 +41,7 @@ fun DeviceScreen(
     val screenWidth = configuration.screenWidthDp.dp
 
     val historyParams = state.value.device?.params?.take(state.value.historyStates.size) ?: emptyList()
-    val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
+    //val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -131,7 +131,7 @@ fun DeviceScreen(
             historyParams = historyParams,
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
-            withoutHistoryParams = withoutHistoryParams,
+            withoutHistoryParams = state.value.device?.params?:emptyList(),
             screenWidth = screenWidth,
             units = state.value.units,
             openFilter = {
@@ -211,7 +211,7 @@ fun DeviceScreen(
             showBottomSheet = showBottomSheet.value,
             limits = limits,
             historyParams = historyParams,
-            withoutHistoryParams = withoutHistoryParams,
+            withoutHistoryParams = state.value.device?.params?:emptyList(),
             screenWidth = screenWidth,
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,

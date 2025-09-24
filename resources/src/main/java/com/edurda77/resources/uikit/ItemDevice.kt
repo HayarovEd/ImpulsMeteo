@@ -1,6 +1,7 @@
 package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,11 @@ fun ItemDevice(
 ) {
 
     val expandedDeleteDialog = remember { mutableStateOf(false) }
-
+    if (device.name == "Восточная") {
+        device.params.forEach {
+            Log.d("TEST METEO APP", "param $it")
+        }
+    }
     if (expandedDeleteDialog.value) {
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_device),
@@ -144,7 +149,7 @@ fun ItemDevice(
                         name = device.params[i].label,
                         hexColor = device.params[i].color,
                     )
-                    if (device.params.size-1>i+1) {
+                    if (device.params.size>i+1) {
                         Spacer(modifier = modifier.width(10.dp))
                         UiRowDeviceValue(
                             modifier = modifier.weight(1f),
@@ -162,7 +167,7 @@ fun ItemDevice(
                     }
                     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
                         Spacer(modifier = modifier.width(10.dp))
-                        if (device.params.size-1>i+2) {
+                        if (device.params.size>i+2) {
                             UiRowDeviceValue(
                                 modifier = modifier.weight(1f),
                                 image = if (device.params[i+2].idUnit == TEMPERATURE_ID && device.params[i+2].value >= 0.0) device.params[i+2].idUnit.asUiImageParam(
