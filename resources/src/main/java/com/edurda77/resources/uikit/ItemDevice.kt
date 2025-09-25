@@ -1,14 +1,14 @@
 package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,11 +51,6 @@ fun ItemDevice(
 ) {
 
     val expandedDeleteDialog = remember { mutableStateOf(false) }
-    if (device.name == "Восточная") {
-        device.params.forEach {
-            Log.d("TEST METEO APP", "param $it")
-        }
-    }
     if (expandedDeleteDialog.value) {
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_device),
@@ -72,9 +67,6 @@ fun ItemDevice(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        /* elevation = CardDefaults.cardElevation(
-             defaultElevation = 10.dp
-         ),*/
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
         ),
@@ -133,55 +125,28 @@ fun ItemDevice(
             val step =
                 if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
 
-            for (i in 0..<device.params.size step step) {
-                Spacer(modifier = modifier.height(10.dp))
-                Row(
-                    modifier = modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+            FlowRow(
+                modifier = modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                maxItemsInEachRow = step
+            ) {
+                device.params.forEach { param->
                     UiRowDeviceValue(
                         modifier = modifier.weight(1f),
-                        image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
+                        image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
                             true
-                        ) else device.params[i].idUnit.asUiImageParam(),
-                        value = device.params[i].value,
-                        unit = device.params[i].idUnit.asUiTextParam(),
-                        name = device.params[i].label,
-                        hexColor = device.params[i].color,
+                        ) else param.idUnit.asUiImageParam(),
+                        value = param.value,
+                        unit = param.idUnit.asUiTextParam(),
+                        name = param.label,
+                        hexColor = param.color,
                     )
-                    if (device.params.size>i+1) {
-                        Spacer(modifier = modifier.width(10.dp))
-                        UiRowDeviceValue(
-                            modifier = modifier.weight(1f),
-                            image = if (device.params[i + 1].idUnit == TEMPERATURE_ID && device.params[i + 1].value >= 0.0) device.params[i + 1].idUnit.asUiImageParam(
-                                true
-                            ) else device.params[i + 1].idUnit.asUiImageParam(),
-                            value = device.params[i + 1].value,
-                            unit = device.params[i + 1].idUnit.asUiTextParam(),
-                            name = device.params[i + 1].label,
-                            hexColor = device.params[i + 1].color,
-                        )
-                    } else  {
-                        Spacer(modifier = modifier.width(10.dp))
+                }
+                val def = device.params.size%step
+                if (def!=0) {
+                    (1..(step-def)).forEach { _ ->
                         Spacer(modifier = modifier.weight(1f))
-                    }
-                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-                        Spacer(modifier = modifier.width(10.dp))
-                        if (device.params.size>i+2) {
-                            UiRowDeviceValue(
-                                modifier = modifier.weight(1f),
-                                image = if (device.params[i+2].idUnit == TEMPERATURE_ID && device.params[i+2].value >= 0.0) device.params[i+2].idUnit.asUiImageParam(
-                                    true
-                                ) else device.params[i+2].idUnit.asUiImageParam(),
-                                value = device.params[i+2].value,
-                                unit = device.params[i+2].idUnit.asUiTextParam(),
-                                name = device.params[i+2].label,
-                                hexColor = device.params[i+2].color,
-                            )
-                        }
-                            else  {
-                            Spacer(modifier = modifier.weight(1f))
-                        }
                     }
                 }
             }
@@ -194,7 +159,7 @@ fun ItemDevice(
 )
 @Composable
 private fun ItemDeviceView1() {
-    val params = (1..10).map {
+    val params = (1..9).map {
         Param(
             id = it,
             idUnit = 1,
@@ -237,7 +202,7 @@ private fun ItemDeviceView1() {
 )
 @Composable
 private fun ItemDeviceView2() {
-    val params = (1..10).map {
+    val params = (1..7).map {
         Param(
             id = it,
             idUnit = 1,
