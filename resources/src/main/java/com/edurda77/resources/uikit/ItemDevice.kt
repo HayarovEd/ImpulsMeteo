@@ -159,7 +159,7 @@ fun ItemDevice(
 )
 @Composable
 private fun ItemDeviceView1() {
-    val params = (1..9).map {
+    val params = (1..21).map {
         Param(
             id = it,
             idUnit = 1,
