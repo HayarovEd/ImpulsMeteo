@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -67,12 +68,16 @@ fun DevicesScreenRoot(
     configuration: Configuration,
     bottomBarContent: @Composable () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val version = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+
     DevicesScreen(
         state = viewModel.state.collectAsStateWithLifecycle().value,
         configuration = configuration,
-        bottomBarContent = bottomBarContent,
+        version = version,
         onGoToLogin = onGoToLogin,
         onGoToDevice = onGoToDevice,
+        bottomBarContent = bottomBarContent,
         onEvent = viewModel::onEvent,
     )
 }
@@ -86,7 +91,8 @@ fun DevicesScreen(
     onGoToLogin: () -> Unit,
     onGoToDevice: (Int) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
-    onEvent: (DevicesEvent) -> Unit
+    onEvent: (DevicesEvent) -> Unit,
+    version: String
 ) {
     val screenWidth = configuration.screenWidthDp.dp
     // val focusRequester = remember { FocusRequester() }
@@ -331,7 +337,13 @@ fun DevicesScreen(
                             }
                         )
                         if (!state.isShowSearch) {
-                            Spacer(modifier = modifier.weight(1f))
+                            Text(
+                                modifier = modifier.weight(1f),
+                                text = "${stringResource(id = R.string.version)}: $version",
+                                style = Typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                textAlign = TextAlign.Center
+                            )
                         } else UiTextField(
                             modifier = modifier.weight(1f),
                             // modifier = modifier.focusRequester(focusRequester),
@@ -491,10 +503,11 @@ private fun DevicesScreenView1() {
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -505,10 +518,11 @@ private fun DevicesScreenView2() {
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -585,10 +599,11 @@ private fun DevicesScreenView3() {
                     permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 )
             ),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -664,10 +679,11 @@ private fun DevicesScreenView4() {
                     permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 )
             ),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }

@@ -96,6 +96,7 @@
     <string name="add_unit">Добавить единицу измерения</string>
     <string name="add_device">Добавить устройство</string>
     <string name="notifications">Уведомления</string>
+    <string name="version">Текущая версия</string>
 
 
 </resources>
