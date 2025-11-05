@@ -74,6 +74,7 @@ fun convertDeviceMessageToDevice(message: String): Device {
                 idDevice = param.idDevice
             )
         },
-        updatedAt = originalData.wsDevices.first().lastUpdate ?: ""
+        updatedAt = originalData.wsDevices.first().lastUpdate ?: "",
+        statusNotifications = true //TODO править сервер
     )
 }

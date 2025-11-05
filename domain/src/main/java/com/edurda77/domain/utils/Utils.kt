@@ -66,7 +66,7 @@ fun updateDevices(
     return devices.mapValues { (_, deviceList) ->
         deviceList.map { device ->
             if (device.id == newDevice.id) {
-                val updatedDevice = newDevice.copy(isFavorite = device.isFavorite)
+                val updatedDevice = newDevice.copy(isFavorite = device.isFavorite, statusNotifications = device.statusNotifications) // TODO remove statusNotifications after correct server
                 updatedDevice
             } else device
         }

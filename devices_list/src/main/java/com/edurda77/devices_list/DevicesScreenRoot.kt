@@ -562,6 +562,7 @@ private fun DevicesScreenView3() {
             ),
             params = params,
             isFavorite = it%2==0,
+            statusNotifications = it%2==0,
         )
     }
     ImpulsMeteoTheme {
@@ -642,6 +643,7 @@ private fun DevicesScreenView4() {
             ),
             params = params,
             isFavorite = it%2==0,
+            statusNotifications = it%2==0,
         )
     }
     ImpulsMeteoTheme {

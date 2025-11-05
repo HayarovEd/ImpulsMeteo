@@ -220,7 +220,8 @@ private fun DevicesSelectorGroupView1() {
                                     idDevice = 0
                                 )
                             ),
-                            isFavorite = true
+                            isFavorite = true,
+                            statusNotifications = true,
                         )
                     ),
                 ),

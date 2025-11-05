@@ -114,13 +114,24 @@ fun ItemDevice(
                     )
                 }
                 Spacer(modifier = modifier.weight(1f))
-                UiIconButton(
-                    icon = if (device.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
-                        R.drawable.baseline_star_border_24
-                    ),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    onClick = onClickChangeFavorite,
-                )
+                Row (
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (device.statusNotifications) ImageVector.vectorResource(R.drawable.bell) else ImageVector.vectorResource(
+                            R.drawable.alert_bell_disable
+                        ),
+                        contentDescription = "",
+                        tint =  MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                    UiIconButton(
+                        icon = if (device.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                            R.drawable.baseline_star_border_24
+                        ),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        onClick = onClickChangeFavorite,
+                    )
+                }
             }
             val step =
                 if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
@@ -188,7 +199,8 @@ private fun ItemDeviceView1() {
                     )
                 ),
                 params = params,
-                isFavorite = false
+                isFavorite = false,
+                statusNotifications = false
             ),
             configuration = LocalConfiguration.current,
             onClickDevice = {},
@@ -231,7 +243,8 @@ private fun ItemDeviceView2() {
                     )
                 ),
                 params = params,
-                isFavorite = true
+                isFavorite = true,
+                statusNotifications = true
             ),
             configuration = LocalConfiguration.current,
             onClickDevice = {},

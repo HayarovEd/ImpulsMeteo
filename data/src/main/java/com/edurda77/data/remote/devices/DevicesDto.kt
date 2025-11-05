@@ -29,5 +29,5 @@ data class DevicesDto(
     @SerialName("to")
     val to: Int,
     @SerialName("total")
-    val total: Int
+    val total: Int,
 )
