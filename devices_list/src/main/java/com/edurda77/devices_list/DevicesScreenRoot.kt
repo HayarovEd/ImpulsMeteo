@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +57,7 @@ import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 import org.koin.androidx.compose.koinViewModel
+import kotlin.random.Random
 
 
 @Composable
@@ -67,12 +68,16 @@ fun DevicesScreenRoot(
     configuration: Configuration,
     bottomBarContent: @Composable () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val version = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+
     DevicesScreen(
         state = viewModel.state.collectAsStateWithLifecycle().value,
         configuration = configuration,
-        bottomBarContent = bottomBarContent,
+        version = version,
         onGoToLogin = onGoToLogin,
         onGoToDevice = onGoToDevice,
+        bottomBarContent = bottomBarContent,
         onEvent = viewModel::onEvent,
     )
 }
@@ -86,7 +91,8 @@ fun DevicesScreen(
     onGoToLogin: () -> Unit,
     onGoToDevice: (Int) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
-    onEvent: (DevicesEvent) -> Unit
+    onEvent: (DevicesEvent) -> Unit,
+    version: String
 ) {
     val screenWidth = configuration.screenWidthDp.dp
     // val focusRequester = remember { FocusRequester() }
@@ -331,7 +337,13 @@ fun DevicesScreen(
                             }
                         )
                         if (!state.isShowSearch) {
-                            Spacer(modifier = modifier.weight(1f))
+                            Text(
+                                modifier = modifier.weight(1f),
+                                text = "${stringResource(id = R.string.version)}: $version",
+                                style = Typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                textAlign = TextAlign.Center
+                            )
                         } else UiTextField(
                             modifier = modifier.weight(1f),
                             // modifier = modifier.focusRequester(focusRequester),
@@ -444,15 +456,15 @@ fun DevicesScreen(
                         state = pagerState,
                         verticalAlignment = Alignment.Top
                     ) { page ->
-                        val currentDevices = state.devices.values.toList()[page]
+                        val currentDevices = state.nonHiddenDevices.values.toList()[page]
                         val cellsCount =
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        LazyVerticalStaggeredGrid(
+                        LazyVerticalGrid(
                             modifier = Modifier
                                 .fillMaxSize(),
-                            columns = StaggeredGridCells.Fixed(cellsCount),
-                            verticalItemSpacing = 5.dp,
-                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            columns = GridCells.Fixed(cellsCount),
+                            verticalArrangement = Arrangement.spacedBy(15.dp),
+                            horizontalArrangement = Arrangement.spacedBy(15.dp)
                         ) {
                             items(
                                 items = currentDevices,
@@ -491,10 +503,11 @@ private fun DevicesScreenView1() {
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -505,10 +518,11 @@ private fun DevicesScreenView2() {
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -519,6 +533,37 @@ private fun DevicesScreenView2() {
 )
 @Composable
 private fun DevicesScreenView3() {
+    val params = (1..10).map {
+        Param(
+            id = it,
+            idUnit = 1,
+            name = "Temp",
+            label = "tmp",
+            value = Random.nextDouble(-10.0, 25.0),
+            color = "#808080",
+            classIcon = "wi wi-thermometer-exterior",
+            isHidden = it%2!=0,
+            idDevice = 0
+        )
+    }
+    val devices = (1..10).map {
+        Device(
+            id = it,
+            name = "Auto N$it",
+            key = "00$it",
+            status = it%3!=0,
+            video = null,
+            updatedAt = "12-03-2025",
+            groups = listOf(
+                GroupDevices(
+                    id = 1,
+                    name = "Perm"
+                )
+            ),
+            params = params,
+            isFavorite = it%2==0,
+        )
+    }
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(
@@ -530,219 +575,7 @@ private fun DevicesScreenView3() {
                             id = 0,
                             name = "group 1"
                         ),
-                        listOf(
-                            Device(
-                                id = 0,
-                                name = "Auto",
-                                key = "1223",
-                                status = true,
-                                video = null,
-                                updatedAt = "12-03-2025",
-                                groups = listOf(
-                                    GroupDevices(
-                                        id = 1,
-                                        name = "Perm"
-                                    )
-                                ),
-                                params = listOf(
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    )
-                                ),
-                                isFavorite = true
-                            ),
-                            Device(
-                                id = 0,
-                                name = "Auto",
-                                key = "1223",
-                                status = true,
-                                video = null,
-                                updatedAt = "12-03-2025",
-                                groups = listOf(
-                                    GroupDevices(
-                                        id = 1,
-                                        name = "Perm"
-                                    )
-                                ),
-                                params = listOf(
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    )
-                                ),
-                                isFavorite = true
-                            )
-                        ),
-
+                        devices
                         ),
                     Pair(
                         GroupDevices(
@@ -766,10 +599,11 @@ private fun DevicesScreenView3() {
                     permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 )
             ),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -779,6 +613,37 @@ private fun DevicesScreenView3() {
 )
 @Composable
 private fun DevicesScreenView4() {
+    val params = (1..10).map {
+        Param(
+            id = it,
+            idUnit = 1,
+            name = "Temp",
+            label = "tmp",
+            value = Random.nextDouble(-10.0, 25.0),
+            color = "#808080",
+            classIcon = "wi wi-thermometer-exterior",
+            isHidden = it%2!=0,
+            idDevice = 0
+        )
+    }
+    val devices = (1..10).map {
+        Device(
+            id = it,
+            name = "Auto N$it",
+            key = "00$it",
+            status = it%3!=0,
+            video = null,
+            updatedAt = "12-03-2025",
+            groups = listOf(
+                GroupDevices(
+                    id = 1,
+                    name = "Perm"
+                )
+            ),
+            params = params,
+            isFavorite = it%2==0,
+        )
+    }
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(
@@ -790,218 +655,7 @@ private fun DevicesScreenView4() {
                             id = 0,
                             name = "group 1"
                         ),
-                        listOf(
-                            Device(
-                                id = 0,
-                                name = "Auto",
-                                key = "1223",
-                                status = true,
-                                video = null,
-                                updatedAt = "12-03-2025",
-                                groups = listOf(
-                                    GroupDevices(
-                                        id = 1,
-                                        name = "Perm"
-                                    )
-                                ),
-                                params = listOf(
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    )
-                                ),
-                                isFavorite = true
-                            ),
-                            Device(
-                                id = 0,
-                                name = "Auto",
-                                key = "1223",
-                                status = true,
-                                video = null,
-                                updatedAt = "12-03-2025",
-                                groups = listOf(
-                                    GroupDevices(
-                                        id = 1,
-                                        name = "Perm"
-                                    )
-                                ),
-                                params = listOf(
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    ),
-                                    Param(
-                                        id = 0,
-                                        idUnit = 1,
-                                        name = "Temp",
-                                        label = "tmp",
-                                        value = 12.0,
-                                        color = "#808080",
-                                        classIcon = "wi wi-thermometer-exterior",
-                                        isHidden = false,
-                                        idDevice = 0
-                                    )
-                                ),
-                                isFavorite = true
-                            )
-                        ),
+                        devices
                     ),
                     Pair(
                         GroupDevices(
@@ -1025,10 +679,11 @@ private fun DevicesScreenView4() {
                     permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 )
             ),
+            version = "1.0",
             configuration = LocalConfiguration.current,
             onGoToLogin = {},
             onGoToDevice = {},
-            onEvent = {}
+            onEvent = {},
         )
     }
 }

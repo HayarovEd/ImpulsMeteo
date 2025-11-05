@@ -13,6 +13,9 @@ import com.edurda77.domain.utils.DATABASE
 import com.edurda77.domain.utils.PING_INTERVAL
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.DEFAULT
@@ -27,6 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import java.net.SocketException
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -43,9 +47,18 @@ val baseModule = module {
     single<HttpClient> {
         HttpClient(OkHttp) {
             install(HttpTimeout) {
-                connectTimeoutMillis = 100000
-                requestTimeoutMillis = 100000
-                socketTimeoutMillis = 100000
+                connectTimeoutMillis = 30000
+                requestTimeoutMillis = 60000
+                socketTimeoutMillis = 60000
+            }
+            install(HttpRequestRetry) {
+                maxRetries = 3
+                retryOnExceptionIf { request, cause ->
+                    cause is SocketException || cause is SocketTimeoutException
+                }
+                delayMillis { retry ->
+                    1000L * (1 shl retry)
+                }
             }
             install(Logging) {
                 logger = Logger.DEFAULT

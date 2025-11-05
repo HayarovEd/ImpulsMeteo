@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -21,7 +22,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
@@ -318,7 +321,7 @@ fun PortraitScreen(
                         .padding(innerPaddings)
                         .navigationBarsPadding()
                         .fillMaxSize()
-                    //    .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState())
                         .padding(horizontal = 15.dp),
                 ) {
                     Row(
@@ -362,7 +365,7 @@ fun PortraitScreen(
                     Spacer(modifier = modifier.height(10.dp))
                     LazyVerticalGrid(
                         modifier = modifier
-                            .height(configuration.screenHeightDp.dp/3)
+                            .heightIn(max = 2000.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(15.dp),
                         verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -401,39 +404,6 @@ fun PortraitScreen(
                                 }
                             )
                         }
-                        /*items(withoutHistoryParams) { param ->
-                            val expandedDialog = remember { mutableStateOf(false) }
-                            UiRowDeviceValueWithClick(
-                                modifier = modifier,
-                                image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
-                                    true
-                                ) else param.idUnit.asUiImageParam(),
-                                value = param.value,
-                                name = param.label,
-                                hexColor = param.color,
-                                expandedDialog = expandedDialog.value,
-                                unit = param.idUnit.asUiTextParam(),
-                                content = {
-                                    UpdateParamDialog(
-                                        param = param,
-                                        units = units,
-                                        onCloseClick = {
-                                            expandedDialog.value = false
-                                        },
-                                        onUpdateClick = {
-                                            expandedDialog.value = false
-                                            onUpdateClick(it)
-                                        }
-                                    )
-                                },
-                                onCloseClick = {
-                                    expandedDialog.value = false
-                                },
-                                onOpenClick = {
-                                    expandedDialog.value = true
-                                }
-                            )
-                        }*/
                     }
                     Spacer(modifier = modifier.height(10.dp))
                     Card (

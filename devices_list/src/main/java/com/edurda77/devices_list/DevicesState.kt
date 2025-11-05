@@ -1,6 +1,7 @@
 package com.edurda77.devices_list
 
 
+import android.util.Log
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
@@ -23,4 +24,15 @@ data class DevicesState(
     val percentUpdate: Int = 0,
     val release: LastVersionApp? = null,
     val isSorted: Boolean = false,
-)
+) {
+    val nonHiddenDevices = devices.mapValues { (_, devices) ->
+        devices.map { device ->
+            if (device.name=="Восточная"){
+                device.params.forEach {
+                    Log.d("TEST METEO APP", "unfiltered param $it")
+                }
+            }
+            device.copy(params = device.params.filter { !it.isHidden })
+        }
+    }
+}

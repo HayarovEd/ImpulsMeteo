@@ -2,12 +2,13 @@ package com.edurda77.resources.uikit
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +38,7 @@ import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
+import kotlin.random.Random
 
 @Composable
 fun ItemDevice(
@@ -49,7 +51,6 @@ fun ItemDevice(
 ) {
 
     val expandedDeleteDialog = remember { mutableStateOf(false) }
-
     if (expandedDeleteDialog.value) {
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_device),
@@ -66,9 +67,6 @@ fun ItemDevice(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        /* elevation = CardDefaults.cardElevation(
-             defaultElevation = 10.dp
-         ),*/
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
         ),
@@ -124,94 +122,31 @@ fun ItemDevice(
                     onClick = onClickChangeFavorite,
                 )
             }
-            Spacer(modifier = modifier.height(10.dp))
-            Row(
+            val step =
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
+
+            FlowRow(
                 modifier = modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+                maxItemsInEachRow = step
             ) {
-                val steps = if (device.params.size <= 6) device.params.size else 6
-                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    Column(
-                        modifier = modifier.weight(1f)
-                    ) {
-                        for (i in 0..<steps step 3) {
-                            UiRowDeviceValue(
-                                image = device.params[i].idUnit.asUiImageParam(),
-                                value = device.params[i].value,
-                                unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label,
-                                hexColor = device.params[i].color,
-                            )
-                            Spacer(modifier = modifier.height(3.dp))
-                        }
-                    }
-                    Spacer(modifier = modifier.width(5.dp))
-                    Column(
-                        modifier = modifier.weight(1f)
-                    ) {
-                        for (i in 1..<steps step 3) {
-                            UiRowDeviceValue(
-                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
-                                    true
-                                ) else device.params[i].idUnit.asUiImageParam(),
-                                value = device.params[i].value,
-                                unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label,
-                                hexColor = device.params[i].color,
-                            )
-                            Spacer(modifier = modifier.height(3.dp))
-                        }
-                    }
-                    Spacer(modifier = modifier.width(5.dp))
-                    Column(
-                        modifier = modifier.weight(1f)
-                    ) {
-                        for (i in 2..<steps step 3) {
-                            UiRowDeviceValue(
-                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
-                                    true
-                                ) else device.params[i].idUnit.asUiImageParam(),
-                                value = device.params[i].value,
-                                unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label,
-                                hexColor = device.params[i].color,
-                            )
-                            Spacer(modifier = modifier.height(3.dp))
-                        }
-                    }
-                } else {
-                    Column(
-                        modifier = modifier.weight(1f)
-                    ) {
-                        for (i in 0..<steps step 2) {
-                            UiRowDeviceValue(
-                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
-                                    true
-                                ) else device.params[i].idUnit.asUiImageParam(),
-                                value = device.params[i].value,
-                                unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label,
-                                hexColor = device.params[i].color,
-                            )
-                            Spacer(modifier = modifier.height(3.dp))
-                        }
-                    }
-                    Spacer(modifier = modifier.width(10.dp))
-                    Column(
-                        modifier = modifier.weight(1f)
-                    ) {
-                        for (i in 1..<steps step 2) {
-                            UiRowDeviceValue(
-                                image = if (device.params[i].idUnit == TEMPERATURE_ID && device.params[i].value >= 0.0) device.params[i].idUnit.asUiImageParam(
-                                    true
-                                ) else device.params[i].idUnit.asUiImageParam(),
-                                value = device.params[i].value,
-                                unit = device.params[i].idUnit.asUiTextParam(),
-                                name = device.params[i].label,
-                                hexColor = device.params[i].color,
-                            )
-                            Spacer(modifier = modifier.height(3.dp))
-                        }
+                device.params.forEach { param->
+                    UiRowDeviceValue(
+                        modifier = modifier.weight(1f),
+                        image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                            true
+                        ) else param.idUnit.asUiImageParam(),
+                        value = param.value,
+                        unit = param.idUnit.asUiTextParam(),
+                        name = param.label,
+                        hexColor = param.color,
+                    )
+                }
+                val def = device.params.size%step
+                if (def!=0) {
+                    (1..(step-def)).forEach { _ ->
+                        Spacer(modifier = modifier.weight(1f))
                     }
                 }
             }
@@ -224,6 +159,19 @@ fun ItemDevice(
 )
 @Composable
 private fun ItemDeviceView1() {
+    val params = (1..21).map {
+        Param(
+            id = it,
+            idUnit = 1,
+            name = "Temp",
+            label = "tmp",
+            value = Random.nextDouble(-10.0, 25.0),
+            color = "#808080",
+            classIcon = "wi wi-thermometer-exterior",
+            isHidden = it % 2 != 0,
+            idDevice = 0
+        )
+    }
     ImpulsMeteoTheme {
         ItemDevice(
             device = Device(
@@ -239,96 +187,7 @@ private fun ItemDeviceView1() {
                         name = "Perm"
                     )
                 ),
-                params = listOf(
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    )
-                ),
+                params = params,
                 isFavorite = false
             ),
             configuration = LocalConfiguration.current,
@@ -343,6 +202,19 @@ private fun ItemDeviceView1() {
 )
 @Composable
 private fun ItemDeviceView2() {
+    val params = (1..7).map {
+        Param(
+            id = it,
+            idUnit = 1,
+            name = "Temp",
+            label = "tmp",
+            value = Random.nextDouble(-10.0, 25.0),
+            color = "#808080",
+            classIcon = "wi wi-thermometer-exterior",
+            isHidden = it % 2 != 0,
+            idDevice = 0
+        )
+    }
     ImpulsMeteoTheme {
         ItemDevice(
             device = Device(
@@ -358,96 +230,7 @@ private fun ItemDeviceView2() {
                         name = "Perm"
                     )
                 ),
-                params = listOf(
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    )
-                ),
+                params = params,
                 isFavorite = true
             ),
             configuration = LocalConfiguration.current,
