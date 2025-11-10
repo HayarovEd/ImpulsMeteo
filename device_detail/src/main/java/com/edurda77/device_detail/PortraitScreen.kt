@@ -242,7 +242,10 @@ fun PortraitScreen(
                                         contentDescription = ""
                                     )
                                 },
-                                onClick = onDeleteDevice,
+                                onClick = {
+                                    expandedDropDownloads.value = false
+                                    onDeleteDevice()
+                                },
                                 text = {
                                     Text(
                                         modifier = modifier,
@@ -348,11 +351,11 @@ fun PortraitScreen(
                         Box(
                             modifier = modifier
                                 .clip(shape = RoundedCornerShape(100.dp))
-                                .background(if (device?.status==true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
+                                .background(if (device?.status == true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
                                 .padding(10.dp),
                         ) {
                             Icon(
-                                painter = if (device?.status==true) painterResource(R.drawable.checkmark) else painterResource(
+                                painter = if (device?.status == true) painterResource(R.drawable.checkmark) else painterResource(
                                     R.drawable.cross
                                 ),
                                 contentDescription = "",
@@ -369,7 +372,7 @@ fun PortraitScreen(
                         verticalArrangement = Arrangement.spacedBy(15.dp),
                         columns = GridCells.Fixed(2)
                     ) {
-                        items(historyParams) { param->
+                        items(historyParams) { param ->
                             val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier.fillMaxWidth(0.4f),
@@ -404,19 +407,19 @@ fun PortraitScreen(
                         }
                     }
                     Spacer(modifier = modifier.height(10.dp))
-                    Card (
+                    Card(
                         modifier = modifier
                             .width(screenWidth * 0.9f),
                         shape = RoundedCornerShape(10.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.background
                         )
-                    ){
-                        Column (
+                    ) {
+                        Column(
                             modifier = modifier
                                 .fillMaxWidth()
                                 .padding(5.dp)
-                        ){
+                        ) {
                             Text(
                                 modifier = modifier,
                                 text = stringResource(R.string.filter),
@@ -494,13 +497,13 @@ fun PortraitScreen(
                                 }
                             }
                             Spacer(modifier = modifier.height(35.dp))
-                            LazyColumn (
+                            LazyColumn(
                                 modifier = modifier
-                                    .height(configuration.screenHeightDp.dp/2)
+                                    .height(configuration.screenHeightDp.dp / 2)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(35.dp)
-                            ){
+                            ) {
                                 itemsIndexed(historyParams) { index, param ->
                                     if (isLoadingHistory) {
                                         CircularProgressIndicator(
@@ -508,7 +511,7 @@ fun PortraitScreen(
                                         )
                                     } else {
                                         if (histories.isNotEmpty()) {
-                                            Column (
+                                            Column(
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {

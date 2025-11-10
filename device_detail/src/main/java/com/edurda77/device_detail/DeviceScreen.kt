@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DEVICES_EDIT
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiDialog
 import kotlinx.coroutines.flow.collectLatest
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
@@ -89,6 +90,21 @@ fun DeviceScreen(
         }
     )
 
+    val expandedDeleteDialog = remember { mutableStateOf(false) }
+    if (expandedDeleteDialog.value) {
+        UiAlertDialog(
+            title = stringResource(R.string.sure_delete_device),
+            onClickConfirm = {
+                onEvent(DeviceEvent.DeleteDevice)
+                expandedDeleteDialog.value = false
+            },
+            onClickCancel = {
+                expandedDeleteDialog.value = false
+            }
+        )
+    }
+
+
     if (expandedUpdateDialog.value) {
         UiDialog(
             onCloseDialog = {
@@ -138,7 +154,7 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
-            historyParams = state.value.device?.params?:emptyList(),
+            historyParams = state.value.device?.params ?: emptyList(),
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
             screenWidth = screenWidth,
@@ -205,7 +221,7 @@ fun DeviceScreen(
                 onEvent(DeviceEvent.WorkWithFavorite)
             },
             onDeleteDevice = {
-                onEvent(DeviceEvent.DeleteDevice)
+               expandedDeleteDialog.value = true
             },
         )
     } else {
@@ -222,7 +238,7 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
-            historyParams = state.value.device?.params?:emptyList(),
+            historyParams = state.value.device?.params ?: emptyList(),
             screenWidth = screenWidth,
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
@@ -286,7 +302,7 @@ fun DeviceScreen(
                 onEvent(DeviceEvent.WorkWithFavorite)
             },
             onDeleteDevice = {
-                onEvent(DeviceEvent.DeleteDevice)
+                expandedDeleteDialog.value = true
             },
         )
     }

@@ -239,7 +239,10 @@ fun LandscapeScreen(
                                         contentDescription = ""
                                     )
                                 },
-                                onClick = onDeleteDevice,
+                                onClick = {
+                                    expandedDropDownloads.value = false
+                                    onDeleteDevice()
+                                },
                                 text = {
                                     Text(
                                         modifier = modifier,
