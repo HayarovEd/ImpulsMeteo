@@ -15,12 +15,19 @@ class DeleteDeviceUseCase(
         isFavorite: Boolean,
         id: Int
     ): ResultWork<Unit, DataError> {
-        if (isFavorite) {
-            localRepository.deleteFavorite(id)
-        }
-        return remoteRepository.deleteDevice(
+        return when (val result = remoteRepository.deleteDevice(
             token = token,
             id = id
-        )
+        )) {
+            is ResultWork.Error-> {
+                ResultWork.Error(result.error)
+            }
+            is ResultWork.Success -> {
+                if (isFavorite) {
+                    localRepository.deleteFavorite(id)
+                }
+                ResultWork.Success(result.data)
+            }
+        }
     }
 }

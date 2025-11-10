@@ -112,6 +112,7 @@ fun LandscapeScreen(
     historyParams: List<Param>,
     withoutHistoryParams: List<Param>,
     screenWidth: Dp,
+    onDeleteDevice: () -> Unit,
     units: List<UnitMeteo>,
     isLoadingHistory: Boolean,
     histories: List<List<ElementHistory>>,
@@ -239,9 +240,7 @@ fun LandscapeScreen(
                                         contentDescription = ""
                                     )
                                 },
-                                onClick = {
-                                    /////
-                                },
+                                onClick = onDeleteDevice,
                                 text = {
                                     Text(
                                         modifier = modifier,
@@ -763,6 +762,7 @@ private fun LandscapeScreenView() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            onDeleteDevice = {},
         )
     }
 }
@@ -953,6 +953,7 @@ private fun LandscapeScreenView2() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            onDeleteDevice = {},
         )
     }
 }

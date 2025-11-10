@@ -33,3 +33,8 @@ data class DeviceState(
     val isLoadingHistory: Boolean = false,
 )
 
+
+sealed class UiDeviceEvents {
+    data object BackNavigationEvent : UiDeviceEvents()
+}
+

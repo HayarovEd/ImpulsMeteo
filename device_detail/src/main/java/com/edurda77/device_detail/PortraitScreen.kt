@@ -109,6 +109,7 @@ fun PortraitScreen(
     onUpdateNotificationClick: () -> Unit,
     onChangeStatusClick: () -> Unit,
     onClickChangeFavorite: () -> Unit,
+    onDeleteDevice: () -> Unit,
     onUpdateClick: (Param) -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
@@ -242,9 +243,7 @@ fun PortraitScreen(
                                         contentDescription = ""
                                     )
                                 },
-                                onClick = {
-                                    /////
-                                },
+                                onClick = onDeleteDevice,
                                 text = {
                                     Text(
                                         modifier = modifier,
@@ -735,6 +734,7 @@ private fun PortraitScreenView() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            onDeleteDevice = {}
         )
     }
 }
@@ -921,6 +921,7 @@ private fun DirectoriesScreenView2() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            onDeleteDevice = {},
         )
     }
 }

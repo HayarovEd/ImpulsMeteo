@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,10 +12,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DEVICES_EDIT
-import com.edurda77.domain.utils.TAKED_COUNT
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiDialog
+import kotlinx.coroutines.flow.collectLatest
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import org.koin.androidx.compose.koinViewModel
@@ -42,6 +43,15 @@ fun DeviceScreen(
 
     val historyParams = state.value.device?.params?.take(state.value.historyStates.size) ?: emptyList()
     //val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                UiDeviceEvents.BackNavigationEvent -> onBackClick()
+            }
+        }
+    }
+
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -194,7 +204,10 @@ fun DeviceScreen(
             },
             onClickChangeFavorite = {
                 onEvent(DeviceEvent.WorkWithFavorite)
-            }
+            },
+            onDeleteDevice = {
+                onEvent(DeviceEvent.DeleteDevice)
+            },
         )
     } else {
         PortraitScreen(
@@ -273,6 +286,9 @@ fun DeviceScreen(
             },
             onClickChangeFavorite = {
                 onEvent(DeviceEvent.WorkWithFavorite)
+            },
+            onDeleteDevice = {
+                onEvent(DeviceEvent.DeleteDevice)
             },
         )
     }
