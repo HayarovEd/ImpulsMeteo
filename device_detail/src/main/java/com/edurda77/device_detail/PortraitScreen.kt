@@ -114,7 +114,6 @@ fun PortraitScreen(
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
-    withoutHistoryParams: List<Param>,
     isLoadingHistory: Boolean,
     histories: List<List<ElementHistory>>,
     screenWidth: Dp,
@@ -370,7 +369,7 @@ fun PortraitScreen(
                         verticalArrangement = Arrangement.spacedBy(15.dp),
                         columns = GridCells.Fixed(2)
                     ) {
-                        items(historyParams+withoutHistoryParams) { param->
+                        items(historyParams) { param->
                             val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier.fillMaxWidth(0.4f),
@@ -730,7 +729,6 @@ private fun PortraitScreenView() {
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
-            withoutHistoryParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
@@ -917,7 +915,6 @@ private fun DirectoriesScreenView2() {
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
-            withoutHistoryParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,

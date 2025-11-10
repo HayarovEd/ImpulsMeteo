@@ -110,7 +110,6 @@ fun LandscapeScreen(
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
-    withoutHistoryParams: List<Param>,
     screenWidth: Dp,
     onDeleteDevice: () -> Unit,
     units: List<UnitMeteo>,
@@ -366,7 +365,7 @@ fun LandscapeScreen(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(15.dp),
                     ) {
-                        items(historyParams+withoutHistoryParams) { param->
+                        items(historyParams) { param->
                             UiRowDeviceValueWithClick(
                                 modifier = modifier,
                                 image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -758,7 +757,6 @@ private fun LandscapeScreenView() {
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
-            withoutHistoryParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
@@ -949,7 +947,6 @@ private fun LandscapeScreenView2() {
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
-            withoutHistoryParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,

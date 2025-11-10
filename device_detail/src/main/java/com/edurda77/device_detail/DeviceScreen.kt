@@ -41,7 +41,7 @@ fun DeviceScreen(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val historyParams = state.value.device?.params?.take(state.value.historyStates.size) ?: emptyList()
+    //val historyParams = state.value.device?.params?.take(state.value.historyStates.size) ?: emptyList()
     //val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
 
     LaunchedEffect(key1 = true) {
@@ -138,10 +138,9 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
-            historyParams = historyParams,
+            historyParams = state.value.device?.params?:emptyList(),
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
-            withoutHistoryParams = state.value.device?.params?:emptyList(),
             screenWidth = screenWidth,
             units = state.value.units,
             openFilter = {
@@ -223,8 +222,7 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
-            historyParams = historyParams,
-            withoutHistoryParams = state.value.device?.params?:emptyList(),
+            historyParams = state.value.device?.params?:emptyList(),
             screenWidth = screenWidth,
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
