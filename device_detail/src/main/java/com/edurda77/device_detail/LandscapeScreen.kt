@@ -328,7 +328,7 @@ fun LandscapeScreen(
                         Column {
                             Text(
                                 modifier = modifier,
-                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt}",
+                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt?:""}",
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 style = Typography.bodyLarge,
                             )
@@ -523,23 +523,24 @@ fun LandscapeScreen(
                                 }
                             }
                             Spacer(modifier = modifier.height(5.dp))
+                            if (isLoadingHistory) {
+                                CircularProgressIndicator(
+                                    modifier = modifier.align(Alignment.CenterHorizontally),
+                                )
+                            } else {
                             LazyColumn (
                                 modifier = modifier
                                     .height(configuration.screenHeightDp.dp*3)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ){
-                                itemsIndexed(historyParams) { index, param ->
-                                    if (isLoadingHistory) {
-                                        CircularProgressIndicator(
-                                            modifier = modifier.align(Alignment.CenterHorizontally),
-                                        )
-                                    } else {
+                                itemsIndexed(histories.take(6)) { index, history ->
                                         if (histories.isNotEmpty()) {
                                             Column (
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
+                                                val param = historyParams[index]
                                                 Text(
                                                     modifier = modifier,
                                                     text = "${param.label}(${param.idUnit.asUiTextParam()})",
@@ -551,7 +552,7 @@ fun LandscapeScreen(
                                                         .fillMaxWidth()
                                                         .height(300.dp)
                                                         .padding(5.dp),
-                                                    infos = histories[index],
+                                                    infos = history,
                                                     unit = param.idUnit.asUiTextParam(),
                                                     chartColor = MaterialTheme.colorScheme.outlineVariant,
                                                     textColor = MaterialTheme.colorScheme.onBackground,

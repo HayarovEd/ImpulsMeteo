@@ -331,7 +331,7 @@ fun PortraitScreen(
                         Column {
                             Text(
                                 modifier = modifier,
-                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt}",
+                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt?:""}",
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 style = Typography.bodyLarge,
                             )
@@ -497,6 +497,11 @@ fun PortraitScreen(
                                 }
                             }
                             Spacer(modifier = modifier.height(35.dp))
+                            if (isLoadingHistory) {
+                                CircularProgressIndicator(
+                                    modifier = modifier.align(Alignment.CenterHorizontally),
+                                )
+                            } else {
                             LazyColumn(
                                 modifier = modifier
                                     .height(configuration.screenHeightDp.dp / 2)
@@ -504,17 +509,13 @@ fun PortraitScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(35.dp)
                             ) {
-                                itemsIndexed(historyParams) { index, param ->
-                                    if (isLoadingHistory) {
-                                        CircularProgressIndicator(
-                                            modifier = modifier.align(Alignment.CenterHorizontally),
-                                        )
-                                    } else {
+                                itemsIndexed(histories) { index, history ->
                                         if (histories.isNotEmpty()) {
                                             Column(
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
+                                                val param = historyParams[index]
                                                 Text(
                                                     modifier = modifier,
                                                     text = "${param.label}(${param.idUnit.asUiTextParam()})",
@@ -526,7 +527,7 @@ fun PortraitScreen(
                                                         .fillMaxWidth()
                                                         .aspectRatio(16 / 9f)
                                                         .padding(5.dp),
-                                                    infos = histories[index],
+                                                    infos = history,
                                                     unit = param.idUnit.asUiTextParam(),
                                                     chartColor = MaterialTheme.colorScheme.outlineVariant,
                                                     textColor = MaterialTheme.colorScheme.onBackground,

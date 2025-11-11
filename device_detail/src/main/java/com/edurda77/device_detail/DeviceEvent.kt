@@ -34,4 +34,5 @@ sealed class DeviceEvent {
     data object DeleteDevice : DeviceEvent()
     data object BackStartGroups : DeviceEvent()
     data object WorkWithFavorite : DeviceEvent()
+    data object ClearDeviceSensorData : DeviceEvent()
 }

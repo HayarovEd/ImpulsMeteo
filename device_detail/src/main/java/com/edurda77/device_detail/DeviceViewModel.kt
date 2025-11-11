@@ -343,6 +343,8 @@ class DeviceViewModel(
                     }
                 }
             }
+
+            DeviceEvent.ClearDeviceSensorData -> TODO()
         }
     }
 

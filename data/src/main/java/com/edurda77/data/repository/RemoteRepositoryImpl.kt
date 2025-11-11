@@ -1,5 +1,6 @@
 package com.edurda77.data.repository
 
+import android.util.Log
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
@@ -178,8 +179,11 @@ class RemoteRepositoryImpl(
                     url {
                         bearerAuth(token)
                     }
-                }.call
+                }
+                val text = responseDevices.bodyAsText()
+                Log.d("TEST NOT FULL DATA", "device $text")
                 responseDevices
+                    .call
                     .body<BodyDeviceDto>().convertToSingleDevice()
             }
         }

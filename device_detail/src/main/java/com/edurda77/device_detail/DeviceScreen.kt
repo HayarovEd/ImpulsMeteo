@@ -119,7 +119,7 @@ fun DeviceScreen(
                     },
                     label = state.value.device?.name ?: "",
                     key = state.value.device?.key ?: "",
-                    frequency = state.value.device?.frequency ?: 0,
+                    frequency = state.value.device?.frequency ?: 60000,
                     groups = state.value.groups,
                     onUpdateClick = { currentName, currentKey, currentFrequency ->
                         onEvent(
@@ -210,6 +210,7 @@ fun DeviceScreen(
             },
             onUpdateNotificationClick = {
                 onEvent(DeviceEvent.UpdateNotifications)
+                showBottomSheet.value = !showBottomSheet.value
             },
             onClickExpandedUpdateDialog = {
                 expandedUpdateDialog.value = true
@@ -291,6 +292,7 @@ fun DeviceScreen(
             },
             onUpdateNotificationClick = {
                 onEvent(DeviceEvent.UpdateNotifications)
+                showBottomSheet.value = !showBottomSheet.value
             },
             onClickExpandedUpdateDialog = {
                 expandedUpdateDialog.value = true
