@@ -224,6 +224,9 @@ fun DeviceScreen(
             onDeleteDevice = {
                expandedDeleteDialog.value = true
             },
+            onClickClearSensors = {
+                onEvent(DeviceEvent.ClearDeviceSensorData)
+            }
         )
     } else {
         PortraitScreen(
@@ -305,6 +308,9 @@ fun DeviceScreen(
             },
             onDeleteDevice = {
                 expandedDeleteDialog.value = true
+            },
+            onClickClearSensors = {
+                onEvent(DeviceEvent.ClearDeviceSensorData)
             },
         )
     }

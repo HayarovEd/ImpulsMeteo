@@ -102,4 +102,5 @@ interface RemoteRepository {
     suspend fun getFavorites(token: String): ResultWork<List<Favorite>, DataError>
     suspend fun addFavorite(token: String, deviceId: Int): ResultWork<Favorite, DataError>
     suspend fun deleteFavorite(token: String, deviceId: Int): ResultWork<Unit, DataError>
+    suspend fun deleteParam(token: String, id: Int): ResultWork<Boolean, DataError>
 }

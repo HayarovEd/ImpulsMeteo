@@ -9,6 +9,7 @@ import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDevice
 import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
+import com.edurda77.domain.usecase.DeleteParamUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.HistoryUseCase
@@ -34,6 +35,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class DeviceViewModel(
     private val deviceByIdUseCase: DeviceByIdUseCase,
@@ -50,6 +53,7 @@ class DeviceViewModel(
     private val webSocketUseCase: WebSocketUseCase,
     private val historyUseCase: HistoryUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
+    private val deleteParamUseCase: DeleteParamUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(DeviceState())
     val state = _state
@@ -65,6 +69,8 @@ class DeviceViewModel(
 
     private val _eventFlow = MutableSharedFlow<UiDeviceEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    private val mutex = Mutex()
 
     fun onEvent(event: DeviceEvent) {
         when (event) {
@@ -273,7 +279,7 @@ class DeviceViewModel(
 
             is DeviceEvent.WorkWithFavorite -> {
                 viewModelScope.launch {
-                    state.value.device?.let { device->
+                    state.value.device?.let { device ->
                         if (device.isFavorite) {
                             when (val result = removeFavoriteUseCase.invoke(
                                 deviceId = device.id,
@@ -285,6 +291,7 @@ class DeviceViewModel(
                                     )
                                         .updateState()
                                 }
+
                                 is ResultWork.Success -> {
                                     _state.value.copy(
                                         device = device.copy(isFavorite = false),
@@ -303,6 +310,7 @@ class DeviceViewModel(
                                     )
                                         .updateState()
                                 }
+
                                 is ResultWork.Success -> {
                                     _state.value.copy(
                                         device = device.copy(isFavorite = true),
@@ -323,7 +331,7 @@ class DeviceViewModel(
                         .updateState()
                     when (val result = deleteDeviceUseCase.invoke(
                         token = state.value.token,
-                        isFavorite = state.value.device?.isFavorite?: false,
+                        isFavorite = state.value.device?.isFavorite ?: false,
                         id = state.value.deviceId
                     )) {
                         is ResultWork.Error -> {
@@ -333,6 +341,7 @@ class DeviceViewModel(
                             )
                                 .updateState()
                         }
+
                         is ResultWork.Success -> {
                             _state.value.copy(
                                 isLoading = false,
@@ -344,7 +353,9 @@ class DeviceViewModel(
                 }
             }
 
-            DeviceEvent.ClearDeviceSensorData -> TODO()
+            DeviceEvent.ClearDeviceSensorData -> {
+                clearSensors()
+            }
         }
     }
 
@@ -535,6 +546,56 @@ class DeviceViewModel(
                         historyStates = result.data
                     )
                         .updateState()
+                }
+            }
+        }
+    }
+
+    private fun clearSensors() {
+        state.value.device?.let { device ->
+            _state.value.copy(
+                isLoading = true,
+            )
+                .updateState()
+
+            var count = 0
+            viewModelScope.launch {
+                device.params.forEach { param ->
+                    when (val result = deleteParamUseCase(
+                        token = state.value.token,
+                        id = param.id
+                    )) {
+                        is ResultWork.Error -> {
+                            _state.value.copy(
+                                message = result.error.asUiText()
+                            )
+                                .updateState()
+                            mutex.withLock {
+                                count++
+                            }
+                        }
+
+                        is ResultWork.Success -> {
+                            mutex.withLock {
+                                count++
+                            }
+                            if (count == device.params.size) {
+                                viewModelScope.launch {
+                                    loadDevice()
+                                }
+                                viewModelScope.launch {
+                                    loadGroups()
+                                    loadUnits()
+                                }
+                                viewModelScope.launch {
+                                    loadUpdateData()
+                                }
+                                viewModelScope.launch {
+                                    loadHistory(limit = 100)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

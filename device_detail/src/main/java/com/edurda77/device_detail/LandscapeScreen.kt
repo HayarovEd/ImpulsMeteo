@@ -107,6 +107,7 @@ fun LandscapeScreen(
     onChangeStatusClick: () -> Unit,
     onClickChangeFavorite: () -> Unit,
     onUpdateClick: (Param) -> Unit,
+    onClickClearSensors: () -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
@@ -252,6 +253,26 @@ fun LandscapeScreen(
                                     )
                                 }
                             )
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.delete_forever_24dp),
+                                        contentDescription = ""
+                                    )
+                                },
+                                onClick = {
+                                    expandedDropDownloads.value = false
+                                    onClickClearSensors()
+                                },
+                                text = {
+                                    Text(
+                                        modifier = modifier,
+                                        text = stringResource(R.string.delete_all_sensors),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        style = Typography.labelSmall,
+                                    )
+                                }
+                            )
                         }
                     }
                 }
@@ -348,7 +369,7 @@ fun LandscapeScreen(
                         Box(
                             modifier = modifier
                                 .clip(shape = RoundedCornerShape(100.dp))
-                                .background(if (device?.status==true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
+                                .background(if (device?.status == true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
                                 .padding(10.dp),
                         ) {
                             Icon(
@@ -364,7 +385,7 @@ fun LandscapeScreen(
                     val expandedDialog = remember { mutableStateOf(false) }
                     LazyRow (
                         modifier = modifier
-                            .height(configuration.screenHeightDp.dp/8)
+                            .height(configuration.screenHeightDp.dp / 8)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(15.dp),
                     ) {
@@ -400,38 +421,6 @@ fun LandscapeScreen(
                                 }
                             )
                         }
-                        /*items(withoutHistoryParams) { param ->
-                            UiRowDeviceValueWithClick(
-                                modifier = modifier,
-                                image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
-                                    true
-                                ) else param.idUnit.asUiImageParam(),
-                                value = param.value,
-                                name = param.label,
-                                hexColor = param.color,
-                                expandedDialog = expandedDialog.value,
-                                unit = param.idUnit.asUiTextParam(),
-                                content = {
-                                    UpdateParamDialog(
-                                        param = param,
-                                        units = units,
-                                        onCloseClick = {
-                                            expandedDialog.value = false
-                                        },
-                                        onUpdateClick = {
-                                            expandedDialog.value = false
-                                            onUpdateClick(param)
-                                        }
-                                    )
-                                },
-                                onCloseClick = {
-                                    expandedDialog.value = false
-                                },
-                                onOpenClick = {
-                                    expandedDialog.value = true
-                                }
-                            )
-                        }*/
                     }
                     Spacer(modifier = modifier.height(10.dp))
                     Card (
@@ -530,7 +519,7 @@ fun LandscapeScreen(
                             } else {
                             LazyColumn (
                                 modifier = modifier
-                                    .height(configuration.screenHeightDp.dp*3)
+                                    .height(configuration.screenHeightDp.dp * 3)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ){
@@ -540,25 +529,27 @@ fun LandscapeScreen(
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
-                                                val param = historyParams[index]
-                                                Text(
-                                                    modifier = modifier,
-                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    style = Typography.titleLarge,
-                                                )
-                                                SecondLineChart(
-                                                    modifier = modifier
-                                                        .fillMaxWidth()
-                                                        .height(300.dp)
-                                                        .padding(5.dp),
-                                                    infos = history,
-                                                    unit = param.idUnit.asUiTextParam(),
-                                                    chartColor = MaterialTheme.colorScheme.outlineVariant,
-                                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                                    maxValue = stringResource(R.string.max_value),
-                                                    minValue = stringResource(R.string.min_value)
-                                                )
+                                                if (histories.isNotEmpty()) {
+                                                    val param = historyParams[index]
+                                                    Text(
+                                                        modifier = modifier,
+                                                        text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                        style = Typography.titleLarge,
+                                                    )
+                                                    SecondLineChart(
+                                                        modifier = modifier
+                                                            .fillMaxWidth()
+                                                            .height(300.dp)
+                                                            .padding(5.dp),
+                                                        infos = history,
+                                                        unit = param.idUnit.asUiTextParam(),
+                                                        chartColor = MaterialTheme.colorScheme.outlineVariant,
+                                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                                        maxValue = stringResource(R.string.max_value),
+                                                        minValue = stringResource(R.string.min_value)
+                                                    )
+                                                }
                                             }
                                         } else {
                                             Text(
@@ -765,6 +756,7 @@ private fun LandscapeScreenView() {
             histories = emptyList(),
             units = units,
             onDeleteDevice = {},
+            onClickClearSensors = {}
         )
     }
 }
@@ -955,6 +947,7 @@ private fun LandscapeScreenView2() {
             histories = emptyList(),
             units = units,
             onDeleteDevice = {},
+            onClickClearSensors = {}
         )
     }
 }

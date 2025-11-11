@@ -23,6 +23,7 @@ import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
 import com.edurda77.data.remote.device.BodyDeviceDto
+import com.edurda77.data.remote.devices.DeleteDeviceParamResponse
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.favorite.FavoriteDto
 import com.edurda77.data.remote.favorite.FavoriteRequest
@@ -579,6 +580,23 @@ class RemoteRepositoryImpl(
                     }
                 }.bodyAsText()
                 Unit
+            }
+        }
+    }
+
+    override suspend fun deleteParam(
+        token: String,
+        id: Int
+    ): ResultWork<Boolean, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.delete ("$BASE_URL$DEVICES_POSTFIX/$PARAMS_POSTFIX/${id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                    }
+                }.body<DeleteDeviceParamResponse>()
+                result.devicesParamsRecordDeleted
             }
         }
     }

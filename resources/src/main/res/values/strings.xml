@@ -97,6 +97,7 @@
     <string name="add_device">Добавить устройство</string>
     <string name="notifications">Уведомления</string>
     <string name="version">Текущая версия</string>
+    <string name="delete_all_sensors">Удалить все данные</string>
 
 
 </resources>

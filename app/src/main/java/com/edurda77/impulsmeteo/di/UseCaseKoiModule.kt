@@ -9,6 +9,7 @@ import com.edurda77.domain.usecase.AuthCheckUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
+import com.edurda77.domain.usecase.DeleteParamUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
@@ -45,6 +46,7 @@ val useCaseKoiModule = module {
     single<LogOffUseCase> { LogOffUseCase(get()) }
     single<AddDeviceUseCase> { AddDeviceUseCase(get()) }
     single<UsersUseCase> { UsersUseCase(get()) }
+    single<DeleteParamUseCase> { DeleteParamUseCase(get()) }
     single<PermissionsUseCase> { PermissionsUseCase(get()) }
     single<AddUserUseCase> { AddUserUseCase(get()) }
     single<DeleteUserUseCase> { DeleteUserUseCase(get()) }

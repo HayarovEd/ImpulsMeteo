@@ -111,6 +111,7 @@ fun PortraitScreen(
     onClickChangeFavorite: () -> Unit,
     onDeleteDevice: () -> Unit,
     onUpdateClick: (Param) -> Unit,
+    onClickClearSensors: () -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
@@ -250,6 +251,26 @@ fun PortraitScreen(
                                     Text(
                                         modifier = modifier,
                                         text = stringResource(R.string.delete_value),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        style = Typography.labelSmall,
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.delete_forever_24dp),
+                                        contentDescription = ""
+                                    )
+                                },
+                                onClick = {
+                                    expandedDropDownloads.value = false
+                                    onClickClearSensors()
+                                },
+                                text = {
+                                    Text(
+                                        modifier = modifier,
+                                        text = stringResource(R.string.delete_all_sensors),
                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                         style = Typography.labelSmall,
                                     )
@@ -515,25 +536,27 @@ fun PortraitScreen(
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
-                                                val param = historyParams[index]
-                                                Text(
-                                                    modifier = modifier,
-                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    style = Typography.titleLarge,
-                                                )
-                                                SecondLineChart(
-                                                    modifier = modifier
-                                                        .fillMaxWidth()
-                                                        .aspectRatio(16 / 9f)
-                                                        .padding(5.dp),
-                                                    infos = history,
-                                                    unit = param.idUnit.asUiTextParam(),
-                                                    chartColor = MaterialTheme.colorScheme.outlineVariant,
-                                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                                    maxValue = stringResource(R.string.max_value),
-                                                    minValue = stringResource(R.string.min_value)
-                                                )
+                                                if (historyParams.isNotEmpty()) {
+                                                    val param = historyParams[index]
+                                                    Text(
+                                                        modifier = modifier,
+                                                        text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                        style = Typography.titleLarge,
+                                                    )
+                                                    SecondLineChart(
+                                                        modifier = modifier
+                                                            .fillMaxWidth()
+                                                            .aspectRatio(16 / 9f)
+                                                            .padding(5.dp),
+                                                        infos = history,
+                                                        unit = param.idUnit.asUiTextParam(),
+                                                        chartColor = MaterialTheme.colorScheme.outlineVariant,
+                                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                                        maxValue = stringResource(R.string.max_value),
+                                                        minValue = stringResource(R.string.min_value)
+                                                    )
+                                                }
                                             }
                                         } else {
                                             Text(
@@ -736,7 +759,8 @@ private fun PortraitScreenView() {
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
-            onDeleteDevice = {}
+            onDeleteDevice = {},
+            onClickClearSensors = {},
         )
     }
 }
@@ -923,6 +947,7 @@ private fun DirectoriesScreenView2() {
             histories = emptyList(),
             units = units,
             onDeleteDevice = {},
+            onClickClearSensors = {},
         )
     }
 }
