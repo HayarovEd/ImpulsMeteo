@@ -24,16 +24,25 @@ class UpdateUserUseCase(
         } else if (!isValidEmail(email)) {
             return ResultWork.Error(DataError.EmailError.EMAIL_NOT_VALID)
         }
-        if (password.isBlank()) return ResultWork.Error(DataError.PasswordError.PASSWORD_BLANK)
-
-        return remoteRepository.updateUser(
-            id = id,
-            devices = devices,
-            permissions = permissions,
-            name = name,
-            token = token,
-            email = email,
-            password = password
-        )
+        return if (password.isBlank()) {
+            remoteRepository.updateUser(
+                id = id,
+                devices = devices,
+                permissions = permissions,
+                name = name,
+                token = token,
+                email = email,
+            )
+        } else {
+            remoteRepository.updateUserWithPassword(
+                id = id,
+                devices = devices,
+                permissions = permissions,
+                name = name,
+                token = token,
+                email = email,
+                password = password
+            )
+        }
     }
 }
