@@ -5,14 +5,16 @@ import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 
 class AuthCheckUseCase(
     private val dataStoreRepository: DataStoreRepository,
 ) {
+    @OptIn(ExperimentalTime::class)
     operator fun invoke(): Flow<LocalAuthResult> {
         return flow {
             dataStoreRepository.readAuthorization().collect { collectAuth ->

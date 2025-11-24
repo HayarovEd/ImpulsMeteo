@@ -1,12 +1,13 @@
 package com.edurda77.domain.utils
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 private val localDateTimeFormat = LocalDateTime.Format {
     date(LocalDate.Formats.ISO)
@@ -14,6 +15,7 @@ private val localDateTimeFormat = LocalDateTime.Format {
     hour(); char(':'); minute(); char(':'); second()
 }
 
+@OptIn(ExperimentalTime::class)
 fun convertToLocalDateTime(stringDate: String): LocalDateTime {
     return try {
         val localDateTime = LocalDateTime.parse(stringDate, localDateTimeFormat)

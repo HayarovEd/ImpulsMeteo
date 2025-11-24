@@ -58,4 +58,7 @@ dependencies {
     //coil
     implementation(libs.coil.compose)
 
+    //Icons
+    api(libs.compose.material.icons)
+
 }

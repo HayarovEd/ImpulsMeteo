@@ -37,12 +37,13 @@ import com.edurda77.domain.utils.formatted
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.uikit.asUiTextParam
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.random.Random
+import kotlin.time.ExperimentalTime
 
 private const val COUNT_STEPS = 5
 
@@ -246,6 +247,7 @@ fun SecondLineChart(
 }
 
 
+@OptIn(ExperimentalTime::class)
 @Preview(widthDp = 1000)
 @Composable
 private fun SecondLineChartPreview() {
