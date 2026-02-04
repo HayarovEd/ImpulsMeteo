@@ -109,11 +109,12 @@ fun PortraitScreen(
     onUpdateNotificationClick: () -> Unit,
     onChangeStatusClick: () -> Unit,
     onClickChangeFavorite: () -> Unit,
+    onDeleteDevice: () -> Unit,
     onUpdateClick: (Param) -> Unit,
+    onClickClearSensors: () -> Unit,
     sheetState: SheetState,
     showBottomSheet: Boolean,
     historyParams: List<Param>,
-    withoutHistoryParams: List<Param>,
     isLoadingHistory: Boolean,
     histories: List<List<ElementHistory>>,
     screenWidth: Dp,
@@ -243,12 +244,33 @@ fun PortraitScreen(
                                     )
                                 },
                                 onClick = {
-                                    /////
+                                    expandedDropDownloads.value = false
+                                    onDeleteDevice()
                                 },
                                 text = {
                                     Text(
                                         modifier = modifier,
                                         text = stringResource(R.string.delete_value),
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        style = Typography.labelSmall,
+                                    )
+                                }
+                            )
+                            DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.delete_forever_24dp),
+                                        contentDescription = ""
+                                    )
+                                },
+                                onClick = {
+                                    expandedDropDownloads.value = false
+                                    onClickClearSensors()
+                                },
+                                text = {
+                                    Text(
+                                        modifier = modifier,
+                                        text = stringResource(R.string.delete_all_sensors),
                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                         style = Typography.labelSmall,
                                     )
@@ -330,7 +352,7 @@ fun PortraitScreen(
                         Column {
                             Text(
                                 modifier = modifier,
-                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt}",
+                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt?:""}",
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 style = Typography.bodyLarge,
                             )
@@ -350,11 +372,11 @@ fun PortraitScreen(
                         Box(
                             modifier = modifier
                                 .clip(shape = RoundedCornerShape(100.dp))
-                                .background(if (device?.status==true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
+                                .background(if (device?.status == true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
                                 .padding(10.dp),
                         ) {
                             Icon(
-                                painter = if (device?.status==true) painterResource(R.drawable.checkmark) else painterResource(
+                                painter = if (device?.status == true) painterResource(R.drawable.checkmark) else painterResource(
                                     R.drawable.cross
                                 ),
                                 contentDescription = "",
@@ -371,7 +393,7 @@ fun PortraitScreen(
                         verticalArrangement = Arrangement.spacedBy(15.dp),
                         columns = GridCells.Fixed(2)
                     ) {
-                        items(historyParams+withoutHistoryParams) { param->
+                        items(historyParams) { param ->
                             val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
                                 modifier = modifier.fillMaxWidth(0.4f),
@@ -406,19 +428,19 @@ fun PortraitScreen(
                         }
                     }
                     Spacer(modifier = modifier.height(10.dp))
-                    Card (
+                    Card(
                         modifier = modifier
                             .width(screenWidth * 0.9f),
                         shape = RoundedCornerShape(10.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.background
                         )
-                    ){
-                        Column (
+                    ) {
+                        Column(
                             modifier = modifier
                                 .fillMaxWidth()
                                 .padding(5.dp)
-                        ){
+                        ) {
                             Text(
                                 modifier = modifier,
                                 text = stringResource(R.string.filter),
@@ -496,42 +518,45 @@ fun PortraitScreen(
                                 }
                             }
                             Spacer(modifier = modifier.height(35.dp))
-                            LazyColumn (
+                            if (isLoadingHistory) {
+                                CircularProgressIndicator(
+                                    modifier = modifier.align(Alignment.CenterHorizontally),
+                                )
+                            } else {
+                            LazyColumn(
                                 modifier = modifier
-                                    .height(configuration.screenHeightDp.dp/2)
+                                    .height(configuration.screenHeightDp.dp / 2)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(35.dp)
-                            ){
-                                itemsIndexed(historyParams) { index, param ->
-                                    if (isLoadingHistory) {
-                                        CircularProgressIndicator(
-                                            modifier = modifier.align(Alignment.CenterHorizontally),
-                                        )
-                                    } else {
+                            ) {
+                                itemsIndexed(histories) { index, history ->
                                         if (histories.isNotEmpty()) {
-                                            Column (
+                                            Column(
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
-                                                Text(
-                                                    modifier = modifier,
-                                                    text = "${param.label}(${param.idUnit.asUiTextParam()})",
-                                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                    style = Typography.titleLarge,
-                                                )
-                                                SecondLineChart(
-                                                    modifier = modifier
-                                                        .fillMaxWidth()
-                                                        .aspectRatio(16 / 9f)
-                                                        .padding(5.dp),
-                                                    infos = histories[index],
-                                                    unit = param.idUnit.asUiTextParam(),
-                                                    chartColor = MaterialTheme.colorScheme.outlineVariant,
-                                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                                    maxValue = stringResource(R.string.max_value),
-                                                    minValue = stringResource(R.string.min_value)
-                                                )
+                                                if (historyParams.isNotEmpty()) {
+                                                    val param = historyParams[index]
+                                                    Text(
+                                                        modifier = modifier,
+                                                        text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                        style = Typography.titleLarge,
+                                                    )
+                                                    SecondLineChart(
+                                                        modifier = modifier
+                                                            .fillMaxWidth()
+                                                            .aspectRatio(16 / 9f)
+                                                            .padding(5.dp),
+                                                        infos = history,
+                                                        unit = param.idUnit.asUiTextParam(),
+                                                        chartColor = MaterialTheme.colorScheme.outlineVariant,
+                                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                                        maxValue = stringResource(R.string.max_value),
+                                                        minValue = stringResource(R.string.min_value)
+                                                    )
+                                                }
                                             }
                                         } else {
                                             Text(
@@ -731,10 +756,11 @@ private fun PortraitScreenView() {
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
-            withoutHistoryParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            onDeleteDevice = {},
+            onClickClearSensors = {},
         )
     }
 }
@@ -917,10 +943,11 @@ private fun DirectoriesScreenView2() {
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
-            withoutHistoryParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            onDeleteDevice = {},
+            onClickClearSensors = {},
         )
     }
 }

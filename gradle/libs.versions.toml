@@ -1,30 +1,30 @@
 [versions]
-agp = "8.11.0"
-coilCompose = "3.2.0"
-kmpDateTimePicker = "1.0.9"
-koinVersion = "4.1.0"
-kotlin = "2.2.0"
-coreKtx = "1.16.0"
-kotlinxDatetime = "0.6.2"
-lifecycleRuntimeKtx = "2.9.1"
-activityCompose = "1.10.1"
-composeBom = "2025.06.01"
-firebaseCrashlytics = "19.4.4"
-googleGmsGoogleServices = "4.4.3"
-googleFirebaseCrashlytics = "3.0.4"
+agp = "8.13.1"
+coilCompose = "3.3.0"
+kmpDateTimePicker = "1.1.1"
+koinVersion = "4.1.1"
+kotlin = "2.2.21"
+coreKtx = "1.17.0"
+kotlinxDatetime = "0.7.1"
+lifecycleRuntimeKtx = "2.10.0"
+activityCompose = "1.12.0"
+composeBom = "2025.11.01"
+firebaseCrashlytics = "20.0.3"
+googleGmsGoogleServices = "4.4.4"
+googleFirebaseCrashlytics = "3.0.6"
 
-datastorePreferences = "1.1.7"
-ktorVersion = "3.1.1"
-roomRuntime = "2.7.2"
-workRuntimeKtx = "2.10.2"
-navigationCompose = "2.9.1"
+datastorePreferences = "1.2.0"
+ktorVersion = "3.3.2"
+roomRuntime = "2.8.4"
+workRuntimeKtx = "2.11.0"
+navigationCompose = "2.9.6"
 kotlinxCoroutinesAndroid = "1.10.2"
 
 minSdk = "26"
 compileSdk = "36"
 targetSdk = "36"
 versionCode = "1"
-versionName = "1.08"
+versionName = "1.11"
 
 jvmTarget = "17"
 kotlinCompilerExtensionVersion = "1.5.10"
@@ -42,7 +42,7 @@ namespacechart = "com.edurda77.chart"
 namespaceData = "com.edurda77.data"
 
 appcompat = "1.7.1"
-uiTooling = "1.8.3"
+uiTooling = "1.9.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +60,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material-icons = { group = "androidx.compose.material", name = "material-icons-core" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
@@ -92,5 +93,5 @@ google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.2.0-2.0.2" }
+ksp = { id = "com.google.devtools.ksp", version = "2.3.0" }
 

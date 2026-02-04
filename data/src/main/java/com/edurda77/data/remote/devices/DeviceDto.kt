@@ -28,5 +28,7 @@ data class DeviceDto(
     @SerialName("update")
     val update: Int,
     @SerialName("video")
-    val video: String?
+    val video: String?,
+    @SerialName("notifications")
+    val notifications: NotificationDevicesDto
 )

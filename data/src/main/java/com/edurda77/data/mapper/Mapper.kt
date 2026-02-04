@@ -99,6 +99,7 @@ fun DevicesDto.convertToDevices(): List<Device> {
                 )
             }.filter { !it.isHidden },
             updatedAt = device.lastUpdate ?: "",
+            statusNotifications = device.notifications.deviceStatus,
         )
     }
 }

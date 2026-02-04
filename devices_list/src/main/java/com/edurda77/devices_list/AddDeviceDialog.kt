@@ -50,7 +50,7 @@ fun AddDeviceDialog(
 
     val name = remember { mutableStateOf("") }
     val key = remember { mutableStateOf("") }
-    val frequency = remember { mutableStateOf("") }
+    val frequency = remember { mutableStateOf("60000") }
     val selectedGroupsText = remember { mutableStateOf("") }
     LaunchedEffect(selectedGroups.size) {
         selectedGroupsText.value = selectedGroups.joinToString { it.name }

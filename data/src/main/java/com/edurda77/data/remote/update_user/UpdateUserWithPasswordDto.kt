@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UpdateUserDto(
+data class UpdateUserWithPasswordDto(
     @SerialName("devices")
     val devices: List<String>,
     @SerialName("email")
@@ -14,6 +14,8 @@ data class UpdateUserDto(
     val id: Int,
     @SerialName("name")
     val name: String,
+    @SerialName("password")
+    val password: String,
     @SerialName("permissions")
     val permissions: List<String>
 )

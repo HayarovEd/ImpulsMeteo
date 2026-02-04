@@ -1,5 +1,6 @@
 package com.edurda77.data.repository
 
+import android.util.Log
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.convertToDevices
@@ -22,6 +23,7 @@ import com.edurda77.data.remote.auth.AuthDto
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
 import com.edurda77.data.remote.device.BodyDeviceDto
+import com.edurda77.data.remote.devices.DeleteDeviceParamResponse
 import com.edurda77.data.remote.devices.DevicesDto
 import com.edurda77.data.remote.favorite.FavoriteDto
 import com.edurda77.data.remote.favorite.FavoriteRequest
@@ -32,6 +34,7 @@ import com.edurda77.data.remote.units.UnitsDto
 import com.edurda77.data.remote.update_devices_group.UpdateDevicesGroupDto
 import com.edurda77.data.remote.update_unit.UpdateUnitDto
 import com.edurda77.data.remote.update_user.UpdateUserDto
+import com.edurda77.data.remote.update_user.UpdateUserWithPasswordDto
 import com.edurda77.data.remote.user.UsersDto
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.Device
@@ -178,8 +181,11 @@ class RemoteRepositoryImpl(
                     url {
                         bearerAuth(token)
                     }
-                }.call
+                }
+                val text = responseDevices.bodyAsText()
+                Log.d("TEST NOT FULL DATA", "device $text")
                 responseDevices
+                    .call
                     .body<BodyDeviceDto>().convertToSingleDevice()
             }
         }
@@ -371,7 +377,6 @@ class RemoteRepositoryImpl(
         permissions: List<String>,
         name: String,
         email: String,
-        password: String
     ): ResultWork<Unit, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
@@ -381,6 +386,38 @@ class RemoteRepositoryImpl(
                         bearerAuth(token)
                         setBody(
                             UpdateUserDto(
+                                id = id,
+                                devices = devices,
+                                permissions = permissions,
+                                name = name,
+                                email = email,
+                            )
+                        )
+                    }
+                }.bodyAsText()
+                Unit
+            }
+        }
+    }
+
+
+    override suspend fun updateUserWithPassword(
+        token: String,
+        id: Int,
+        devices: List<String>,
+        permissions: List<String>,
+        name: String,
+        email: String,
+        password: String
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.put("$BASE_URL$USERS_POSTFIX/$id") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                        setBody(
+                            UpdateUserWithPasswordDto(
                                 id = id,
                                 devices = devices,
                                 permissions = permissions,
@@ -575,6 +612,23 @@ class RemoteRepositoryImpl(
                     }
                 }.bodyAsText()
                 Unit
+            }
+        }
+    }
+
+    override suspend fun deleteParam(
+        token: String,
+        id: Int
+    ): ResultWork<Boolean, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.delete ("$BASE_URL$DEVICES_POSTFIX/$PARAMS_POSTFIX/${id}") {
+                    contentType(ContentType.Application.Json)
+                    url {
+                        bearerAuth(token)
+                    }
+                }.body<DeleteDeviceParamResponse>()
+                result.devicesParamsRecordDeleted
             }
         }
     }

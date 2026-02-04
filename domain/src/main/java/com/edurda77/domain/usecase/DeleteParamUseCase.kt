@@ -1,21 +1,18 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
-class DeleteDeviceUseCase(
+class DeleteParamUseCase(
     private val remoteRepository: RemoteRepository,
-    private val localRepository: LocalRepository,
 ) {
     suspend operator fun invoke(
         token: String,
-        isFavorite: Boolean,
         id: Int
-    ): ResultWork<Unit, DataError> {
-        return when (val result = remoteRepository.deleteDevice(
+    ): ResultWork<Boolean, DataError> {
+        return when (val result = remoteRepository.deleteParam(
             token = token,
             id = id
         )) {
@@ -23,9 +20,6 @@ class DeleteDeviceUseCase(
                 ResultWork.Error(result.error)
             }
             is ResultWork.Success -> {
-                if (isFavorite) {
-                    localRepository.deleteFavorite(id)
-                }
                 ResultWork.Success(result.data)
             }
         }

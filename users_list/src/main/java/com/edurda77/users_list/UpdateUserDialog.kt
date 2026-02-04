@@ -150,7 +150,7 @@ fun UpdateUserDialog(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            devices.forEach { device ->
+            devices.sortedBy { it.name }.forEach { device ->
                 FilterChip(
                     label = {
                         Text(

@@ -31,13 +31,14 @@ import com.edurda77.domain.model.DataPoint
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.resources.theme.ImpulsMeteoTheme
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.roundToInt
 import kotlin.random.Random
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun LineChart(
@@ -348,6 +349,7 @@ private fun getSelectedDataPointIndex(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview(widthDp = 1000)
 @Composable
 private fun LineChartPreview() {

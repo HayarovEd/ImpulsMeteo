@@ -8,7 +8,7 @@ data class SingleDevice(
     val host: String,
     val port: Int,
     val video: String?,
-    val updatedAt: String,
+    val updatedAt: String?,
     val frequency: Int,
     val groups: List<GroupDevices>,
     val params: List<Param>,

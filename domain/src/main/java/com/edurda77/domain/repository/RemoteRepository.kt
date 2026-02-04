@@ -50,7 +50,6 @@ interface RemoteRepository {
         permissions: List<String>,
         name: String,
         email: String,
-        password: String
     ): ResultWork<Unit, DataError>
 
     suspend fun getDevicesGroups(
@@ -102,4 +101,14 @@ interface RemoteRepository {
     suspend fun getFavorites(token: String): ResultWork<List<Favorite>, DataError>
     suspend fun addFavorite(token: String, deviceId: Int): ResultWork<Favorite, DataError>
     suspend fun deleteFavorite(token: String, deviceId: Int): ResultWork<Unit, DataError>
+    suspend fun deleteParam(token: String, id: Int): ResultWork<Boolean, DataError>
+    suspend fun updateUserWithPassword(
+        token: String,
+        id: Int,
+        devices: List<String>,
+        permissions: List<String>,
+        name: String,
+        email: String,
+        password: String
+    ): ResultWork<Unit, DataError>
 }

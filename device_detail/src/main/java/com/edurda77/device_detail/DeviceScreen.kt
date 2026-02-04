@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -11,10 +12,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.utils.DEVICES_EDIT
-import com.edurda77.domain.utils.TAKED_COUNT
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiDialog
+import kotlinx.coroutines.flow.collectLatest
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import org.koin.androidx.compose.koinViewModel
@@ -40,8 +42,17 @@ fun DeviceScreen(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val historyParams = state.value.device?.params?.take(state.value.historyStates.size) ?: emptyList()
+    //val historyParams = state.value.device?.params?.take(state.value.historyStates.size) ?: emptyList()
     //val withoutHistoryParams = state.value.device?.params?.drop(TAKED_COUNT) ?: emptyList()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                UiDeviceEvents.BackNavigationEvent -> onBackClick()
+            }
+        }
+    }
+
 
     WheelDateTimePickerView(
         height = if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) screenHeight * 9 / 10 else screenHeight / 5,
@@ -79,6 +90,21 @@ fun DeviceScreen(
         }
     )
 
+    val expandedDeleteDialog = remember { mutableStateOf(false) }
+    if (expandedDeleteDialog.value) {
+        UiAlertDialog(
+            title = stringResource(R.string.sure_delete_device),
+            onClickConfirm = {
+                onEvent(DeviceEvent.DeleteDevice)
+                expandedDeleteDialog.value = false
+            },
+            onClickCancel = {
+                expandedDeleteDialog.value = false
+            }
+        )
+    }
+
+
     if (expandedUpdateDialog.value) {
         UiDialog(
             onCloseDialog = {
@@ -93,7 +119,7 @@ fun DeviceScreen(
                     },
                     label = state.value.device?.name ?: "",
                     key = state.value.device?.key ?: "",
-                    frequency = state.value.device?.frequency ?: 0,
+                    frequency = state.value.device?.frequency ?: 60000,
                     groups = state.value.groups,
                     onUpdateClick = { currentName, currentKey, currentFrequency ->
                         onEvent(
@@ -128,10 +154,9 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
-            historyParams = historyParams,
+            historyParams = state.value.device?.params ?: emptyList(),
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
-            withoutHistoryParams = state.value.device?.params?:emptyList(),
             screenWidth = screenWidth,
             units = state.value.units,
             openFilter = {
@@ -185,6 +210,7 @@ fun DeviceScreen(
             },
             onUpdateNotificationClick = {
                 onEvent(DeviceEvent.UpdateNotifications)
+                showBottomSheet.value = !showBottomSheet.value
             },
             onClickExpandedUpdateDialog = {
                 expandedUpdateDialog.value = true
@@ -194,6 +220,12 @@ fun DeviceScreen(
             },
             onClickChangeFavorite = {
                 onEvent(DeviceEvent.WorkWithFavorite)
+            },
+            onDeleteDevice = {
+               expandedDeleteDialog.value = true
+            },
+            onClickClearSensors = {
+                onEvent(DeviceEvent.ClearDeviceSensorData)
             }
         )
     } else {
@@ -210,8 +242,7 @@ fun DeviceScreen(
             isEnableEdit = state.value.loggedUser?.permissions?.contains(DEVICES_EDIT) == true,
             showBottomSheet = showBottomSheet.value,
             limits = limits,
-            historyParams = historyParams,
-            withoutHistoryParams = state.value.device?.params?:emptyList(),
+            historyParams = state.value.device?.params ?: emptyList(),
             screenWidth = screenWidth,
             isLoadingHistory = state.value.isLoadingHistory,
             histories = state.value.historyStates,
@@ -264,6 +295,7 @@ fun DeviceScreen(
             },
             onUpdateNotificationClick = {
                 onEvent(DeviceEvent.UpdateNotifications)
+                showBottomSheet.value = !showBottomSheet.value
             },
             onClickExpandedUpdateDialog = {
                 expandedUpdateDialog.value = true
@@ -273,6 +305,12 @@ fun DeviceScreen(
             },
             onClickChangeFavorite = {
                 onEvent(DeviceEvent.WorkWithFavorite)
+            },
+            onDeleteDevice = {
+                expandedDeleteDialog.value = true
+            },
+            onClickClearSensors = {
+                onEvent(DeviceEvent.ClearDeviceSensorData)
             },
         )
     }
