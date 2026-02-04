@@ -1,23 +1,23 @@
 [versions]
-agp = "8.13.1"
+agp = "8.13.2"
 coilCompose = "3.3.0"
 kmpDateTimePicker = "1.1.1"
 koinVersion = "4.1.1"
-kotlin = "2.2.21"
+kotlin = "2.3.0"
 coreKtx = "1.17.0"
 kotlinxDatetime = "0.7.1"
 lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.0"
-composeBom = "2025.11.01"
-firebaseCrashlytics = "20.0.3"
+activityCompose = "1.12.3"
+composeBom = "2026.01.01"
+firebaseCrashlytics = "20.0.4"
 googleGmsGoogleServices = "4.4.4"
 googleFirebaseCrashlytics = "3.0.6"
 
 datastorePreferences = "1.2.0"
-ktorVersion = "3.3.2"
+ktorVersion = "3.4.0"
 roomRuntime = "2.8.4"
-workRuntimeKtx = "2.11.0"
-navigationCompose = "2.9.6"
+workRuntimeKtx = "2.11.1"
+navigationCompose = "2.9.7"
 kotlinxCoroutinesAndroid = "1.10.2"
 
 minSdk = "26"
@@ -42,7 +42,7 @@ namespacechart = "com.edurda77.chart"
 namespaceData = "com.edurda77.data"
 
 appcompat = "1.7.1"
-uiTooling = "1.9.5"
+uiTooling = "1.10.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
