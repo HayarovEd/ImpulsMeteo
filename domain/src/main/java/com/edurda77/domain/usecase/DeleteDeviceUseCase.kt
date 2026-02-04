@@ -1,13 +1,13 @@
 package com.edurda77.domain.usecase
 
 import com.edurda77.domain.repository.LocalRepository
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class DeleteDeviceUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
     private val localRepository: LocalRepository,
 ) {
     suspend operator fun invoke(
@@ -15,7 +15,7 @@ class DeleteDeviceUseCase(
         isFavorite: Boolean,
         id: Int
     ): ResultWork<Unit, DataError> {
-        return when (val result = remoteRepository.deleteDevice(
+        return when (val result = oldRemoteRepository.deleteDevice(
             token = token,
             id = id
         )) {

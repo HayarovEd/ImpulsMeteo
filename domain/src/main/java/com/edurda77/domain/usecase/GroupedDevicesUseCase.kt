@@ -2,7 +2,7 @@ package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevices
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.convertToMapGroupedDevices
@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 
 
 class GroupedDevicesUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
 
     private val _devices =
@@ -29,8 +29,8 @@ class GroupedDevicesUseCase(
     ): ResultWork<Map<GroupDevices, List<Device>>, DataError> {
         return withContext(Dispatchers.IO) {
             if (_devices.value.isEmpty() || isRefresh) {
-                val resultGroupedDevicesDif = async { remoteRepository.getGroupedDevices(token) }
-                val resultFavoritesDif = async { remoteRepository.getFavorites(token) }
+                val resultGroupedDevicesDif = async { oldRemoteRepository.getGroupedDevices(token) }
+                val resultFavoritesDif = async { oldRemoteRepository.getFavorites(token) }
                 when (val resultGroupedDevices = resultGroupedDevicesDif.await()) {
                     is ResultWork.Error -> {
                         ResultWork.Error(resultGroupedDevices.error)

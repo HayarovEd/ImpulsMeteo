@@ -1,13 +1,13 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.isValidEmail
 
 
 class UpdateUserUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     suspend operator fun invoke(
         token: String,
@@ -25,7 +25,7 @@ class UpdateUserUseCase(
             return ResultWork.Error(DataError.EmailError.EMAIL_NOT_VALID)
         }
         return if (password.isBlank()) {
-            remoteRepository.updateUser(
+            oldRemoteRepository.updateUser(
                 id = id,
                 devices = devices,
                 permissions = permissions,
@@ -34,7 +34,7 @@ class UpdateUserUseCase(
                 email = email,
             )
         } else {
-            remoteRepository.updateUserWithPassword(
+            oldRemoteRepository.updateUserWithPassword(
                 id = id,
                 devices = devices,
                 permissions = permissions,

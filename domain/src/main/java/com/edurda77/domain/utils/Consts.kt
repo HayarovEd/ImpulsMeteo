@@ -56,7 +56,6 @@ const val CAMERA_DELETE = 14*/
 
 const val STATUS_ON = "on"
 
-const val TAKED_COUNT = 6
 const val IS_HIDDEN = 1
 
 const val PING_INTERVAL = 20_000L
@@ -73,4 +72,9 @@ const val FAVORITE_DEVICE_ID = "device_id"
 const val FAVORITE = "favorite"
 const val FAVORITE_ID_GROUP = -10
 
-const val IMAGE_FILE = "image/*"
+
+
+//New
+const val NEW_BASE_URL = "http://10.222.222.135:8081/api/"
+const val ACCESS_TOKEN_LABEL = "access_token"
+const val REFRESH_TOKEN_LABEL = "refresh_token"

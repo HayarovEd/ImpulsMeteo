@@ -9,12 +9,15 @@ import com.edurda77.data.handler.handleRead
 import com.edurda77.data.handler.handleWrite
 import com.edurda77.domain.model.Auth
 import com.edurda77.domain.model.LastAuthData
+import com.edurda77.domain.model.Token
 import com.edurda77.domain.repository.DataStoreRepository
+import com.edurda77.domain.utils.ACCESS_TOKEN_LABEL
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EXPIRED_LABEL
 import com.edurda77.domain.utils.LAST_EMAIL
 import com.edurda77.domain.utils.LAST_PASSWORD
 import com.edurda77.domain.utils.NEGATIVE_ID
+import com.edurda77.domain.utils.REFRESH_TOKEN_LABEL
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.TOKEN_LABEL
 import com.edurda77.domain.utils.USER_ID_LABEL
@@ -81,6 +84,38 @@ class DataStoreRepositoryImpl(
         }
     }
 
+    override suspend fun saveTokens(
+        token: Token
+    ): ResultWork<Unit, DataError.DataStore> {
+        return handleWrite {
+            dataStore.edit { settings ->
+                settings[FIELD_ACCESS_TOKEN] = token.accessToken
+                settings[FIELD_REFRESH_TOKEN] = token.refreshToken
+            }
+        }
+    }
+
+    override fun readTokens(): Flow<ResultWork<Token, DataError.DataStore>> {
+        return handleRead {
+            dataStore.data.map {
+                Token(
+                    accessToken = it[FIELD_ACCESS_TOKEN] ?: "",
+                    refreshToken = it[FIELD_REFRESH_TOKEN] ?: "",
+                )
+            }
+        }
+    }
+
+    override suspend fun deleteTokens(): ResultWork<Unit, DataError.DataStore> {
+        return handleWrite {
+            dataStore.edit { settings ->
+                settings.remove(FIELD_ACCESS_TOKEN)
+                settings.remove(FIELD_REFRESH_TOKEN)
+            }
+        }
+    }
+
+
 
     companion object {
         val FIELD_TOKEN_LABEL = stringPreferencesKey(TOKEN_LABEL)
@@ -88,5 +123,7 @@ class DataStoreRepositoryImpl(
         val FIELD_USER_ID_LABEL = intPreferencesKey(USER_ID_LABEL)
         val FIELD_LAST_EMAIL = stringPreferencesKey(LAST_EMAIL)
         val FIELD_LAST_PASSWORD = stringPreferencesKey(LAST_PASSWORD)
+        val FIELD_ACCESS_TOKEN = stringPreferencesKey(ACCESS_TOKEN_LABEL)
+        val FIELD_REFRESH_TOKEN = stringPreferencesKey(REFRESH_TOKEN_LABEL)
     }
 }

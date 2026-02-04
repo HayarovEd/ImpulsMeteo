@@ -1,18 +1,18 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class DeleteUnitUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     suspend operator fun invoke(
         token: String,
         id: Int
     ): ResultWork<Unit, DataError> {
-        return remoteRepository.deleteUnit(
+        return oldRemoteRepository.deleteUnit(
             token = token,
             id = id
         )

@@ -2,7 +2,7 @@ package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.repository.LocalRepository
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 
 
 class DeviceByIdUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
     private val localRepository: LocalRepository,
 ) {
     operator fun invoke(
@@ -25,7 +25,7 @@ class DeviceByIdUseCase(
                     }
 
                     is ResultWork.Success -> {
-                        when (val result = remoteRepository.getDeviceById(
+                        when (val result = oldRemoteRepository.getDeviceById(
                             token = token,
                             id = id
                         )) {

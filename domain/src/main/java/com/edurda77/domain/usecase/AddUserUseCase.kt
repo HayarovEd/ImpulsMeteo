@@ -1,13 +1,13 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.isValidEmail
 
 
 class AddUserUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     suspend operator fun invoke(
         token: String,
@@ -25,7 +25,7 @@ class AddUserUseCase(
         }
         if (password.isBlank()) return ResultWork.Error(DataError.PasswordError.PASSWORD_BLANK)
 
-        return remoteRepository.addUser(
+        return oldRemoteRepository.addUser(
             devices = devices,
             permissions = permissions,
             name = name,

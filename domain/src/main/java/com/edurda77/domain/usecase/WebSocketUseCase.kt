@@ -3,7 +3,7 @@ package com.edurda77.domain.usecase
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.Subscriber
 import com.edurda77.domain.model.WebSocketMessage
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 
 class WebSocketUseCase(
     private val webSocketRepository: WebSocketRepository,
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     operator fun invoke(
         token: String,
@@ -33,7 +33,7 @@ class WebSocketUseCase(
                         when (collector.data) {
                             is WebSocketMessage.Connect -> {
                                 ids.forEach { id ->
-                                    val resultBroadcast = remoteRepository.getBroadcatingAuth(
+                                    val resultBroadcast = oldRemoteRepository.getBroadcatingAuth(
                                         socketId = collector.data.messageWebSocketStart.socketId,
                                         token = token,
                                         deviceId = id

@@ -1,12 +1,12 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class UpdateDevicesGroupUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     suspend operator fun invoke(
         token: String,
@@ -15,7 +15,7 @@ class UpdateDevicesGroupUseCase(
     ): ResultWork<Unit, DataError> {
         if (name.isBlank()) return ResultWork.Error(DataError.NameError.NAME_BLANK)
 
-        return remoteRepository.updateDevicesGroup(
+        return oldRemoteRepository.updateDevicesGroup(
             id = id,
             name = name,
             token = token,

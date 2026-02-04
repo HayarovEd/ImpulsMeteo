@@ -1,13 +1,13 @@
 package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.Notifications
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class UpdateNotificationsDeviceUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     suspend operator fun invoke(
         token: String,
@@ -15,7 +15,7 @@ class UpdateNotificationsDeviceUseCase(
         notifications: Notifications,
     ): ResultWork<Unit, DataError> {
 
-        return remoteRepository.updateNotificationsDevice(
+        return oldRemoteRepository.updateNotificationsDevice(
             id = id,
             token = token,
             notifications = notifications

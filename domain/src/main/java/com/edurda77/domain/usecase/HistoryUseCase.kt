@@ -1,13 +1,13 @@
 package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class HistoryUseCase(
-    private val remoteRepository: RemoteRepository,
+    private val oldRemoteRepository: OldRemoteRepository,
 ) {
     suspend operator fun invoke(
         token: String,
@@ -17,7 +17,7 @@ class HistoryUseCase(
         limit: Int,
     ): ResultWork<List<List<ElementHistory>>, DataError> {
 
-        return when (val result = remoteRepository.getHistoryDeviceById(
+        return when (val result = oldRemoteRepository.getHistoryDeviceById(
             id = id,
             fromDate = fromDate,
             limit = limit,
