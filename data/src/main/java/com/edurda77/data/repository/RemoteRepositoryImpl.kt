@@ -1,18 +1,13 @@
 package com.edurda77.data.repository
 
 import com.edurda77.data.handler.handleResponse
-import com.edurda77.data.mapper.convertToAuth
 import com.edurda77.data.mapper.toAuthUser
-import com.edurda77.data.remote.auth.AuthDtoOld
 import com.edurda77.data.remote.newDtos.auth.AuthUserDto
 import com.edurda77.data.remote.newDtos.auth.TokenDto
 import com.edurda77.data.remote.newDtos.requests.RefreshRequest
-import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.Token
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.repository.RemoteRepository
-import com.edurda77.domain.utils.AUTH_POSTFIX
-import com.edurda77.domain.utils.BASE_URL
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
 import com.edurda77.domain.utils.NEW_BASE_URL

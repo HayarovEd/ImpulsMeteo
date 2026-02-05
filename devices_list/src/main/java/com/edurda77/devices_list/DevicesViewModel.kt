@@ -54,9 +54,10 @@ class DevicesViewModel(
     private var _state = MutableStateFlow(DevicesState())
     val state = _state
         .onStart {
-            loadLocalData()
-            loadUpdateData()
+           // loadLocalData()
+            //loadUpdateData()
             checkEnableUpdates()
+            loadUserData()
         }
         .stateIn(
             viewModelScope,
@@ -285,7 +286,7 @@ class DevicesViewModel(
     }
 
     private suspend fun loadLoggedUserData(token: String) {
-        when (val result = loggedUserUseCase.invoke(token)) {
+        /*when (val result = loggedUserUseCase.invoke(token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     isLoading = false,
@@ -309,7 +310,7 @@ class DevicesViewModel(
                     query = state.value.query
                 )
             }
-        }
+        }*/
     }
 
     private suspend fun loadDevices(
@@ -454,6 +455,37 @@ class DevicesViewModel(
                                 .updateState()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun loadUserData() {
+        viewModelScope.launch {
+            when (val result = loggedUserUseCase.invoke()) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        message = result.error.asUiText()
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        authUser = result.data
+                    )
+                        .updateState()
+                    //TODO
+                    viewModelScope.launch {
+                        if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
+                            loadGroups()
+                        }
+                    }
+                    loadDevices(
+                        isRefresh = true,
+                        query = state.value.query
+                    )
                 }
             }
         }

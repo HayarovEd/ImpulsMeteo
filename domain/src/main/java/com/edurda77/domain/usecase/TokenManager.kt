@@ -14,11 +14,10 @@ class TokenManager(
 ) {
     suspend fun <D> validateFactory(
         data: suspend (String) -> ResultWork<D, DataError>,
-        onFailureTokens: () -> Unit
-    ) {
-        when (val tokens = dataStoreRepository.readStateTokens()) {
+    ): ResultWork<D, DataError> {
+        return when (val tokens = dataStoreRepository.readStateTokens()) {
             is ResultWork.Error -> {
-                onFailureTokens()
+                ResultWork.Error(DataError.TokenError.TOKEN_EXPIRED)
             }
 
             is ResultWork.Success -> {
@@ -28,11 +27,11 @@ class TokenManager(
                     val expiredRefresh =
                         jwtRepository.decodeJwt(tokens.data.refreshToken)
                     if (expiredRefresh == null || expiredRefresh < currentTimeLong) {
-                        onFailureTokens()
+                        ResultWork.Error(DataError.TokenError.TOKEN_EXPIRED)
                     } else {
                         when (val remoteRefresh =
                             remoteRepository.refresh(tokens.data.refreshToken)) {
-                            is ResultWork.Error -> onFailureTokens()
+                            is ResultWork.Error -> ResultWork.Error(DataError.TokenError.TOKEN_EXPIRED)
                             is ResultWork.Success -> {
                                 dataStoreRepository.saveTokens(remoteRefresh.data)
                                 data(remoteRefresh.data.accessToken)

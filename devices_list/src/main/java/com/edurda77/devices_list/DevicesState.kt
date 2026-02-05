@@ -5,6 +5,7 @@ import android.util.Log
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
+import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.download_install.model.LastVersionApp
 import com.edurda77.resources.uikit.UiText
 
@@ -24,6 +25,8 @@ data class DevicesState(
     val percentUpdate: Int = 0,
     val release: LastVersionApp? = null,
     val isSorted: Boolean = false,
+    //
+    val authUser: AuthUser? = null,
 ) {
     val nonHiddenDevices = devices.mapValues { (_, devices) ->
         devices.map { device ->

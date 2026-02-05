@@ -47,4 +47,8 @@ sealed interface DataError : RootError {
         ERROR_READ_DATA,
         ERROR_WRITE_DATA
     }
+
+    enum class TokenError : DataError {
+        TOKEN_EXPIRED
+    }
 }
