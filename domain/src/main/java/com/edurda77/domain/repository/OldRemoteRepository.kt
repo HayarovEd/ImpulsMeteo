@@ -1,14 +1,14 @@
 package com.edurda77.domain.repository
 
-import com.edurda77.domain.model.Auth
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.AuthOld
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.model.Favorite
+import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
-import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
@@ -16,12 +16,12 @@ import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 interface OldRemoteRepository {
-    suspend fun authorization(email: String, password: String): ResultWork<Auth, DataError>
+    suspend fun authorization(email: String, password: String): ResultWork<AuthOld, DataError>
     suspend fun authorizedUser(token: String): ResultWork<LoggedUser, DataError>
     suspend fun getGroupedDevices(
         token: String,
         parameterGroup: Int = 0
-    ): ResultWork<List<Device>, DataError>
+    ): ResultWork<List<DeviceOld>, DataError>
 
     suspend fun addDevice(
         token: String,
@@ -31,7 +31,7 @@ interface OldRemoteRepository {
         update: String
     ): ResultWork<Unit, DataError>
 
-    suspend fun getPermissions(token: String): ResultWork<Permissions, DataError>
+    suspend fun getPermissions(token: String): ResultWork<PermissionsOld, DataError>
     suspend fun getUsers(token: String): ResultWork<List<User>, DataError>
     suspend fun addUser(
         token: String,
@@ -84,7 +84,7 @@ interface OldRemoteRepository {
     suspend fun updateNotificationsDevice(
         token: String,
         id: Int,
-        notifications: Notifications
+        notificationsOld: NotificationsOld
     ): ResultWork<Unit, DataError>
 
     suspend fun updateDeviceById(token: String, device: SingleDevice): ResultWork<Unit, DataError>
@@ -98,8 +98,8 @@ interface OldRemoteRepository {
         limit: Int
     ): ResultWork<List<List<ElementHistory>>, DataError>
 
-    suspend fun getFavorites(token: String): ResultWork<List<Favorite>, DataError>
-    suspend fun addFavorite(token: String, deviceId: Int): ResultWork<Favorite, DataError>
+    suspend fun getFavorites(token: String): ResultWork<List<FavoriteOld>, DataError>
+    suspend fun addFavorite(token: String, deviceId: Int): ResultWork<FavoriteOld, DataError>
     suspend fun deleteFavorite(token: String, deviceId: Int): ResultWork<Unit, DataError>
     suspend fun deleteParam(token: String, id: Int): ResultWork<Boolean, DataError>
     suspend fun updateUserWithPassword(

@@ -16,7 +16,7 @@ suspend fun <D> handleWrite(data: suspend () -> D): ResultWork<D, DataError.Data
     }
 }
 
-fun <D> handleRead(data: () -> Flow <D>): Flow<ResultWork<D, DataError.DataStore>> {
+fun <D> handleReadFlow(data: () -> Flow <D>): Flow<ResultWork<D, DataError.DataStore>> {
     return flow<ResultWork<D, DataError.DataStore>> {
         data.invoke().collect { collector ->
             emit(
@@ -27,5 +27,15 @@ fun <D> handleRead(data: () -> Flow <D>): Flow<ResultWork<D, DataError.DataStore
         emit(
             ResultWork.Error(DataError.DataStore.ERROR_READ_DATA)
         )
+    }
+}
+
+suspend fun <D> handleRead(data: suspend () -> D): ResultWork<D, DataError.DataStore> {
+    return try {
+        ResultWork.Success(data())
+
+    }  catch (e: Exception) {
+        e.printStackTrace()
+        ResultWork.Error(DataError.DataStore.ERROR_READ_DATA)
     }
 }

@@ -1,5 +1,5 @@
 package com.edurda77.domain.model
 
-data class Favorite(
+data class FavoriteOld(
     val deviceId: Int
 )

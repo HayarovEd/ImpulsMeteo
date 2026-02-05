@@ -6,8 +6,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.edurda77.data.handler.handleRead
+import com.edurda77.data.handler.handleReadFlow
 import com.edurda77.data.handler.handleWrite
-import com.edurda77.domain.model.Auth
+import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.LastAuthData
 import com.edurda77.domain.model.Token
 import com.edurda77.domain.repository.DataStoreRepository
@@ -24,6 +25,7 @@ import com.edurda77.domain.utils.USER_ID_LABEL
 import com.edurda77.domain.utils.convertToLocalDateTime
 import com.edurda77.domain.utils.convertToStringDateTime
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class DataStoreRepositoryImpl(
@@ -31,21 +33,21 @@ class DataStoreRepositoryImpl(
 ) : DataStoreRepository {
 
     override suspend fun setAuthorization(
-        auth: Auth
+        authOld: AuthOld
     ): ResultWork<Unit, DataError.DataStore> {
         return handleWrite {
             dataStore.edit { settings ->
-                settings[FIELD_TOKEN_LABEL] = auth.accessToken
-                settings[FIELD_EXPIRED_LABEL] = convertToStringDateTime(auth.expiresAt)
-                settings[FIELD_USER_ID_LABEL] = auth.id
+                settings[FIELD_TOKEN_LABEL] = authOld.accessToken
+                settings[FIELD_EXPIRED_LABEL] = convertToStringDateTime(authOld.expiresAt)
+                settings[FIELD_USER_ID_LABEL] = authOld.id
             }
         }
     }
 
-    override fun readAuthorization(): Flow<ResultWork<Auth, DataError.DataStore>> {
-        return handleRead {
+    override fun readAuthorization(): Flow<ResultWork<AuthOld, DataError.DataStore>> {
+        return handleReadFlow {
             dataStore.data.map {
-                Auth(
+                AuthOld(
                     accessToken = it[FIELD_TOKEN_LABEL] ?: "",
                     expiresAt = convertToLocalDateTime(it[FIELD_EXPIRED_LABEL] ?: ""),
                     id = it[FIELD_USER_ID_LABEL] ?: NEGATIVE_ID,
@@ -74,7 +76,7 @@ class DataStoreRepositoryImpl(
     }
 
     override fun getLocalAuthorization(): Flow<ResultWork<LastAuthData, DataError.DataStore>> {
-        return handleRead {
+        return handleReadFlow {
             dataStore.data.map {
                 LastAuthData(
                     email = it[FIELD_LAST_EMAIL] ?: "",
@@ -96,13 +98,23 @@ class DataStoreRepositoryImpl(
     }
 
     override fun readTokens(): Flow<ResultWork<Token, DataError.DataStore>> {
-        return handleRead {
+        return handleReadFlow {
+            //dataStore.data.first()[FIELD_PASSWORD_LABEL] ?: ""
             dataStore.data.map {
                 Token(
                     accessToken = it[FIELD_ACCESS_TOKEN] ?: "",
                     refreshToken = it[FIELD_REFRESH_TOKEN] ?: "",
                 )
             }
+        }
+    }
+
+    override suspend fun readStateTokens(): ResultWork<Token, DataError.DataStore> {
+        return handleRead{
+            Token(
+                accessToken = dataStore.data.first()[FIELD_ACCESS_TOKEN] ?: "",
+                refreshToken = dataStore.data.first()[FIELD_REFRESH_TOKEN] ?: "",
+            )
         }
     }
 

@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.Subscriber
 import com.edurda77.domain.model.WebSocketMessage
 import com.edurda77.domain.repository.OldRemoteRepository
@@ -19,7 +19,7 @@ class WebSocketUseCase(
     operator fun invoke(
         token: String,
         ids: List<Int>
-    ): Flow<ResultWork<Device, DataError>> {
+    ): Flow<ResultWork<DeviceOld, DataError>> {
         return flow {
             webSocketRepository.getStateStream().collect { collector ->
                 when (collector) {
@@ -67,7 +67,7 @@ class WebSocketUseCase(
                             }
 
                             is WebSocketMessage.DeviceEvent -> {
-                                emit(ResultWork.Success(collector.data.device))
+                                emit(ResultWork.Success(collector.data.deviceOld))
                             }
                         }
 

@@ -1,6 +1,6 @@
 package com.edurda77.domain.model
 
-data class NotificationDevice(
+data class NotificationDeviceOld(
     val condition: String,
     val id: Int? = null,
     val idParam: Int,

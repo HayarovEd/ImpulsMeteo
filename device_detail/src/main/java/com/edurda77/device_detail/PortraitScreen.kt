@@ -62,8 +62,8 @@ import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.GroupDevices
-import com.edurda77.domain.model.NotificationDevice
-import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.NotificationDeviceOld
+import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -303,7 +303,7 @@ fun PortraitScreen(
                         onDeleteNotificationFromListClick = {
                             onDeleteNotificationFromListClick(it)
                         },
-                        notifications = device?.notifications,
+                        notificationsOld = device?.notificationsOld,
                         params = device?.params ?: emptyList(),
                         onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
                             onUpdateNotificationInListClick(
@@ -730,10 +730,10 @@ private fun PortraitScreenView() {
                 host = "host",
                 port = 0,
                 frequency = 60000,
-                notifications = Notifications(
+                notificationsOld = NotificationsOld(
                     deviceStatus = true,
                     notifications = listOf(
-                        NotificationDevice(
+                        NotificationDeviceOld(
                             condition = "nt1",
                             idParam = 1,
                             value = 3
@@ -917,10 +917,10 @@ private fun DirectoriesScreenView2() {
                 host = "host",
                 port = 0,
                 frequency = 60000,
-                notifications = Notifications(
+                notificationsOld = NotificationsOld(
                     deviceStatus = true,
                     notifications = listOf(
-                        NotificationDevice(
+                        NotificationDeviceOld(
                             condition = "nt1",
                             idParam = 1,
                             value = 3

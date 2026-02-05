@@ -41,8 +41,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.NotificationDevice
-import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.NotificationDeviceOld
+import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.R
@@ -57,7 +57,7 @@ import com.edurda77.resources.uikit.asUiImageParam
 fun NotificationsContent(
     modifier: Modifier = Modifier,
     onClickChangeVisibleBottomSheet: () -> Unit,
-    notifications: Notifications?,
+    notificationsOld: NotificationsOld?,
     params: List<Param>,
     onAddNotificationToListClick: (Int, String, Int) -> Unit,
     onDeleteNotificationFromListClick: (Int) -> Unit,
@@ -115,7 +115,7 @@ fun NotificationsContent(
             )
             Spacer(modifier = modifier.width(5.dp))
             Switch(
-                checked = notifications?.deviceStatus == true,
+                checked = notificationsOld?.deviceStatus == true,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White
                 ),
@@ -254,8 +254,8 @@ fun NotificationsContent(
             modifier = modifier
                 .fillMaxWidth(),
         ) {
-            if (notifications?.notifications != null) {
-                itemsIndexed(notifications.notifications) { index, notification ->
+            if (notificationsOld?.notifications != null) {
+                itemsIndexed(notificationsOld.notifications) { index, notification ->
                     val intIcon = params.firstOrNull { it.id == notification.idParam }?.idUnit ?: 1
                     val description =
                         params.firstOrNull { it.id == notification.idParam }?.name ?: ""
@@ -281,7 +281,7 @@ fun NotificationsContent(
                                         )
                                     },
                                     params = params,
-                                    notificationDevice = notification
+                                    notificationDeviceOld = notification
                                 )
                             }
                         )
@@ -386,10 +386,10 @@ private fun NotificationsContentView() {
             onChangeStatusClick = {},
             onAddNotificationToListClick = { _, _, _ -> },
             onDeleteNotificationFromListClick = {},
-            notifications = Notifications(
+            notificationsOld = NotificationsOld(
                 deviceStatus = true,
                 notifications = listOf(
-                    NotificationDevice(
+                    NotificationDeviceOld(
                         condition = "nt1",
                         idParam = 1,
                         value = 3
@@ -429,10 +429,10 @@ private fun NotificationsContentView2() {
             onChangeStatusClick = {},
             onAddNotificationToListClick = { _, _, _ -> },
             onDeleteNotificationFromListClick = {},
-            notifications = Notifications(
+            notificationsOld = NotificationsOld(
                 deviceStatus = true,
                 notifications = listOf(
-                    NotificationDevice(
+                    NotificationDeviceOld(
                         condition = "nt1",
                         idParam = 1,
                         value = 3

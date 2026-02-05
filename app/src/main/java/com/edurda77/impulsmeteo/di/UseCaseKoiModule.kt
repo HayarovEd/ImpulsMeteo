@@ -33,10 +33,12 @@ import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
 val useCaseKoiModule = module {
-    single<AuthCheckUseCase> { AuthCheckUseCase(get()) }
+    factoryOf(::AuthCheckUseCase) { bind<AuthCheckUseCase>() }
     single<LoginUseCase> { LoginUseCase(get(), get()) }
     single<ReadLocalAuthorizationUseCase> { ReadLocalAuthorizationUseCase(get()) }
     single<SaveLocalAuthorizationUseCase> { SaveLocalAuthorizationUseCase(get()) }

@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -11,6 +11,6 @@ class PermissionsUseCase(
 ) {
     suspend operator fun invoke(
         token: String
-    ): ResultWork<Permissions, DataError> =
+    ): ResultWork<PermissionsOld, DataError> =
         oldRemoteRepository.getPermissions(token)
 }

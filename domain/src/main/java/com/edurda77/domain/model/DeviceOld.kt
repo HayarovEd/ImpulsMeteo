@@ -1,6 +1,6 @@
 package com.edurda77.domain.model
 
-data class Device(
+data class DeviceOld(
     val id: Int,
     val name: String,
     val key: String,

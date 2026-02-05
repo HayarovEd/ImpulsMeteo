@@ -154,9 +154,9 @@ class DevicesViewModel(
                 )
                     .updateState()
                 viewModelScope.launch {
-                    if (event.device.isFavorite) {
+                    if (event.deviceOld.isFavorite) {
                         when (val result = removeFavoriteUseCase.invoke(
-                            deviceId = event.device.id,
+                            deviceId = event.deviceOld.id,
                             token = state.value.token
                         )) {
                             is ResultWork.Error -> {
@@ -174,7 +174,7 @@ class DevicesViewModel(
                         }
                     } else {
                         when (val result = addFavoriteUseCase.invoke(
-                            deviceId = event.device.id,
+                            deviceId = event.deviceOld.id,
                             token = state.value.token
                         )) {
                             is ResultWork.Error -> {
@@ -198,8 +198,8 @@ class DevicesViewModel(
                 viewModelScope.launch {
                     deleteDeviceUseCase.invoke(
                         token = state.value.token,
-                        isFavorite = event.device.isFavorite,
-                        id = event.device.id
+                        isFavorite = event.deviceOld.isFavorite,
+                        id = event.deviceOld.id
                     )
                     _state.value.copy(
                         isLoading = true,
@@ -274,7 +274,7 @@ class DevicesViewModel(
                         _state.value.copy(
                             devices = updateDevices(
                                 devices = state.value.devices,
-                                newDevice = collector.data
+                                newDeviceOld = collector.data
                             )
                         )
                             .updateState()

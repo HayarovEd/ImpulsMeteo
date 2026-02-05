@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
@@ -18,7 +18,7 @@ class GroupedDevicesUseCase(
 ) {
 
     private val _devices =
-        MutableStateFlow<List<Device>>(emptyList())
+        MutableStateFlow<List<DeviceOld>>(emptyList())
 
 
     suspend operator fun invoke(
@@ -26,7 +26,7 @@ class GroupedDevicesUseCase(
         query: String,
         isRefresh: Boolean,
         isSorted: Boolean,
-    ): ResultWork<Map<GroupDevices, List<Device>>, DataError> {
+    ): ResultWork<Map<GroupDevices, List<DeviceOld>>, DataError> {
         return withContext(Dispatchers.IO) {
             if (_devices.value.isEmpty() || isRefresh) {
                 val resultGroupedDevicesDif = async { oldRemoteRepository.getGroupedDevices(token) }
@@ -42,7 +42,7 @@ class GroupedDevicesUseCase(
                             }
                             is ResultWork.Success -> {
                                 _devices.value = resultGroupedDevices.data
-                                val devicesWithFavorite = mutableListOf<Device>()
+                                val devicesWithFavorite = mutableListOf<DeviceOld>()
                                 _devices.value.forEach { device ->
                                     if (resultFavorites.data.firstOrNull { it.deviceId == device.id } != null) {
                                         devicesWithFavorite.add(device.copy(isFavorite = true))
@@ -54,7 +54,7 @@ class GroupedDevicesUseCase(
                                 ResultWork.Success(
                                     filterGroupedDevices(
                                         devices = convertToMapGroupedDevices(
-                                            devices = _devices.value,
+                                            deviceOlds = _devices.value,
                                         ),
                                         query = query,
                                         isSorted = isSorted
@@ -68,7 +68,7 @@ class GroupedDevicesUseCase(
                 ResultWork.Success(
                     filterGroupedDevices(
                         devices = convertToMapGroupedDevices(
-                            devices = _devices.value,
+                            deviceOlds = _devices.value,
                         ),
                         query = query,
                         isSorted = isSorted

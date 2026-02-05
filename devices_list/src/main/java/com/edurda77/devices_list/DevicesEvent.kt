@@ -1,6 +1,6 @@
 package com.edurda77.devices_list
 
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 
 sealed class DevicesEvent {
@@ -19,8 +19,8 @@ sealed class DevicesEvent {
     ) : DevicesEvent()
 
     data object OnCloseWebSocket : DevicesEvent()
-    class WorkWithFavorite(val device: Device) : DevicesEvent()
-    class OnDeleteDevice(val device: Device) : DevicesEvent()
+    class WorkWithFavorite(val deviceOld: DeviceOld) : DevicesEvent()
+    class OnDeleteDevice(val deviceOld: DeviceOld) : DevicesEvent()
     data object UpdateApp:DevicesEvent()
     data object SortDevicesByStatus:DevicesEvent()
 }

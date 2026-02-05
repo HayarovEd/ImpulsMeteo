@@ -1,6 +1,6 @@
 package com.edurda77.domain.model
 
-data class Permissions(
-    val permissions: List<PermissionUser>,
+data class PermissionsOld(
+    val permissions: List<PermissionUserOld>,
     val devicesPermission: List<DeviceUser>
 )

@@ -3,7 +3,7 @@ package com.edurda77.users_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.PermissionUserOld
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
@@ -99,10 +99,10 @@ class UsersViewModel(
 
             is UsersEvent.UpdateSelectedPermission -> {
                 val updatedPermissions = state.value.selectedPermissions.toMutableList()
-                if (state.value.selectedPermissions.contains(event.permissionUser)) {
-                    updatedPermissions.remove(event.permissionUser)
+                if (state.value.selectedPermissions.contains(event.permissionUserOld)) {
+                    updatedPermissions.remove(event.permissionUserOld)
                 } else {
-                    updatedPermissions.add(event.permissionUser)
+                    updatedPermissions.add(event.permissionUserOld)
                 }
                 _state.value.copy(
                     selectedPermissions = updatedPermissions
@@ -184,7 +184,7 @@ class UsersViewModel(
         password: String,
         email: String,
         devices: List<DeviceUser>,
-        permissions: List<PermissionUser>
+        permissions: List<PermissionUserOld>
     ) {
         when (val result = addUserUseCase.invoke(
             token = state.value.token,
@@ -213,7 +213,7 @@ class UsersViewModel(
         password: String,
         email: String,
         devices: List<DeviceUser>,
-        permissions: List<PermissionUser>
+        permissions: List<PermissionUserOld>
     ) {
         when (val result = updateUserUseCase.invoke(
             id = id,

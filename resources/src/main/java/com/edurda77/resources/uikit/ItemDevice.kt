@@ -31,7 +31,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.TEMPERATURE_ID
@@ -43,7 +43,7 @@ import kotlin.random.Random
 @Composable
 fun ItemDevice(
     modifier: Modifier = Modifier,
-    device: Device,
+    deviceOld: DeviceOld,
     configuration: Configuration,
     onClickDevice: () -> Unit,
     onClickChangeFavorite: () -> Unit,
@@ -55,7 +55,7 @@ fun ItemDevice(
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_device),
             onClickConfirm = {
-                onDeleteClick(device.id)
+                onDeleteClick(deviceOld.id)
                 expandedDeleteDialog.value = false
             },
             onClickCancel = {
@@ -84,11 +84,11 @@ fun ItemDevice(
                 Box(
                     modifier = modifier
                         .clip(shape = RoundedCornerShape(100.dp))
-                        .background(if (device.status) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
+                        .background(if (deviceOld.status) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
                         .padding(10.dp),
                 ) {
                     Icon(
-                        painter = if (device.status) painterResource(R.drawable.checkmark) else painterResource(
+                        painter = if (deviceOld.status) painterResource(R.drawable.checkmark) else painterResource(
                             R.drawable.cross
                         ),
                         contentDescription = "",
@@ -99,7 +99,7 @@ fun ItemDevice(
                 Column {
                     Text(
                         modifier = modifier,
-                        text = device.name,
+                        text = deviceOld.name,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = Typography.titleLarge,
                         textAlign = TextAlign.Center
@@ -107,7 +107,7 @@ fun ItemDevice(
                     Spacer(modifier = modifier.width(5.dp))
                     Text(
                         modifier = modifier,
-                        text = device.updatedAt,
+                        text = deviceOld.updatedAt,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = Typography.labelSmall,
                         textAlign = TextAlign.Center
@@ -118,14 +118,14 @@ fun ItemDevice(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = if (device.statusNotifications) ImageVector.vectorResource(R.drawable.bell) else ImageVector.vectorResource(
+                        imageVector = if (deviceOld.statusNotifications) ImageVector.vectorResource(R.drawable.bell) else ImageVector.vectorResource(
                             R.drawable.alert_bell_disable
                         ),
                         contentDescription = "",
                         tint =  MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     UiIconButton(
-                        icon = if (device.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                        icon = if (deviceOld.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
                             R.drawable.baseline_star_border_24
                         ),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -142,7 +142,7 @@ fun ItemDevice(
                 horizontalArrangement = Arrangement.spacedBy(15.dp),
                 maxItemsInEachRow = step
             ) {
-                device.params.forEach { param->
+                deviceOld.params.forEach { param->
                     UiRowDeviceValue(
                         modifier = modifier.weight(1f),
                         image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
@@ -154,7 +154,7 @@ fun ItemDevice(
                         hexColor = param.color,
                     )
                 }
-                val def = device.params.size%step
+                val def = deviceOld.params.size%step
                 if (def!=0) {
                     (1..(step-def)).forEach { _ ->
                         Spacer(modifier = modifier.weight(1f))
@@ -185,7 +185,7 @@ private fun ItemDeviceView1() {
     }
     ImpulsMeteoTheme {
         ItemDevice(
-            device = Device(
+            deviceOld = DeviceOld(
                 id = 0,
                 name = "Auto",
                 key = "1223",
@@ -229,7 +229,7 @@ private fun ItemDeviceView2() {
     }
     ImpulsMeteoTheme {
         ItemDevice(
-            device = Device(
+            deviceOld = DeviceOld(
                 id = 0,
                 name = "Auto",
                 key = "1223",

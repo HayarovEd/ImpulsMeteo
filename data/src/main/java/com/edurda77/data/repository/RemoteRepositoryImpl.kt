@@ -1,9 +1,18 @@
 package com.edurda77.data.repository
 
 import com.edurda77.data.handler.handleResponse
+import com.edurda77.data.mapper.convertToAuth
+import com.edurda77.data.mapper.toAuthUser
+import com.edurda77.data.remote.auth.AuthDtoOld
+import com.edurda77.data.remote.newDtos.auth.AuthUserDto
 import com.edurda77.data.remote.newDtos.auth.TokenDto
+import com.edurda77.data.remote.newDtos.requests.RefreshRequest
+import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.Token
+import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.utils.AUTH_POSTFIX
+import com.edurda77.domain.utils.BASE_URL
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -12,6 +21,11 @@ import com.edurda77.domain.utils.ResultWork
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -37,6 +51,62 @@ class RemoteRepositoryImpl(
                     accessToken = result.accessToken,
                     refreshToken = result.refreshToken
                 )
+            }
+        }
+    }
+
+    override suspend fun refresh(
+        refreshToken: String,
+    ): ResultWork<Token, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.post(
+                    NEW_BASE_URL + "auth/refresh"
+                ) {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        RefreshRequest(refreshToken)
+                    )
+                }.call
+                    .body<TokenDto>()
+                Token(
+                    accessToken = result.accessToken,
+                    refreshToken = result.refreshToken
+                )
+            }
+        }
+    }
+
+    override suspend fun logout(
+        refreshToken: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.post(
+                    NEW_BASE_URL + "auth/logout"
+                ) {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        RefreshRequest(refreshToken)
+                    )
+                }.call
+                    .body<TokenDto>()
+                Unit
+            }
+        }
+    }
+
+    override suspend fun loadAuthUserData(
+        accessToken: String,
+    ): ResultWork<AuthUser, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.get(NEW_BASE_URL + "auth/user") {
+                    contentType(ContentType.Application.Json)
+                }
+                    .call
+                    .body<AuthUserDto>()
+                result.toAuthUser()
             }
         }
     }

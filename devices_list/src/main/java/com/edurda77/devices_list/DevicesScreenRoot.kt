@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
@@ -473,7 +473,7 @@ fun DevicesScreen(
                                 }) { device ->
                                 ItemDevice(
                                     modifier = modifier,
-                                    device = device,
+                                    deviceOld = device,
                                     configuration = configuration,
                                     onClickDevice = {
                                         onGoToDevice(device.id)
@@ -546,8 +546,8 @@ private fun DevicesScreenView3() {
             idDevice = 0
         )
     }
-    val devices = (1..10).map {
-        Device(
+    val deviceOlds = (1..10).map {
+        DeviceOld(
             id = it,
             name = "Auto N$it",
             key = "00$it",
@@ -576,7 +576,7 @@ private fun DevicesScreenView3() {
                             id = 0,
                             name = "group 1"
                         ),
-                        devices
+                        deviceOlds
                         ),
                     Pair(
                         GroupDevices(
@@ -627,8 +627,8 @@ private fun DevicesScreenView4() {
             idDevice = 0
         )
     }
-    val devices = (1..10).map {
-        Device(
+    val deviceOlds = (1..10).map {
+        DeviceOld(
             id = it,
             name = "Auto N$it",
             key = "00$it",
@@ -657,7 +657,7 @@ private fun DevicesScreenView4() {
                             id = 0,
                             name = "group 1"
                         ),
-                        devices
+                        deviceOlds
                     ),
                     Pair(
                         GroupDevices(

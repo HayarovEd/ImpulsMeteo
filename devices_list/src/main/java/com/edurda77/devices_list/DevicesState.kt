@@ -2,7 +2,7 @@ package com.edurda77.devices_list
 
 
 import android.util.Log
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.download_install.model.LastVersionApp
@@ -15,7 +15,7 @@ data class DevicesState(
     val query: String = "",
     val numberSelectedGroup: Int = 0,
     val loggedUser: LoggedUser? = null,
-    val devices: Map<GroupDevices, List<Device>> = emptyMap(),
+    val devices: Map<GroupDevices, List<DeviceOld>> = emptyMap(),
     val isShowSearch: Boolean = false,
     val selectedGroups: List<GroupDevices> = emptyList(),
     val groups: List<GroupDevices> = emptyList(),

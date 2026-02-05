@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.Auth
+import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 class LocalTokenUseCase(
     private val dataStoreRepository: DataStoreRepository,
 ) {
-    operator fun invoke(): Flow<ResultWork<Auth, DataError.DataStore>> {
+    operator fun invoke(): Flow<ResultWork<AuthOld, DataError.DataStore>> {
         return dataStoreRepository.readAuthorization()
     }
 }

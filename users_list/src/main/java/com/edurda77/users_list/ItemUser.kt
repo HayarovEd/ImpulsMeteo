@@ -41,7 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.PermissionUserOld
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -63,12 +63,12 @@ fun ItemUser(
     onClearSelected: () -> Unit,
     onUpdateSelected: (Int) -> Unit,
     devices: List<DeviceUser>,
-    permissions: List<PermissionUser>,
+    permissions: List<PermissionUserOld>,
     selectedDevices: List<DeviceUser>,
-    selectedPermissions: List<PermissionUser>,
-    onUpdatePermissions: (PermissionUser) -> Unit,
+    selectedPermissions: List<PermissionUserOld>,
+    onUpdatePermissions: (PermissionUserOld) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
+    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUserOld>) -> Unit,
     onClickExpanded: () -> Unit,
 ) {
     val localDensity = LocalDensity.current
@@ -311,11 +311,11 @@ private fun ItemUserView1() {
                     )
                 ),
                 permissions = listOf(
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     ),
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     )
@@ -339,17 +339,17 @@ private fun ItemUserView1() {
             onUpdateSelected = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
@@ -387,11 +387,11 @@ private fun ItemUserView2() {
                     )
                 ),
                 permissions = listOf(
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     ),
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     )
@@ -415,17 +415,17 @@ private fun ItemUserView2() {
             onUpdateSelected = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),

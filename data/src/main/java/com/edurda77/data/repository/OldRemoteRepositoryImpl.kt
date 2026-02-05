@@ -19,7 +19,7 @@ import com.edurda77.data.remote.add_device.AddDeviceDto
 import com.edurda77.data.remote.add_devices_group.AddDevicesGroupDto
 import com.edurda77.data.remote.add_unit.AddUnitDto
 import com.edurda77.data.remote.add_user.AddUserDto
-import com.edurda77.data.remote.auth.AuthDto
+import com.edurda77.data.remote.auth.AuthDtoOld
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.broadcating_auth.BroadcatingAuthDto
 import com.edurda77.data.remote.device.BodyDeviceDto
@@ -36,15 +36,15 @@ import com.edurda77.data.remote.update_unit.UpdateUnitDto
 import com.edurda77.data.remote.update_user.UpdateUserDto
 import com.edurda77.data.remote.update_user.UpdateUserWithPasswordDto
 import com.edurda77.data.remote.user.UsersDto
-import com.edurda77.domain.model.Auth
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.AuthOld
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.model.Favorite
+import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
-import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
@@ -100,7 +100,7 @@ class OldRemoteRepositoryImpl(
     override suspend fun authorization(
         email: String,
         password: String,
-    ): ResultWork<Auth, DataError> {
+    ): ResultWork<AuthOld, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val result = httpClient.submitForm(
@@ -110,7 +110,7 @@ class OldRemoteRepositoryImpl(
                         append(PASSWORD, password)
                     }
                 ).call
-                    .body<AuthDto>()
+                    .body<AuthDtoOld>()
                 result.convertToAuth()
             }
         }
@@ -156,7 +156,7 @@ class OldRemoteRepositoryImpl(
     override suspend fun getGroupedDevices(
         token: String,
         parameterGroup: Int
-    ): ResultWork<List<Device>, DataError> {
+    ): ResultWork<List<DeviceOld>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val responseDevices = httpClient.get(BASE_URL + DEVICES_POSTFIX) {
@@ -222,7 +222,7 @@ class OldRemoteRepositoryImpl(
     override suspend fun updateNotificationsDevice(
         token: String,
         id: Int,
-        notifications: Notifications,
+        notificationsOld: NotificationsOld,
     ): ResultWork<Unit, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
@@ -231,7 +231,7 @@ class OldRemoteRepositoryImpl(
                     url {
                         bearerAuth(token)
                         setBody(
-                            notifications.convertToUpdateNotificationsDto()
+                            notificationsOld.convertToUpdateNotificationsDto()
                         )
                     }
                 }.bodyAsText()
@@ -279,7 +279,7 @@ class OldRemoteRepositoryImpl(
 
     override suspend fun getPermissions(
         token: String,
-    ): ResultWork<Permissions, DataError> {
+    ): ResultWork<PermissionsOld, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val result = httpClient.get(BASE_URL + PERMISSIONS_POSTFIX) {
@@ -662,7 +662,7 @@ class OldRemoteRepositoryImpl(
 
     override suspend fun getFavorites(
         token: String,
-    ): ResultWork<List<Favorite>, DataError> {
+    ): ResultWork<List<FavoriteOld>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val response = httpClient.get(BASE_URL + FAVORITE_POSTFIX) {
@@ -682,7 +682,7 @@ class OldRemoteRepositoryImpl(
     override suspend fun addFavorite(
         token: String,
         deviceId: Int,
-    ): ResultWork<Favorite, DataError> {
+    ): ResultWork<FavoriteOld, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val response = httpClient.post(BASE_URL + FAVORITE_POSTFIX) {

@@ -6,5 +6,5 @@ data class User(
     val id: Int,
     val name: String,
     val devices: List<DeviceUser>,
-    val permissions: List<PermissionUser>
+    val permissions: List<PermissionUserOld>
 )

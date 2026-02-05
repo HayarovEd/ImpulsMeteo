@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.PermissionUserOld
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -51,13 +51,13 @@ import com.edurda77.resources.uikit.UiTextField
 fun AddUserDialog(
     modifier: Modifier = Modifier,
     devices: List<DeviceUser>,
-    permissions: List<PermissionUser>,
-    selectedPermissions: List<PermissionUser>,
+    permissions: List<PermissionUserOld>,
+    selectedPermissions: List<PermissionUserOld>,
     selectedDevices: List<DeviceUser>,
     onCloseClick: () -> Unit,
-    onUpdatePermissions: (PermissionUser) -> Unit,
+    onUpdatePermissions: (PermissionUserOld) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onAddClick: (String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
+    onAddClick: (String, String, String, List<DeviceUser>, List<PermissionUserOld>) -> Unit,
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
@@ -239,17 +239,17 @@ private fun AddUserDialogView() {
                 )
             ),
             permissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
@@ -286,17 +286,17 @@ private fun AddUserDialogView2() {
                 )
             ),
             permissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),

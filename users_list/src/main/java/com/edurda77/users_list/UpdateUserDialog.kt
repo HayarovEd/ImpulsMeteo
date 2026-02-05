@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.PermissionUserOld
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -53,13 +53,13 @@ fun UpdateUserDialog(
     modifier: Modifier = Modifier,
     user: UserUi,
     devices: List<DeviceUser>,
-    permissions: List<PermissionUser>,
-    selectedPermissions: List<PermissionUser>,
+    permissions: List<PermissionUserOld>,
+    selectedPermissions: List<PermissionUserOld>,
     selectedDevices: List<DeviceUser>,
     onCloseClick: () -> Unit,
-    onUpdatePermissions: (PermissionUser) -> Unit,
+    onUpdatePermissions: (PermissionUserOld) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
+    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUserOld>) -> Unit,
 ) {
     val name = remember { mutableStateOf(user.name) }
     val email = remember { mutableStateOf(user.email) }
@@ -245,11 +245,11 @@ private fun UpdateUserDialogView1() {
                     )
                 ),
                 permissions = listOf(
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     ),
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     )
@@ -269,17 +269,17 @@ private fun UpdateUserDialogView1() {
             onUpdatePermissions = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
@@ -317,11 +317,11 @@ private fun UpdateUserDialog2() {
                     )
                 ),
                 permissions = listOf(
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     ),
-                    PermissionUser(
+                    PermissionUserOld(
                         id = 1,
                         displayName = "prm1"
                     )
@@ -341,17 +341,17 @@ private fun UpdateUserDialog2() {
             onUpdatePermissions = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUser(
+                PermissionUserOld(
                     id = 1,
                     displayName = "prm1"
                 ),

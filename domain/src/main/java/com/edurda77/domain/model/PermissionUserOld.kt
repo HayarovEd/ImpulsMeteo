@@ -1,7 +1,7 @@
 package com.edurda77.domain.model
 
 
-data class PermissionUser(
+data class PermissionUserOld(
     val displayName: String,
     val id: Int,
 )

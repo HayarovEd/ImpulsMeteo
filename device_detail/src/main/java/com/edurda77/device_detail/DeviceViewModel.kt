@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.NavigationRoute
-import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteParamUseCase
@@ -95,9 +95,9 @@ class DeviceViewModel(
             is DeviceEvent.AddNewNotificationToList -> {
                 viewModelScope.launch {
                     val updateList =
-                        state.value.device?.notifications?.notifications?.toMutableList()
+                        state.value.device?.notificationsOld?.notifications?.toMutableList()
                     updateList?.add(
-                        NotificationDevice(
+                        NotificationDeviceOld(
                             condition = event.condition,
                             idParam = event.idParam,
                             value = event.value
@@ -106,7 +106,7 @@ class DeviceViewModel(
                     if (state.value.device != null) {
                         _state.value.copy(
                             device = state.value.device?.copy(
-                                notifications = state.value.device!!.notifications.copy(
+                                notificationsOld = state.value.device!!.notificationsOld.copy(
                                     notifications = updateList ?: emptyList()
                                 )
                             )
@@ -119,12 +119,12 @@ class DeviceViewModel(
             is DeviceEvent.DeleteNotificationFromList -> {
                 viewModelScope.launch {
                     val updateList =
-                        state.value.device?.notifications?.notifications?.toMutableList()
+                        state.value.device?.notificationsOld?.notifications?.toMutableList()
                     updateList?.removeAt(event.index)
                     if (state.value.device != null) {
                         _state.value.copy(
                             device = state.value.device?.copy(
-                                notifications = state.value.device!!.notifications.copy(
+                                notificationsOld = state.value.device!!.notificationsOld.copy(
                                     notifications = updateList ?: emptyList()
                                 )
                             )
@@ -137,10 +137,10 @@ class DeviceViewModel(
             is DeviceEvent.UpdateNotificationInList -> {
                 viewModelScope.launch {
                     val updateList =
-                        state.value.device?.notifications?.notifications?.toMutableList()
+                        state.value.device?.notificationsOld?.notifications?.toMutableList()
                     if (state.value.device != null) {
                         updateList?.set(
-                            event.index, NotificationDevice(
+                            event.index, NotificationDeviceOld(
                                 id = event.id,
                                 condition = event.condition,
                                 idParam = event.idParam,
@@ -149,7 +149,7 @@ class DeviceViewModel(
                         )
                         _state.value.copy(
                             device = state.value.device?.copy(
-                                notifications = state.value.device!!.notifications.copy(
+                                notificationsOld = state.value.device!!.notificationsOld.copy(
                                     notifications = updateList ?: emptyList()
                                 )
                             )
@@ -164,8 +164,8 @@ class DeviceViewModel(
                     if (state.value.device != null) {
                         _state.value.copy(
                             device = state.value.device?.copy(
-                                notifications = state.value.device!!.notifications.copy(
-                                    deviceStatus = !state.value.device!!.notifications.deviceStatus
+                                notificationsOld = state.value.device!!.notificationsOld.copy(
+                                    deviceStatus = !state.value.device!!.notificationsOld.deviceStatus
                                 )
                             )
                         )
@@ -180,7 +180,7 @@ class DeviceViewModel(
                         when (val result = updateNotificationsDeviceUseCase.invoke(
                             token = state.value.token,
                             id = state.value.deviceId,
-                            notifications = state.value.device!!.notifications
+                            notificationsOld = state.value.device!!.notificationsOld
                         )) {
                             is ResultWork.Error -> {
                                 _state.value.copy(
@@ -508,7 +508,7 @@ class DeviceViewModel(
                         _state.value.copy(
                             device = updateDevice(
                                 device = state.value.device!!,
-                                newDevice = collector.data
+                                newDeviceOld = collector.data
                             )
                         )
                             .updateState()

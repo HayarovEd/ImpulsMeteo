@@ -5,7 +5,7 @@ import com.edurda77.data.remote.websocket.init_message.InitMessageDto
 import com.edurda77.data.remote.websocket.init_message.OriginalStartMessage
 import com.edurda77.data.remote.websocket_device.WebSocketDeviceDto
 import com.edurda77.data.remote.websocket_success_subscribe.SuccessSubscribeDto
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.MessageWebSocketStart
 import com.edurda77.domain.model.Param
@@ -42,14 +42,14 @@ fun convertToSuccessSubscribe(message: String): SuccessSubscribe {
     )
 }
 
-fun convertDeviceMessageToDevice(message: String): Device {
+fun convertDeviceMessageToDevice(message: String): DeviceOld {
     val formattedData = message
         .replace("\"[\\\"", "[")
         .replace("\\\"]\"", "]")
         .replace("\\\\\\", "")
     println("web socket open, formattedData $formattedData")
     val originalData = Json.decodeFromString<WebSocketDeviceDto>(formattedData)
-    return Device(
+    return DeviceOld(
         id = originalData.wsDevices.first().id,
         name = originalData.wsDevices.first().name,
         key = originalData.wsDevices.first().key,

@@ -1,0 +1,15 @@
+package com.edurda77.domain.model.newModels
+
+
+data class AuthUser(
+    val createdAt: String,
+    val devices: List<Device>,
+    val email: String,
+    val favorites: List<Favorite>,
+    val id: String,
+    val isEnabled: Boolean,
+    val name: String,
+    val password: String,
+    val permissions: List<Permission>,
+    val updateAt: String
+)

@@ -32,7 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.R
@@ -45,15 +45,15 @@ import com.edurda77.resources.uikit.UiTextField
 fun UpdateNotificationDialog(
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
-    notificationDevice: NotificationDevice,
+    notificationDeviceOld: NotificationDeviceOld,
     onConfirmClick: (Int, Int, String, Int) -> Unit,
     params: List<Param>,
 ) {
-    val condition = remember { mutableStateOf(notificationDevice.condition) }
-    val value = remember { mutableStateOf(notificationDevice.value.toString()) }
+    val condition = remember { mutableStateOf(notificationDeviceOld.condition) }
+    val value = remember { mutableStateOf(notificationDeviceOld.value.toString()) }
     val parameterId = remember { mutableIntStateOf(NEGATIVE_ID) }
     val parameter =
-        remember { mutableStateOf(params.first { it.id == notificationDevice.idParam }.label) }
+        remember { mutableStateOf(params.first { it.id == notificationDeviceOld.idParam }.label) }
     val expandedParameters = remember { mutableStateOf(false) }
     val expandedConditions = remember { mutableStateOf(false) }
     val conditions = listOf("<=", ">=")
@@ -212,7 +212,7 @@ fun UpdateNotificationDialog(
                 shape = MaterialTheme.shapes.medium,
                 onClick = {
                     onConfirmClick(
-                        notificationDevice.id ?: NEGATIVE_ID,
+                        notificationDeviceOld.id ?: NEGATIVE_ID,
                         parameterId.intValue,
                         condition.value,
                         value.value.toIntOrNull() ?: 0
@@ -253,7 +253,7 @@ private fun UpdateNotificationDialogView() {
     ImpulsMeteoTheme {
         UpdateNotificationDialog(
             onCloseClick = {},
-            notificationDevice = NotificationDevice(
+            notificationDeviceOld = NotificationDeviceOld(
                 condition = "nt1",
                 idParam = 1,
                 value = 3
@@ -287,7 +287,7 @@ private fun UpdateNotificationDialogView2() {
     ImpulsMeteoTheme {
         UpdateNotificationDialog(
             onCloseClick = {},
-            notificationDevice = NotificationDevice(
+            notificationDeviceOld = NotificationDeviceOld(
                 condition = "nt1",
                 idParam = 1,
                 value = 3

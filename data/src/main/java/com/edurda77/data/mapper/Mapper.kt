@@ -1,6 +1,6 @@
 package com.edurda77.data.mapper
 
-import com.edurda77.data.remote.auth.AuthDto
+import com.edurda77.data.remote.auth.AuthDtoOld
 import com.edurda77.data.remote.auth_user.AuthUserDto
 import com.edurda77.data.remote.device.BodyDeviceDto
 import com.edurda77.data.remote.devices.DevicesDto
@@ -17,18 +17,18 @@ import com.edurda77.data.remote.update_device.UpdateDeviceParamsDto
 import com.edurda77.data.remote.update_notifications.UpdateNotificationsDto
 import com.edurda77.data.remote.update_notifications.UpdateParamsNotificationsDto
 import com.edurda77.data.remote.user.UsersDto
-import com.edurda77.domain.model.Auth
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.AuthOld
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.model.Favorite
+import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.LoggedUser
-import com.edurda77.domain.model.NotificationDevice
-import com.edurda77.domain.model.Notifications
+import com.edurda77.domain.model.NotificationDeviceOld
+import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.PermissionUser
-import com.edurda77.domain.model.Permissions
+import com.edurda77.domain.model.PermissionUserOld
+import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.model.User
@@ -40,8 +40,8 @@ import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.USERS_LIST
 import com.edurda77.domain.utils.convertToLocalDateTime
 
-fun AuthDto.convertToAuth(): Auth {
-    return Auth(
+fun AuthDtoOld.convertToAuth(): AuthOld {
+    return AuthOld(
         accessToken = this.accessToken,
         expiresAt = convertToLocalDateTime(this.expiresAt),
         id = if (this.permissions.isNotEmpty()) {
@@ -71,9 +71,9 @@ fun DevicesGropusDto.convertToGroups(): List<GroupDevices> {
     }
 }
 
-fun DevicesDto.convertToDevices(): List<Device> {
+fun DevicesDto.convertToDevices(): List<DeviceOld> {
     return this.deviceDto.map { device ->
-        Device(
+        DeviceOld(
             id = device.id,
             name = device.name,
             key = device.key,
@@ -104,10 +104,10 @@ fun DevicesDto.convertToDevices(): List<Device> {
     }
 }
 
-fun PermissionsDto.convertToPermissions(): Permissions {
-    return Permissions(
+fun PermissionsDto.convertToPermissions(): PermissionsOld {
+    return PermissionsOld(
         permissions = this.permissionsDto.map {
-            PermissionUser(
+            PermissionUserOld(
                 displayName = it.displayName,
                 id = it.id
             )
@@ -134,7 +134,7 @@ fun UsersDto.convertToUsers(): List<User> {
                 )
             },
             permissions = user.permissionsUserDto.map {
-                PermissionUser(
+                PermissionUserOld(
                     displayName = it.displayName,
                     id = it.id
                 )
@@ -184,10 +184,10 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
                 idDevice = it.idDevice
             )
         },
-        notifications = Notifications(
+        notificationsOld = NotificationsOld(
             deviceStatus = this.singleDeviceDto.first().notificationsDto.deviceStatus,
             notifications = this.singleDeviceDto.first().notificationsDto.paramNotifications.map {
-                NotificationDevice(
+                NotificationDeviceOld(
                     id = it.id,
                     condition = it.condition,
                     idParam = it.idParam,
@@ -198,7 +198,7 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
     )
 }
 
-fun Notifications.convertToUpdateNotificationsDto(): UpdateNotificationsDto {
+fun NotificationsOld.convertToUpdateNotificationsDto(): UpdateNotificationsDto {
     return UpdateNotificationsDto(
         deviceStatus = this.deviceStatus,
         params = this.notifications.map {
@@ -223,8 +223,8 @@ fun SingleDevice.convertToSingleDeviceDto(): UpdateDeviceDto {
         lastUpdate = "",
         name = this.name,
         notifications = UpdateDeviceNotificationsDto(
-            deviceStatus = this.notifications.deviceStatus,
-            params = this.notifications.notifications.map {
+            deviceStatus = this.notificationsOld.deviceStatus,
+            params = this.notificationsOld.notifications.map {
                 UpdateDeviceNotificationsParamsDto(
                     condition = it.condition,
                     id = it.id ?: 0,
@@ -280,8 +280,8 @@ fun ResponseHistory.convertToElementsHistory(): List<List<ElementHistory>> {
     }
 }
 
-fun FavoriteDto.convertToFavorite(): Favorite {
-    return Favorite(deviceId = this.deviceId)
+fun FavoriteDto.convertToFavorite(): FavoriteOld {
+    return FavoriteOld(deviceId = this.deviceId)
 }
 
 

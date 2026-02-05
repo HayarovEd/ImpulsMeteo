@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevices
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.FAVORITE
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 fun DevicesSelectorGroup(
     modifier: Modifier = Modifier,
     listState: LazyListState,
-    devices: Map<GroupDevices, List<Device>>,
+    devices: Map<GroupDevices, List<DeviceOld>>,
     numberSelectedGroup: Int,
     onClick: (Int) -> Unit,
     scope: CoroutineScope,
@@ -117,7 +117,7 @@ private fun DevicesSelectorGroupView1() {
                         name = "group 1"
                     ),
                     listOf(
-                        Device(
+                        DeviceOld(
                             id = 0,
                             name = "Auto",
                             key = "1223",

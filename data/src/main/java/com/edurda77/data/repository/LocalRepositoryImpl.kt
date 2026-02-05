@@ -4,7 +4,7 @@ import com.edurda77.data.handler.handleReadFromDataBase
 import com.edurda77.data.handler.handleWriteToDataBase
 import com.edurda77.data.local.FavoriteEntity
 import com.edurda77.data.local.MeteoDataBase
-import com.edurda77.domain.model.Favorite
+import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -38,11 +38,11 @@ class LocalRepositoryImpl(
         }
     }
 
-    override suspend fun getAllFavorites(): Flow<ResultWork<List<Favorite>, DataError.LocalDateBase>> {
+    override suspend fun getAllFavorites(): Flow<ResultWork<List<FavoriteOld>, DataError.LocalDateBase>> {
         return handleReadFromDataBase {
             dao.getAllFavorites().map { favorites ->
                 favorites.map {
-                    Favorite(
+                    FavoriteOld(
                         deviceId = it.deviceId
                     )
                 }
