@@ -46,6 +46,7 @@ import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.DEVICES_CREATE
+import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
@@ -109,7 +110,7 @@ fun DevicesScreen(
         )
     val scope = rememberCoroutineScope()
     val expandedAddDialog = remember { mutableStateOf(false) }
-    val permissions = listOf(DEVICES_CREATE, DIRECTORY_LIST)
+
 
     LaunchedEffect(pagerState.currentPage) {
         if (state.devices.isNotEmpty()) {
@@ -119,12 +120,6 @@ fun DevicesScreen(
             }
         }
     }
-    /*
-        LaunchedEffect(state.isShowSearch) {
-            if (state.isShowSearch) {
-                focusRequester.requestFocus()
-            }
-        }*/
 
     val isShowDialogLogOff = remember { mutableStateOf(false) }
 
@@ -189,7 +184,6 @@ fun DevicesScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             UiIconButton(
-                                //    modifier = modifierByVisibilitySearch,
                                 icon = ImageVector.vectorResource(
                                     id = R.drawable.baseline_search_24
                                 ),
@@ -237,13 +231,11 @@ fun DevicesScreen(
 
                             }
                             UiIconButton(
-                                // modifier = modifierByVisibilitySearch,
                                 icon = ImageVector.vectorResource(id = R.drawable.outline_sort_24),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
                             )
                             UiIconButton(
-                                //  modifier = modifierByVisibilitySearch,
                                 icon = ImageVector.vectorResource(id = R.drawable.baseline_logout_24),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 onClick = { isShowDialogLogOff.value = true }
@@ -255,7 +247,6 @@ fun DevicesScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             UiIconButton(
-                                //modifier = modifierByVisibilitySearch,
                                 icon = ImageVector.vectorResource(id = R.drawable.baseline_search_off_24),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 onClick = {
@@ -265,7 +256,6 @@ fun DevicesScreen(
                             )
                             UiTextField(
                                 modifier = modifier.weight(1f),
-                                // modifier = modifier.focusRequester(focusRequester),
                                 content = state.query,
                                 label = stringResource(id = R.string.search),
                                 onClickContent = {
@@ -297,13 +287,11 @@ fun DevicesScreen(
 
                             }
                             UiIconButton(
-                                //modifier = modifierByVisibilitySearch,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 icon = ImageVector.vectorResource(id = R.drawable.outline_sort_24),
                                 onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
                             )
                             UiIconButton(
-                                // modifier = modifierByVisibilitySearch,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 icon = ImageVector.vectorResource(id = R.drawable.logout),
                                 onClick = { isShowDialogLogOff.value = true }
@@ -413,7 +401,7 @@ fun DevicesScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.loggedUser?.permissions?.containsAll(permissions) == true) {
+            if (state.authUser?.permissions?.map { it.name }?.contains(DEVICES_CREATE_LABEL) == true) {
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.outlineVariant,
                     onClick = { expandedAddDialog.value = true }
@@ -487,9 +475,6 @@ fun DevicesScreen(
                                     onClickChangeFavorite = {
                                        // onEvent(DevicesEvent.WorkWithFavorite(device))
                                     },
-                                    onDeleteClick = {
-                                       // onEvent(DevicesEvent.OnDeleteDevice(device))
-                                    }
                                 )
                             }
                         }

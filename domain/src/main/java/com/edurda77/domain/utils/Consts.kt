@@ -55,6 +55,7 @@ const val CAMERA_EDIT = 13
 const val CAMERA_DELETE = 14*/
 
 
+
 const val STATUS_ON = "on"
 
 const val IS_HIDDEN = 1
@@ -79,3 +80,5 @@ const val FAVORITE_ID_GROUP_STRING = "-10"
 const val NEW_BASE_URL = "http://10.222.222.135:8081/api/"
 const val ACCESS_TOKEN_LABEL = "access_token"
 const val REFRESH_TOKEN_LABEL = "refresh_token"
+
+const val DEVICES_CREATE_LABEL = "devices-create"

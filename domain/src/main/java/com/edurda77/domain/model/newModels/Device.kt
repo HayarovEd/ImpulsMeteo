@@ -1,5 +1,6 @@
 package com.edurda77.domain.model.newModels
 
+import kotlinx.datetime.LocalDateTime
 
 
 data class Device (
@@ -11,7 +12,7 @@ data class Device (
     val port: Int,
     val status: Boolean,
     val updateRate: Int,
-    val updatedDate: String,
+    val updatedDate: LocalDateTime,
     val videoUrl: String,
     val groups: List<GroupDevice>,
     val params: List<Param>,

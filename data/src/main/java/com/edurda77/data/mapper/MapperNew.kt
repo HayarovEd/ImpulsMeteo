@@ -19,6 +19,7 @@ import com.edurda77.domain.model.newModels.NotificationsDevice
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.Permission
 import com.edurda77.domain.utils.STATUS_ON
+import com.edurda77.domain.utils.convertToLocalDateTime
 
 fun PermissionDto.toPermission(): Permission {
     return Permission(
@@ -92,7 +93,7 @@ fun DeviceDto.toDevice(): Device {
         port = this.port,
         status = this.status == STATUS_ON,
         updateRate = this.updateRate,
-        updatedDate = this.updatedDate,
+        updatedDate = convertToLocalDateTime(this.updatedDate),
         videoUrl = this.videoUrl,
         groups = groupsDevice.map { it.toGroupDevice() },
         params = params.map { it.toParam() }
@@ -117,6 +118,6 @@ fun AuthUserDto.toAuthUser(): AuthUser {
         name = this.name,
         password = this.password,
         permissions = this.permissionDtos.map { it.toPermission() },
-        updateAt = this.updateAt,
+        updateAt = convertToLocalDateTime(this.updateAt),
     )
 }

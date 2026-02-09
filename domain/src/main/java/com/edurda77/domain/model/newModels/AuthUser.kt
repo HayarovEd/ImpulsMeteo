@@ -1,5 +1,7 @@
 package com.edurda77.domain.model.newModels
 
+import kotlinx.datetime.LocalDateTime
+
 
 data class AuthUser(
     val createdAt: String,
@@ -11,5 +13,5 @@ data class AuthUser(
     val name: String,
     val password: String?,
     val permissions: List<Permission>,
-    val updateAt: String,
+    val updateAt: LocalDateTime,
 )

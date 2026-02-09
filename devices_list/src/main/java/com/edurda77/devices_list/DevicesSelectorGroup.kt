@@ -39,6 +39,9 @@ import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 @Composable
 fun DevicesSelectorGroup(
@@ -127,7 +130,8 @@ private fun DevicesSelectorGroupView1() {
                             port = 80,
                             updateRate = 6000,
                             videoUrl = "",
-                            updatedDate = "12-03-2025",
+                            updatedDate = Clock.System.now()
+                                .toLocalDateTime(TimeZone.currentSystemDefault()),
                             groups = listOf(
                                 GroupDevice(
                                     id = "1",

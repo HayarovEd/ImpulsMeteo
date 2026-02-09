@@ -47,7 +47,7 @@ internal fun UiRowContent(
             Text(
                 modifier = Modifier
                     .basicMarquee(),
-                text = "$value $unit",
+                text = "${"%.1f".format(value)} $unit",
                 color = textColor,
                 style = Typography.bodyLarge,
             )

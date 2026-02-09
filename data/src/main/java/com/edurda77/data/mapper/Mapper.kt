@@ -38,12 +38,12 @@ import com.edurda77.domain.utils.IS_HIDDEN
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.USERS_LIST
-import com.edurda77.domain.utils.convertToLocalDateTime
+import com.edurda77.domain.utils.convertToLocalDateTimeOld
 
 fun AuthDtoOld.convertToAuth(): AuthOld {
     return AuthOld(
         accessToken = this.accessToken,
-        expiresAt = convertToLocalDateTime(this.expiresAt),
+        expiresAt = convertToLocalDateTimeOld(this.expiresAt),
         id = if (this.permissions.isNotEmpty()) {
             val containsRequired =
                 this.permissions.any { it.id == USERS_LIST || it.id == DEVICES_LIST || it.id == DIRECTORY_LIST }
@@ -273,7 +273,7 @@ fun ResponseHistory.convertToElementsHistory(): List<List<ElementHistory>> {
     return this.elementsHistory.map { baseHistory ->
         baseHistory.map {
             ElementHistory(
-                time = convertToLocalDateTime(it.time),
+                time = convertToLocalDateTimeOld(it.time),
                 value = it.value
             )
         }

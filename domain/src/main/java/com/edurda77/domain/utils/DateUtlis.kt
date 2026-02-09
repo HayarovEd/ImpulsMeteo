@@ -1,5 +1,6 @@
 package com.edurda77.domain.utils
 
+import com.sun.org.apache.xalan.internal.lib.ExsltDatetime.year
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -8,6 +9,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 private val localDateTimeFormat = LocalDateTime.Format {
     date(LocalDate.Formats.ISO)
@@ -16,7 +18,7 @@ private val localDateTimeFormat = LocalDateTime.Format {
 }
 
 @OptIn(ExperimentalTime::class)
-fun convertToLocalDateTime(stringDate: String): LocalDateTime {
+fun convertToLocalDateTimeOld(stringDate: String): LocalDateTime {
     return try {
         val localDateTime = LocalDateTime.parse(stringDate, localDateTimeFormat)
         localDateTime
@@ -24,6 +26,11 @@ fun convertToLocalDateTime(stringDate: String): LocalDateTime {
         val timeZone = TimeZone.currentSystemDefault()
         Clock.System.now().toLocalDateTime(timeZone)
     }
+}
+
+fun convertToLocalDateTime(stringDate: String): LocalDateTime {
+    val instant = Instant.parse(stringDate)
+    return instant.toLocalDateTime(TimeZone.currentSystemDefault())
 }
 
 fun convertToStringDateTime(localDateTime: LocalDateTime): String {
@@ -43,6 +50,23 @@ fun formatDateTimeChart(
         monthNumber()
         char('/')
         dayOfMonth()
+    }
+    return localDateTime.format(dateFormat)
+}
+
+fun formatDateTime(
+    localDateTime: LocalDateTime
+): String {
+    val dateFormat = LocalDateTime.Format {
+        year()
+        char('-')
+        monthNumber()
+        char('-')
+        day()
+        char(' ')
+        hour()
+        char(':')
+        minute()
     }
     return localDateTime.format(dateFormat)
 }

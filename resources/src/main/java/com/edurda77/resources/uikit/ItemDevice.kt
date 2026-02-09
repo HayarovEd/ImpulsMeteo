@@ -37,10 +37,16 @@ import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.domain.model.newModels.NotificationDevice
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.utils.TEMPERATURE_ABB
+import com.edurda77.domain.utils.formatDateTime
+import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.random.Random
+import kotlin.time.Clock
 
 @Composable
 fun ItemDevice(
@@ -50,7 +56,6 @@ fun ItemDevice(
     configuration: Configuration,
     onClickDevice: () -> Unit,
     onClickChangeFavorite: () -> Unit,
-    onDeleteClick: (Int) -> Unit,
 ) {
 
     val expandedDeleteDialog = remember { mutableStateOf(false) }
@@ -110,7 +115,7 @@ fun ItemDevice(
                     Spacer(modifier = modifier.width(5.dp))
                     Text(
                         modifier = modifier,
-                        text = device.updatedDate,
+                        text = formatDateTime(device.updatedDate),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = Typography.labelSmall,
                         textAlign = TextAlign.Center
@@ -209,7 +214,8 @@ private fun ItemDeviceView1() {
                 name = "Auto",
                 key = "1223",
                 status = false,
-                updatedDate = "12-03-2025",
+                updatedDate = Clock.System.now()
+                    .toLocalDateTime(TimeZone.currentSystemDefault()),
                 groups = listOf(
                     GroupDevice(
                         id = "1",
@@ -232,7 +238,6 @@ private fun ItemDeviceView1() {
             favorites = favorites,
             configuration = LocalConfiguration.current,
             onClickDevice = {},
-            onDeleteClick = {},
             onClickChangeFavorite = {}
         )
     }

@@ -22,7 +22,7 @@ import com.edurda77.domain.utils.REFRESH_TOKEN_LABEL
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.TOKEN_LABEL
 import com.edurda77.domain.utils.USER_ID_LABEL
-import com.edurda77.domain.utils.convertToLocalDateTime
+import com.edurda77.domain.utils.convertToLocalDateTimeOld
 import com.edurda77.domain.utils.convertToStringDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -49,7 +49,7 @@ class DataStoreRepositoryImpl(
             dataStore.data.map {
                 AuthOld(
                     accessToken = it[FIELD_TOKEN_LABEL] ?: "",
-                    expiresAt = convertToLocalDateTime(it[FIELD_EXPIRED_LABEL] ?: ""),
+                    expiresAt = convertToLocalDateTimeOld(it[FIELD_EXPIRED_LABEL] ?: ""),
                     id = it[FIELD_USER_ID_LABEL] ?: NEGATIVE_ID,
                 )
             }
