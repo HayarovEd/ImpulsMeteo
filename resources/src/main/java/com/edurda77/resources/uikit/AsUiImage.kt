@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.resources.R
 
 /*@Composable
@@ -30,6 +31,18 @@ fun Int.asUiImageParam(isHeightZero: Boolean = false): Painter {
 }
 
 @Composable
+fun MeasurementUnit.asUiImageParam(isHeightZero: Boolean = false): Painter {
+    return when (this.abbreviation) {
+        "°C" -> if (isHeightZero) painterResource(R.drawable.thermometer) else painterResource(R.drawable.thermometer_exterior)
+        "%" -> painterResource(R.drawable.humidity)
+        "мм.рт.ст." -> painterResource(R.drawable.pressure)
+        "м." -> painterResource(R.drawable.sea_level)
+        //"в." -> painterResource(R.drawable.sea_level)
+        else -> painterResource(R.drawable.not_available)
+    }
+}
+
+@Composable
 fun Int.asUiTextParam(): String {
     return when (this) {
         1 -> stringResource(R.string.unit_unknown)
@@ -37,6 +50,17 @@ fun Int.asUiTextParam(): String {
         3 -> stringResource(R.string.unit_humidity)
         4 -> stringResource(R.string.unit_pressure)
         5 -> stringResource(R.string.unit_length)
+        else -> stringResource(R.string.unit_unknown)
+    }
+}
+
+@Composable
+fun MeasurementUnit.asUiTextParam(): String {
+    return when (this.abbreviation) {
+        "°C" -> stringResource(R.string.unit_temperature)
+        "%" -> stringResource(R.string.unit_humidity)
+        "мм.рт.ст." -> stringResource(R.string.unit_pressure)
+        "м." -> stringResource(R.string.unit_length)
         else -> stringResource(R.string.unit_unknown)
     }
 }

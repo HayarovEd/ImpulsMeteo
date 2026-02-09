@@ -263,7 +263,7 @@ class UsersViewModel(
     }
 
     private suspend fun loadLoggedUserData(token: String) {
-        when (val result = loggedUserUseCase.invoke(token)) {
+       /* when (val result = loggedUserUseCase.invoke(token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     isLoading = false,
@@ -280,7 +280,7 @@ class UsersViewModel(
                 loadPermissionsAndDevices()
                 loadUsers()
             }
-        }
+        }*/
     }
 
     private suspend fun loadUsers() {
