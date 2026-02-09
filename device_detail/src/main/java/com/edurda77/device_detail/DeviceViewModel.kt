@@ -454,7 +454,7 @@ class DeviceViewModel(
     }
 
     private suspend fun loadGroups() {
-        when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
+        /*when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     message = result.error.asUiText()
@@ -468,7 +468,7 @@ class DeviceViewModel(
                 )
                     .updateState()
             }
-        }
+        }*/
     }
 
     private suspend fun loadUnits() {

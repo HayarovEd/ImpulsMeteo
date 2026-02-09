@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.GroupDevicesOld
+import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -40,12 +40,12 @@ import com.edurda77.resources.uikit.UiTextField
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddDeviceDialog(
-    groups: List<GroupDevicesOld>,
+    groups: List<GroupDevice>,
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
-    onAddClick: (String, String, String, List<GroupDevicesOld>) -> Unit,
-    onUpdateGroups: (GroupDevicesOld) -> Unit,
-    selectedGroups: List<GroupDevicesOld>,
+    onAddClick: (String, String, String, List<GroupDevice>) -> Unit,
+    onUpdateGroups: (GroupDevice) -> Unit,
+    selectedGroups: List<GroupDevice>,
 ) {
 
     val name = remember { mutableStateOf("") }
@@ -185,8 +185,8 @@ fun AddDeviceDialog(
 private fun AddDeviceDialogView() {
     val groups = remember {
         (1..5).map {
-            GroupDevicesOld(
-                id = it,
+            GroupDevice(
+                id = "$it",
                 name = "Group $it"
             )
         }
@@ -197,7 +197,7 @@ private fun AddDeviceDialogView() {
             onCloseClick = {},
             groups = groups,
             onUpdateGroups = {},
-            selectedGroups = groups.filter { it.id % 2 == 0 }
+            selectedGroups = groups.take(2)
         )
     }
 }
@@ -209,8 +209,8 @@ private fun AddDeviceDialogView() {
 private fun AddDeviceDialogView2() {
     val groups = remember {
         (1..5).map {
-            GroupDevicesOld(
-                id = it,
+            GroupDevice(
+                id = "$it",
                 name = "Group $it"
             )
         }
@@ -221,7 +221,7 @@ private fun AddDeviceDialogView2() {
             onCloseClick = {},
             groups = groups,
             onUpdateGroups = {},
-            selectedGroups = groups.filter { it.id % 2 == 0 }
+            selectedGroups = groups.takeLast(2)
         )
     }
 }

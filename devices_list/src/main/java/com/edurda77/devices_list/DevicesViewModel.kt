@@ -14,6 +14,7 @@ import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
+import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.updateDevices
@@ -112,21 +113,21 @@ class DevicesViewModel(
 
             is DevicesEvent.OnInsertDevice -> {
                 viewModelScope.launch {
-                    insertDevice(
+                   /* insertDevice(
                         name = event.name,
                         key = event.key,
                         frequency = event.frequency,
                         groups = event.groups.map { it.id }
-                    )
+                    )*/
                 }
             }
 
             is DevicesEvent.UpdateSelectedGroups -> {
                 val updatedGroups = state.value.selectedGroups.toMutableList()
-                if (state.value.selectedGroups.contains(event.groupDevicesOld)) {
-                    updatedGroups.remove(event.groupDevicesOld)
+                if (state.value.selectedGroups.contains(event.groupDevices)) {
+                    updatedGroups.remove(event.groupDevices)
                 } else {
-                    updatedGroups.add(event.groupDevicesOld)
+                    updatedGroups.add(event.groupDevices)
                 }
                 _state.value.copy(
                     selectedGroups = updatedGroups
@@ -475,12 +476,9 @@ class DevicesViewModel(
                         isLoading = false,
                     )
                         .updateState()
-                    //TODO
-                   /* viewModelScope.launch {
-                        if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
-                            loadGroups()
-                        }
-                    }*/
+                    if (result.data.permissions.map { it.name }.contains(DEVICES_CREATE_LABEL)) {
+                        loadGroups()
+                    }
                 }
             }
         }

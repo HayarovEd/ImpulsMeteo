@@ -5,6 +5,7 @@ import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.newModels.AuthUser
+import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.utils.convertToMapGroupedDevices2
 import com.edurda77.domain.utils.filterGroupedDevices2
 import com.edurda77.download_install.model.LastVersionApp
@@ -19,8 +20,8 @@ data class DevicesState(
     val loggedUser: LoggedUser? = null,
     val devices: Map<GroupDevicesOld, List<DeviceOld>> = emptyMap(),
     val isShowSearch: Boolean = false,
-    val selectedGroups: List<GroupDevicesOld> = emptyList(),
-    val groups: List<GroupDevicesOld> = emptyList(),
+    val selectedGroups: List<GroupDevice> = emptyList(),
+    val groups: List<GroupDevice> = emptyList(),
     val enableUpdate: Boolean = false,
     val isUpdating: Boolean = false,
     val percentUpdate: Int = 0,

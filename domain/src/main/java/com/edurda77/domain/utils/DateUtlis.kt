@@ -1,6 +1,5 @@
 package com.edurda77.domain.utils
 
-import com.sun.org.apache.xalan.internal.lib.ExsltDatetime.year
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -49,7 +48,7 @@ fun formatDateTimeChart(
         char('\n')
         monthNumber()
         char('/')
-        dayOfMonth()
+        monthNumber()
     }
     return localDateTime.format(dateFormat)
 }

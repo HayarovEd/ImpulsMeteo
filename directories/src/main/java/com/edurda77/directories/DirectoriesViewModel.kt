@@ -218,7 +218,7 @@ class DirectoriesViewModel(
             isLoading = true
         )
             .updateState()
-        when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
+      /*  when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     isLoading = false,
@@ -236,7 +236,7 @@ class DirectoriesViewModel(
                 )
                     .updateState()
             }
-        }
+        }*/
     }
 
     private suspend fun insertDevicesGroup(name: String) {

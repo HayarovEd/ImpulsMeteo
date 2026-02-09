@@ -38,11 +38,9 @@ import com.edurda77.domain.model.newModels.NotificationDevice
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.utils.TEMPERATURE_ABB
 import com.edurda77.domain.utils.formatDateTime
-import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.random.Random
