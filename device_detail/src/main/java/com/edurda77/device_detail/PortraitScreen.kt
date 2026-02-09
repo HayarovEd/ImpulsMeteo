@@ -61,7 +61,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
@@ -631,7 +631,7 @@ private fun PortraitScreenView() {
                 video = null,
                 updatedAt = "12-03-2025",
                 groups = listOf(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 1,
                         name = "Perm"
                     )
@@ -818,7 +818,7 @@ private fun DirectoriesScreenView2() {
                 video = null,
                 updatedAt = "12-03-2025",
                 groups = listOf(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 1,
                         name = "Perm"
                     )

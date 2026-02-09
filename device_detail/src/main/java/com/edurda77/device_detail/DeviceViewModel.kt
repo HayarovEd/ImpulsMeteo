@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.usecase.AddFavoriteUseCase
@@ -65,7 +65,7 @@ class DeviceViewModel(
             SharingStarted.WhileSubscribed(5000L),
             DeviceState()
         )
-    private var _startGroups = MutableStateFlow<List<GroupDevices>>(emptyList())
+    private var _startGroups = MutableStateFlow<List<GroupDevicesOld>>(emptyList())
 
     private val _eventFlow = MutableSharedFlow<UiDeviceEvents>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -200,10 +200,10 @@ class DeviceViewModel(
             is DeviceEvent.UpdateSelectedGroups -> {
                 if (state.value.device != null) {
                     val updatedGroups = state.value.device!!.groups.toMutableList()
-                    if (updatedGroups.contains(event.groupDevices)) {
-                        updatedGroups.remove(event.groupDevices)
+                    if (updatedGroups.contains(event.groupDevicesOld)) {
+                        updatedGroups.remove(event.groupDevicesOld)
                     } else {
-                        updatedGroups.add(event.groupDevices)
+                        updatedGroups.add(event.groupDevicesOld)
                     }
                     _state.value.copy(
                         device = state.value.device!!.copy(
@@ -393,7 +393,7 @@ class DeviceViewModel(
         )
             .updateState()
         delay(500)
-        when (val result = loggedUserUseCase.invoke(token)) {
+        /*when (val result = loggedUserUseCase.invoke(token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     isLoading = false,
@@ -421,7 +421,7 @@ class DeviceViewModel(
                     loadHistory(limit = 100)
                 }
             }
-        }
+        }*/
     }
 
     private suspend fun loadDevice() {

@@ -14,7 +14,6 @@ import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
-import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.updateDevices
 import com.edurda77.download_install.refresher.Refresher
@@ -125,10 +124,10 @@ class DevicesViewModel(
 
             is DevicesEvent.UpdateSelectedGroups -> {
                 val updatedGroups = state.value.selectedGroups.toMutableList()
-                if (state.value.selectedGroups.contains(event.groupDevices)) {
-                    updatedGroups.remove(event.groupDevices)
+                if (state.value.selectedGroups.contains(event.groupDevicesOld)) {
+                    updatedGroups.remove(event.groupDevicesOld)
                 } else {
-                    updatedGroups.add(event.groupDevices)
+                    updatedGroups.add(event.groupDevicesOld)
                 }
                 _state.value.copy(
                     selectedGroups = updatedGroups
@@ -473,19 +472,16 @@ class DevicesViewModel(
 
                 is ResultWork.Success -> {
                     _state.value.copy(
-                        authUser = result.data
+                        authUser = result.data,
+                        isLoading = false,
                     )
                         .updateState()
                     //TODO
-                    viewModelScope.launch {
+                   /* viewModelScope.launch {
                         if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
                             loadGroups()
                         }
-                    }
-                    loadDevices(
-                        isRefresh = true,
-                        query = state.value.query
-                    )
+                    }*/
                 }
             }
         }

@@ -40,7 +40,7 @@ import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.FavoriteOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
@@ -435,7 +435,7 @@ class OldRemoteRepositoryImpl(
 
     override suspend fun getDevicesGroups(
         token: String,
-    ): ResultWork<List<GroupDevices>, DataError> {
+    ): ResultWork<List<GroupDevicesOld>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val responseGroups = httpClient.get(BASE_URL + DEVICES_GROUPS_POSTFIX) {

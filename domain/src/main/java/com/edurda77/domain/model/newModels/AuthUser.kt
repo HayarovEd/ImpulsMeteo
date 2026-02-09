@@ -9,7 +9,7 @@ data class AuthUser(
     val id: String,
     val isEnabled: Boolean,
     val name: String,
-    val password: String,
+    val password: String?,
     val permissions: List<Permission>,
-    val updateAt: String
+    val updateAt: String,
 )

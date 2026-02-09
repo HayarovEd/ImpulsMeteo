@@ -2,7 +2,7 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
@@ -49,7 +49,7 @@ class DirectoriesViewModel(
             DirectoriesState()
         )
 
-    private val baseGroups = mutableListOf<GroupDevices>()
+    private val baseGroups = mutableListOf<GroupDevicesOld>()
     private val baseUnits = mutableListOf<UnitMeteo>()
 
     fun onEvent(event: DirectoriesEvent) {
@@ -167,7 +167,7 @@ class DirectoriesViewModel(
     }
 
     private suspend fun loadLoggedUserData(token: String) {
-        when (val result = loggedUserUseCase.invoke(token)) {
+        /*when (val result = loggedUserUseCase.invoke(token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     isLoading = false,
@@ -184,7 +184,7 @@ class DirectoriesViewModel(
                 loadGroups()
                 loadUnits()
             }
-        }
+        }*/
     }
 
     private suspend fun loadUnits() {

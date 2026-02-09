@@ -10,7 +10,7 @@ data class SingleDevice(
     val video: String?,
     val updatedAt: String?,
     val frequency: Int,
-    val groups: List<GroupDevices>,
+    val groups: List<GroupDevicesOld>,
     val params: List<Param>,
     val notificationsOld: NotificationsOld,
     val isFavorite: Boolean = false

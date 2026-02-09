@@ -1,8 +1,11 @@
 package com.edurda77.domain.utils
 
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.SingleDevice
+import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.Favorite
+import com.edurda77.domain.model.newModels.GroupDevice
 
 
 fun isValidEmail(email: String): Boolean {
@@ -13,9 +16,9 @@ fun isValidEmail(email: String): Boolean {
 
 fun convertToMapGroupedDevices(
     deviceOlds: List<DeviceOld>,
-): Map<GroupDevices, List<DeviceOld>> {
-    val groupedDevices = mutableMapOf<GroupDevices, List<DeviceOld>>()
-    val groups = mutableListOf<GroupDevices>()
+): Map<GroupDevicesOld, List<DeviceOld>> {
+    val groupedDevices = mutableMapOf<GroupDevicesOld, List<DeviceOld>>()
+    val groups = mutableListOf<GroupDevicesOld>()
     val favoriteDeviceOlds = mutableListOf<DeviceOld>()
     deviceOlds.forEach { device ->
         if (device.isFavorite) {
@@ -24,7 +27,7 @@ fun convertToMapGroupedDevices(
         groups.addAll(device.groups.filterNot { it in groups })
     }
     if (favoriteDeviceOlds.isNotEmpty()) {
-        groupedDevices[GroupDevices(
+        groupedDevices[GroupDevicesOld(
             id = FAVORITE_ID_GROUP,
             name = FAVORITE
         )] = favoriteDeviceOlds
@@ -38,11 +41,65 @@ fun convertToMapGroupedDevices(
     return groupedDevices
 }
 
+
+fun convertToMapGroupedDevices2(
+    devices: List<Device>,
+    favorites: List<Favorite>,
+): Map<GroupDevice, List<Device>> {
+    val groupedDevices = mutableMapOf<GroupDevice, List<Device>>()
+    val groups = mutableListOf<GroupDevice>()
+    val favoriteDevice = mutableListOf<Device>()
+    val nonHiddenParamsDevices = devices.map {
+        it.copy(
+            params = it.params.filter { pr-> !pr.isHidden }
+        )
+    }
+    nonHiddenParamsDevices.forEach { device ->
+        if (device.id in favorites.map { it.deviceId }) {
+            favoriteDevice.add(device)
+        }
+        groups.addAll(device.groups.filterNot { it in groups })
+    }
+    if (favoriteDevice.isNotEmpty()) {
+        groupedDevices[GroupDevice(
+            id = FAVORITE_ID_GROUP_STRING,
+            name = FAVORITE
+        )] = favoriteDevice
+    }
+    groups
+        .sortedBy { it.id }
+        .forEach { group ->
+            val enteredDevices = devices.filter { it.groups.contains(group) }
+            groupedDevices[group] = enteredDevices
+        }
+    return groupedDevices
+}
+
 fun filterGroupedDevices(
-    devices: Map<GroupDevices, List<DeviceOld>>,
+    devices: Map<GroupDevicesOld, List<DeviceOld>>,
     query: String,
     isSorted: Boolean,
-): Map<GroupDevices, List<DeviceOld>> {
+): Map<GroupDevicesOld, List<DeviceOld>> {
+    return devices
+        .mapValues { (_, current) ->
+            val searched = current.filter {
+                it.name
+                    .contains(
+                        other = query,
+                        ignoreCase = true
+                    )
+            }
+            if (isSorted) {
+                searched.sortedByDescending { it.status }
+            } else searched
+        }
+}
+
+fun filterGroupedDevices2(
+    devices: Map<GroupDevice, List<Device>>,
+    query: String,
+    isSorted: Boolean,
+): Map<GroupDevice, List<Device>> {
     return devices
         .mapValues { (_, current) ->
             val searched = current.filter {
@@ -59,9 +116,9 @@ fun filterGroupedDevices(
 }
 
 fun updateDevices(
-    devices: Map<GroupDevices, List<DeviceOld>>,
+    devices: Map<GroupDevicesOld, List<DeviceOld>>,
     newDeviceOld: DeviceOld
-): Map<GroupDevices, List<DeviceOld>> {
+): Map<GroupDevicesOld, List<DeviceOld>> {
 
     return devices.mapValues { (_, deviceList) ->
         deviceList.map { device ->

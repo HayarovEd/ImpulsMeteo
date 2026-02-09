@@ -42,7 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.DEVICES_CREATE
@@ -95,11 +95,10 @@ fun DevicesScreen(
     version: String
 ) {
     val screenWidth = configuration.screenWidthDp.dp
-    // val focusRequester = remember { FocusRequester() }
     val listState = rememberLazyListState()
     val pagerState =
         rememberPagerState(
-            pageCount = { state.devices.size }
+            pageCount = { state.filteredDevices.keys.size }
         )
     val scope = rememberCoroutineScope()
     val expandedAddDialog = remember { mutableStateOf(false) }
@@ -448,7 +447,7 @@ fun DevicesScreen(
                     }
                 }
             ) {
-                if (state.devices.isNotEmpty() && !state.isLoading) {
+                if (!state.isLoading) {
                     HorizontalPager(
                         modifier = modifier
                             .fillMaxSize()
@@ -456,7 +455,7 @@ fun DevicesScreen(
                         state = pagerState,
                         verticalAlignment = Alignment.Top
                     ) { page ->
-                        val currentDevices = state.nonHiddenDevices.values.toList()[page]
+                        val currentDevices = state.filteredDevices.values.toList()[page]
                         val cellsCount =
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
                         LazyVerticalGrid(
@@ -473,16 +472,17 @@ fun DevicesScreen(
                                 }) { device ->
                                 ItemDevice(
                                     modifier = modifier,
-                                    deviceOld = device,
+                                    device = device,
                                     configuration = configuration,
+                                    favorites = state.authUser?.favorites?: emptyList(),
                                     onClickDevice = {
-                                        onGoToDevice(device.id)
+                                       // onGoToDevice(device.id)
                                     },
                                     onClickChangeFavorite = {
-                                        onEvent(DevicesEvent.WorkWithFavorite(device))
+                                       // onEvent(DevicesEvent.WorkWithFavorite(device))
                                     },
                                     onDeleteClick = {
-                                        onEvent(DevicesEvent.OnDeleteDevice(device))
+                                       // onEvent(DevicesEvent.OnDeleteDevice(device))
                                     }
                                 )
                             }
@@ -555,7 +555,7 @@ private fun DevicesScreenView3() {
             video = null,
             updatedAt = "12-03-2025",
             groups = listOf(
-                GroupDevices(
+                GroupDevicesOld(
                     id = 1,
                     name = "Perm"
                 )
@@ -572,21 +572,21 @@ private fun DevicesScreenView3() {
                 isShowSearch = true,
                 devices = mapOf(
                     Pair(
-                        GroupDevices(
+                        GroupDevicesOld(
                             id = 0,
                             name = "group 1"
                         ),
                         deviceOlds
                         ),
                     Pair(
-                        GroupDevices(
+                        GroupDevicesOld(
                             id = 1,
                             name = "group 2"
                         ),
                         emptyList()
                     ),
                     Pair(
-                        GroupDevices(
+                        GroupDevicesOld(
                             id = 2,
                             name = "group 3"
                         ),
@@ -636,7 +636,7 @@ private fun DevicesScreenView4() {
             video = null,
             updatedAt = "12-03-2025",
             groups = listOf(
-                GroupDevices(
+                GroupDevicesOld(
                     id = 1,
                     name = "Perm"
                 )
@@ -653,21 +653,21 @@ private fun DevicesScreenView4() {
                 isShowSearch = true,
                 devices = mapOf(
                     Pair(
-                        GroupDevices(
+                        GroupDevicesOld(
                             id = 0,
                             name = "group 1"
                         ),
                         deviceOlds
                     ),
                     Pair(
-                        GroupDevices(
+                        GroupDevicesOld(
                             id = 1,
                             name = "group 2"
                         ),
                         emptyList()
                     ),
                     Pair(
-                        GroupDevices(
+                        GroupDevicesOld(
                             id = 2,
                             name = "group 3"
                         ),

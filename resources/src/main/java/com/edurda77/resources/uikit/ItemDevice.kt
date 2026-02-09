@@ -26,15 +26,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
-import com.edurda77.domain.model.Param
-import com.edurda77.domain.utils.TEMPERATURE_ID
+import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.Favorite
+import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.newModels.NotificationDevice
+import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.utils.TEMPERATURE_ABB
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -43,7 +45,8 @@ import kotlin.random.Random
 @Composable
 fun ItemDevice(
     modifier: Modifier = Modifier,
-    deviceOld: DeviceOld,
+    device: Device,
+    favorites: List<Favorite>,
     configuration: Configuration,
     onClickDevice: () -> Unit,
     onClickChangeFavorite: () -> Unit,
@@ -52,16 +55,16 @@ fun ItemDevice(
 
     val expandedDeleteDialog = remember { mutableStateOf(false) }
     if (expandedDeleteDialog.value) {
-        UiAlertDialog(
+        /*UiAlertDialog(
             title = stringResource(R.string.sure_delete_device),
             onClickConfirm = {
-                onDeleteClick(deviceOld.id)
+                onDeleteClick(device.id)
                 expandedDeleteDialog.value = false
             },
             onClickCancel = {
                 expandedDeleteDialog.value = false
             }
-        )
+        )*/
     }
     Card(
         modifier = modifier
@@ -84,11 +87,11 @@ fun ItemDevice(
                 Box(
                     modifier = modifier
                         .clip(shape = RoundedCornerShape(100.dp))
-                        .background(if (deviceOld.status) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
+                        .background(if (device.status) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
                         .padding(10.dp),
                 ) {
                     Icon(
-                        painter = if (deviceOld.status) painterResource(R.drawable.checkmark) else painterResource(
+                        painter = if (device.status) painterResource(R.drawable.checkmark) else painterResource(
                             R.drawable.cross
                         ),
                         contentDescription = "",
@@ -99,7 +102,7 @@ fun ItemDevice(
                 Column {
                     Text(
                         modifier = modifier,
-                        text = deviceOld.name,
+                        text = device.name,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = Typography.titleLarge,
                         textAlign = TextAlign.Center
@@ -107,25 +110,29 @@ fun ItemDevice(
                     Spacer(modifier = modifier.width(5.dp))
                     Text(
                         modifier = modifier,
-                        text = deviceOld.updatedAt,
+                        text = device.updatedDate,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = Typography.labelSmall,
                         textAlign = TextAlign.Center
                     )
                 }
                 Spacer(modifier = modifier.weight(1f))
-                Row (
+                Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = if (deviceOld.statusNotifications) ImageVector.vectorResource(R.drawable.bell) else ImageVector.vectorResource(
+                        imageVector = if (device.notificationDevice != null && device.notificationDevice!!.value) ImageVector.vectorResource(
+                            R.drawable.bell
+                        ) else ImageVector.vectorResource(
                             R.drawable.alert_bell_disable
                         ),
                         contentDescription = "",
-                        tint =  MaterialTheme.colorScheme.onPrimaryContainer,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     UiIconButton(
-                        icon = if (deviceOld.isFavorite) ImageVector.vectorResource(R.drawable.baseline_star_24) else ImageVector.vectorResource(
+                        icon = if (device.id in favorites.map { it.deviceId }) ImageVector.vectorResource(
+                            R.drawable.baseline_star_24
+                        ) else ImageVector.vectorResource(
                             R.drawable.baseline_star_border_24
                         ),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -142,21 +149,21 @@ fun ItemDevice(
                 horizontalArrangement = Arrangement.spacedBy(15.dp),
                 maxItemsInEachRow = step
             ) {
-                deviceOld.params.forEach { param->
+                device.params.forEach { param ->
                     UiRowDeviceValue(
                         modifier = modifier.weight(1f),
-                        image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                        image = if (param.measurementUnit.abbreviation == TEMPERATURE_ABB && param.value >= 0.0) param.measurementUnit.asUiImageParam(
                             true
-                        ) else param.idUnit.asUiImageParam(),
+                        ) else param.measurementUnit.asUiImageParam(),
                         value = param.value,
-                        unit = param.idUnit.asUiTextParam(),
+                        unit = param.measurementUnit.asUiTextParam(),
                         name = param.label,
                         hexColor = param.color,
                     )
                 }
-                val def = deviceOld.params.size%step
-                if (def!=0) {
-                    (1..(step-def)).forEach { _ ->
+                val def = device.params.size % step
+                if (def != 0) {
+                    (1..(step - def)).forEach { _ ->
                         Spacer(modifier = modifier.weight(1f))
                     }
                 }
@@ -165,43 +172,64 @@ fun ItemDevice(
     }
 }
 
-@Preview(
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
+@Preview
 @Composable
 private fun ItemDeviceView1() {
     val params = (1..21).map {
         Param(
-            id = it,
-            idUnit = 1,
+            id = "$it",
             name = "Temp",
             label = "tmp",
             value = Random.nextDouble(-10.0, 25.0),
             color = "#808080",
             classIcon = "wi wi-thermometer-exterior",
             isHidden = it % 2 != 0,
-            idDevice = 0
+            measurementUnit = MeasurementUnit(
+                abbreviation = "",
+                id = "1",
+                name = "tmp"
+            )
         )
     }
-    ImpulsMeteoTheme {
+    val favorites = (1..3).map {
+        Favorite(
+            createdAt = "",
+            deviceId = "$it",
+            id = "$it",
+            updateAt = "",
+            userId = "0"
+        )
+    }
+    ImpulsMeteoTheme(
+        darkTheme = true
+    ) {
         ItemDevice(
-            deviceOld = DeviceOld(
-                id = 0,
+            device = Device(
+                id = "0",
                 name = "Auto",
                 key = "1223",
                 status = false,
-                video = null,
-                updatedAt = "12-03-2025",
+                updatedDate = "12-03-2025",
                 groups = listOf(
-                    GroupDevices(
-                        id = 1,
+                    GroupDevice(
+                        id = "1",
                         name = "Perm"
                     )
                 ),
                 params = params,
-                isFavorite = false,
-                statusNotifications = false
+                host = "host",
+                port = 8000,
+                updateRate = 60000,
+                videoUrl = "",
+                notificationDevice = NotificationDevice(
+                    deviceId = "1",
+                    id = "0",
+                    notificationsDevice = emptyList(),
+                    userId = "8",
+                    value = false
+                )
             ),
+            favorites = favorites,
             configuration = LocalConfiguration.current,
             onClickDevice = {},
             onDeleteClick = {},
@@ -210,6 +238,7 @@ private fun ItemDeviceView1() {
     }
 }
 
+/*
 @Preview(
 )
 @Composable
@@ -229,7 +258,7 @@ private fun ItemDeviceView2() {
     }
     ImpulsMeteoTheme {
         ItemDevice(
-            deviceOld = DeviceOld(
+            device = DeviceOld(
                 id = 0,
                 name = "Auto",
                 key = "1223",
@@ -237,7 +266,7 @@ private fun ItemDeviceView2() {
                 video = null,
                 updatedAt = "12-03-2025",
                 groups = listOf(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 1,
                         name = "Perm"
                     )
@@ -252,4 +281,4 @@ private fun ItemDeviceView2() {
             onClickChangeFavorite = {}
         )
     }
-}
+}*/

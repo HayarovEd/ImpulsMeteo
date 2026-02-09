@@ -36,6 +36,7 @@ const val LAST_PASSWORD = "last_password"
 
 const val NEGATIVE_ID = -1
 const val TEMPERATURE_ID = 2
+const val  TEMPERATURE_ABB = "°C"
 
 //permissions
 const val USERS_LIST = 1
@@ -71,7 +72,7 @@ const val FAVORITE_TABLE = "tb_favorite"
 const val FAVORITE_DEVICE_ID = "device_id"
 const val FAVORITE = "favorite"
 const val FAVORITE_ID_GROUP = -10
-
+const val FAVORITE_ID_GROUP_STRING = "-10"
 
 
 //New

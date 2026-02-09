@@ -3,8 +3,8 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toAuthUser
 import com.edurda77.data.remote.newDtos.auth.AuthUserDto
+import com.edurda77.data.remote.newDtos.auth.RefreshRequest
 import com.edurda77.data.remote.newDtos.auth.TokenDto
-import com.edurda77.data.remote.newDtos.requests.RefreshRequest
 import com.edurda77.domain.model.Token
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.repository.RemoteRepository
@@ -15,6 +15,7 @@ import com.edurda77.domain.utils.PASSWORD
 import com.edurda77.domain.utils.ResultWork
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -98,10 +99,9 @@ class RemoteRepositoryImpl(
             handleResponse {
                 val result = httpClient.get(NEW_BASE_URL + "auth/user") {
                     contentType(ContentType.Application.Json)
+                    bearerAuth(accessToken)
                 }
-                    .call
-                    .body<AuthUserDto>()
-                result.toAuthUser()
+                result.call.body<AuthUserDto>().toAuthUser()
             }
         }
     }

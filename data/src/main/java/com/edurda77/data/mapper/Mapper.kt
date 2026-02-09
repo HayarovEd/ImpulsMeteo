@@ -22,7 +22,7 @@ import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.DeviceUser
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.FavoriteOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.NotificationsOld
@@ -62,9 +62,9 @@ fun AuthUserDto.convertToLoggedUser(): LoggedUser {
     )
 }
 
-fun DevicesGropusDto.convertToGroups(): List<GroupDevices> {
+fun DevicesGropusDto.convertToGroups(): List<GroupDevicesOld> {
     return this.groupsDto.map {
-        GroupDevices(
+        GroupDevicesOld(
             id = it.id,
             name = it.name
         )
@@ -80,7 +80,7 @@ fun DevicesDto.convertToDevices(): List<DeviceOld> {
             status = device.status == STATUS_ON,
             video = device.video,
             groups = device.groups.map { group ->
-                GroupDevices(
+                GroupDevicesOld(
                     id = group.id,
                     name = group.name
                 )
@@ -166,7 +166,7 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
         host = this.singleDeviceDto.first().host ?: "",
         port = this.singleDeviceDto.first().port,
         groups = this.singleDeviceDto.first().groups.map {
-            GroupDevices(
+            GroupDevicesOld(
                 id = it.id,
                 name = it.name
             )

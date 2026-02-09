@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 
 
 @Composable
@@ -16,7 +16,7 @@ fun DirectoryScreenGroups(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     isEnableUpdate: Boolean,
-    groups: List<GroupDevices>,
+    groups: List<GroupDevicesOld>,
     cellsCount: Int,
     onDeleteClick: (Int) -> Unit,
     onUpdateClick: (Int, String) -> Unit,

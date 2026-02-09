@@ -2,7 +2,7 @@ package com.edurda77.device_detail
 
 
 import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -25,7 +25,7 @@ data class DeviceState @OptIn(ExperimentalTime::class) constructor(
     val loggedUser: LoggedUser? = null,
     val device: SingleDevice? = null,
     val units: List<UnitMeteo> = emptyList(),
-    val groups: List<GroupDevices> = emptyList(),
+    val groups: List<GroupDevicesOld> = emptyList(),
     val toDate: LocalDateTime = LocalDateTime.now(),
     val fromDate: LocalDateTime = Clock.System.now()
         .minus(DateTimePeriod(months = 1), TimeZone.currentSystemDefault())

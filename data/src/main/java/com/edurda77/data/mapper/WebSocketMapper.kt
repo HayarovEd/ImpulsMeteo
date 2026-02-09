@@ -6,7 +6,7 @@ import com.edurda77.data.remote.websocket.init_message.OriginalStartMessage
 import com.edurda77.data.remote.websocket_device.WebSocketDeviceDto
 import com.edurda77.data.remote.websocket_success_subscribe.SuccessSubscribeDto
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.MessageWebSocketStart
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SuccessSubscribe
@@ -56,7 +56,7 @@ fun convertDeviceMessageToDevice(message: String): DeviceOld {
         status = originalData.wsDevices.first().status == STATUS_ON,
         video = originalData.wsDevices.first().video,
         groups = originalData.wsDevices.first().wsGroups.map { group ->
-            GroupDevices(
+            GroupDevicesOld(
                 id = group.id,
                 name = group.name
             )

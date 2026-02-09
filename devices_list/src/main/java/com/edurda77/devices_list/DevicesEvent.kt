@@ -1,7 +1,7 @@
 package com.edurda77.devices_list
 
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 
 sealed class DevicesEvent {
     data object Refresh : DevicesEvent()
@@ -9,13 +9,13 @@ sealed class DevicesEvent {
     class OnSearch(val query: String) : DevicesEvent()
     class SelectGroup(val index: Int) : DevicesEvent()
     data object ShowSearchField : DevicesEvent()
-    class UpdateSelectedGroups(val groupDevices: GroupDevices) : DevicesEvent()
+    class UpdateSelectedGroups(val groupDevicesOld: GroupDevicesOld) : DevicesEvent()
     data object ClearSelectedGroups : DevicesEvent()
     class OnInsertDevice(
         val name: String,
         val key: String,
         val frequency: String,
-        val groups: List<GroupDevices>,
+        val groups: List<GroupDevicesOld>,
     ) : DevicesEvent()
 
     data object OnCloseWebSocket : DevicesEvent()

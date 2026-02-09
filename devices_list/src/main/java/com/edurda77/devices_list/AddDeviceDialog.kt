@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -40,12 +40,12 @@ import com.edurda77.resources.uikit.UiTextField
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddDeviceDialog(
-    groups: List<GroupDevices>,
+    groups: List<GroupDevicesOld>,
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
-    onAddClick: (String, String, String, List<GroupDevices>) -> Unit,
-    onUpdateGroups: (GroupDevices) -> Unit,
-    selectedGroups: List<GroupDevices>,
+    onAddClick: (String, String, String, List<GroupDevicesOld>) -> Unit,
+    onUpdateGroups: (GroupDevicesOld) -> Unit,
+    selectedGroups: List<GroupDevicesOld>,
 ) {
 
     val name = remember { mutableStateOf("") }
@@ -185,7 +185,7 @@ fun AddDeviceDialog(
 private fun AddDeviceDialogView() {
     val groups = remember {
         (1..5).map {
-            GroupDevices(
+            GroupDevicesOld(
                 id = it,
                 name = "Group $it"
             )
@@ -209,7 +209,7 @@ private fun AddDeviceDialogView() {
 private fun AddDeviceDialogView2() {
     val groups = remember {
         (1..5).map {
-            GroupDevices(
+            GroupDevicesOld(
                 id = it,
                 name = "Group $it"
             )

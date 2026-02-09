@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.FAVORITE
 import com.edurda77.resources.R
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 fun DevicesSelectorGroup(
     modifier: Modifier = Modifier,
     listState: LazyListState,
-    devices: Map<GroupDevices, List<DeviceOld>>,
+    devices: Map<GroupDevicesOld, List<DeviceOld>>,
     numberSelectedGroup: Int,
     onClick: (Int) -> Unit,
     scope: CoroutineScope,
@@ -112,7 +112,7 @@ private fun DevicesSelectorGroupView1() {
             listState = rememberLazyListState(),
             devices = mapOf(
                 Pair(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 0,
                         name = "group 1"
                     ),
@@ -125,7 +125,7 @@ private fun DevicesSelectorGroupView1() {
                             video = null,
                             updatedAt = "12-03-2025",
                             groups = listOf(
-                                GroupDevices(
+                                GroupDevicesOld(
                                     id = 1,
                                     name = "Perm"
                                 )
@@ -226,14 +226,14 @@ private fun DevicesSelectorGroupView1() {
                     ),
                 ),
                 Pair(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 1,
                         name = "group 2"
                     ),
                     emptyList()
                 ),
                 Pair(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 2,
                         name = "group 3"
                     ),
@@ -259,21 +259,21 @@ private fun DevicesSelectorGroupView2() {
             listState = rememberLazyListState(),
             devices = mapOf(
                 Pair(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 0,
                         name = "group 1"
                     ),
                     emptyList()
                 ),
                 Pair(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 1,
                         name = "group 2"
                     ),
                     emptyList()
                 ),
                 Pair(
-                    GroupDevices(
+                    GroupDevicesOld(
                         id = 2,
                         name = "group 3"
                     ),

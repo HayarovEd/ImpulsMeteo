@@ -1,4 +1,4 @@
-package com.edurda77.data.remote.newDtos.requests
+package com.edurda77.data.remote.newDtos.auth
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

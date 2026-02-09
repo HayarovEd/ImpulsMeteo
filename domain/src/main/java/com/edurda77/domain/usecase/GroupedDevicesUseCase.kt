@@ -1,7 +1,7 @@
 package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -26,7 +26,7 @@ class GroupedDevicesUseCase(
         query: String,
         isRefresh: Boolean,
         isSorted: Boolean,
-    ): ResultWork<Map<GroupDevices, List<DeviceOld>>, DataError> {
+    ): ResultWork<Map<GroupDevicesOld, List<DeviceOld>>, DataError> {
         return withContext(Dispatchers.IO) {
             if (_devices.value.isEmpty() || isRefresh) {
                 val resultGroupedDevicesDif = async { oldRemoteRepository.getGroupedDevices(token) }

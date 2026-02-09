@@ -7,7 +7,7 @@ data class DeviceOld(
     val status: Boolean,
     val video: String?,
     val updatedAt: String,
-    val groups: List<GroupDevices>,
+    val groups: List<GroupDevicesOld>,
     val params: List<Param>,
     val isFavorite: Boolean = false,
     val statusNotifications: Boolean,

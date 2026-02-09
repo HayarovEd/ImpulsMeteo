@@ -4,7 +4,7 @@ import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.FavoriteOld
-import com.edurda77.domain.model.GroupDevices
+import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
@@ -54,7 +54,7 @@ interface OldRemoteRepository {
 
     suspend fun getDevicesGroups(
         token: String,
-    ): ResultWork<List<GroupDevices>, DataError>
+    ): ResultWork<List<GroupDevicesOld>, DataError>
 
     suspend fun getUnits(token: String): ResultWork<List<UnitMeteo>, DataError>
     suspend fun addDevicesGroup(token: String, name: String): ResultWork<Unit, DataError>
