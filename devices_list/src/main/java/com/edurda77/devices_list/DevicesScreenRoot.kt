@@ -56,6 +56,7 @@ import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
 
@@ -71,11 +72,18 @@ fun DevicesScreenRoot(
     val context = LocalContext.current
     val version = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
 
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                UiDevicesEvents.LoginNavigationEvent -> onGoToLogin()
+            }
+        }
+    }
+
     DevicesScreen(
         state = viewModel.state.collectAsStateWithLifecycle().value,
         configuration = configuration,
         version = version,
-        onGoToLogin = onGoToLogin,
         onGoToDevice = onGoToDevice,
         bottomBarContent = bottomBarContent,
         onEvent = viewModel::onEvent,
@@ -88,7 +96,6 @@ fun DevicesScreen(
     modifier: Modifier = Modifier,
     state: DevicesState,
     configuration: Configuration,
-    onGoToLogin: () -> Unit,
     onGoToDevice: (Int) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DevicesEvent) -> Unit,
@@ -127,7 +134,6 @@ fun DevicesScreen(
             onClickConfirm = {
                 isShowDialogLogOff.value = false
                 onEvent(DevicesEvent.Logoff)
-                onGoToLogin()
                 onEvent(DevicesEvent.OnCloseWebSocket)
             },
             onClickCancel = {
@@ -202,7 +208,7 @@ fun DevicesScreen(
                                 scope = scope,
                                 screenWidth = screenWidth,
                                 onClick = {
-                                    DevicesEvent.SelectGroup(it)
+                                    onEvent(DevicesEvent.SelectGroup(it))
                                 }
                             )
                             if (state.enableUpdate) {
@@ -309,7 +315,7 @@ fun DevicesScreen(
                             devices = state.filteredDevices,
                             numberSelectedGroup = state.numberSelectedGroup,
                             onClick = {
-                                DevicesEvent.SelectGroup(it)
+                                onEvent(DevicesEvent.SelectGroup(it))
                             },
                             scope = scope,
                             pagerState = pagerState,
@@ -396,7 +402,7 @@ fun DevicesScreen(
                         devices = state.filteredDevices,
                         numberSelectedGroup = state.numberSelectedGroup,
                         onClick = {
-                            DevicesEvent.SelectGroup(it)
+                            onEvent(DevicesEvent.SelectGroup(it))
                         },
                         scope = scope,
                         pagerState = pagerState,
@@ -505,7 +511,6 @@ private fun DevicesScreenView1() {
             state = DevicesState(),
             version = "1.0",
             configuration = LocalConfiguration.current,
-            onGoToLogin = {},
             onGoToDevice = {},
             onEvent = {},
         )
@@ -520,7 +525,6 @@ private fun DevicesScreenView2() {
             state = DevicesState(),
             version = "1.0",
             configuration = LocalConfiguration.current,
-            onGoToLogin = {},
             onGoToDevice = {},
             onEvent = {},
         )
@@ -602,7 +606,6 @@ private fun DevicesScreenView3() {
             ),
             version = "1.0",
             configuration = LocalConfiguration.current,
-            onGoToLogin = {},
             onGoToDevice = {},
             onEvent = {},
         )
@@ -683,7 +686,6 @@ private fun DevicesScreenView4() {
             ),
             version = "1.0",
             configuration = LocalConfiguration.current,
-            onGoToLogin = {},
             onGoToDevice = {},
             onEvent = {},
         )

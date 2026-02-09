@@ -29,8 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.MeasurementUnit
@@ -62,7 +60,6 @@ fun DevicesSelectorGroup(
         items(
             count = devices.size
         ) {
-            //val index = it % monitors.size
             val groupName =
                 if (devices.keys.toList()[it].name == FAVORITE) stringResource(R.string.favorite) else devices.keys.toList()[it].name
             Box(

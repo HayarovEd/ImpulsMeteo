@@ -46,3 +46,7 @@ data class DevicesState(
         isSorted = isSorted
     )
 }
+
+sealed interface UiDevicesEvents {
+    data object LoginNavigationEvent : UiDevicesEvents
+}

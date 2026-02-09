@@ -14,6 +14,7 @@ import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
+import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.updateDevices
 import com.edurda77.download_install.refresher.Refresher
@@ -23,8 +24,10 @@ import com.edurda77.download_install.utils.ResultDownloadWork
 import com.edurda77.download_install.utils.asUiResultText
 import com.edurda77.resources.uikit.asUiText
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -64,10 +67,16 @@ class DevicesViewModel(
             DevicesState()
         )
 
+    private val _eventFlow = MutableSharedFlow<UiDevicesEvents>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
     fun onEvent(event: DevicesEvent) {
         when (event) {
             DevicesEvent.Logoff -> {
-                viewModelScope.launch { logoffUseCase.invoke() }
+                viewModelScope.launch {
+                    logoffUseCase.invoke()
+                    _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
+                }
             }
 
             is DevicesEvent.OnSearch -> {
@@ -76,9 +85,6 @@ class DevicesViewModel(
                         query = event.query
                     )
                         .updateState()
-                    loadDevices(
-                        isRefresh = false,
-                        query = event.query)
                 }
             }
 
@@ -87,21 +93,14 @@ class DevicesViewModel(
                     isLoading = true,
                 )
                     .updateState()
-                viewModelScope.launch {
-                    delay(1000)
-                    loadDevices(
-                        isRefresh = true,
-                        query = state.value.query)
-                }
+                loadUserData()
             }
 
             is DevicesEvent.SelectGroup -> {
-                viewModelScope.launch {
-                    _state.value.copy(
-                        numberSelectedGroup = event.index
-                    )
-                        .updateState()
-                }
+                _state.value.copy(
+                    numberSelectedGroup = event.index
+                )
+                    .updateState()
             }
 
             DevicesEvent.ShowSearchField -> {
@@ -219,11 +218,6 @@ class DevicesViewModel(
                         isSorted = !state.value.isSorted,
                     )
                         .updateState()
-                    delay(300)
-                    loadDevices(
-                        isRefresh = false,
-                        query = state.value.query,
-                    )
                 }
             }
         }
@@ -460,14 +454,19 @@ class DevicesViewModel(
     }
 
     private fun loadUserData() {
+
         viewModelScope.launch {
             when (val result = loggedUserUseCase.invoke()) {
                 is ResultWork.Error -> {
-                    _state.value.copy(
-                        isLoading = false,
-                        message = result.error.asUiText()
-                    )
-                        .updateState()
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
+                    } else {
+                        _state.value.copy(
+                            isLoading = false,
+                            message = result.error.asUiText()
+                        )
+                            .updateState()
+                    }
                 }
 
                 is ResultWork.Success -> {
