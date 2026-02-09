@@ -31,7 +31,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.utils.FAVORITE
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
@@ -43,7 +46,7 @@ import kotlinx.coroutines.launch
 fun DevicesSelectorGroup(
     modifier: Modifier = Modifier,
     listState: LazyListState,
-    devices: Map<GroupDevicesOld, List<DeviceOld>>,
+    devices: Map<GroupDevice, List<Device>>,
     numberSelectedGroup: Int,
     onClick: (Int) -> Unit,
     scope: CoroutineScope,
@@ -112,129 +115,99 @@ private fun DevicesSelectorGroupView1() {
             listState = rememberLazyListState(),
             devices = mapOf(
                 Pair(
-                    GroupDevicesOld(
-                        id = 0,
+                    GroupDevice(
+                        id = "0",
                         name = "group 1"
                     ),
                     listOf(
-                        DeviceOld(
-                            id = 0,
+                        Device(
+                            id = "0",
                             name = "Auto",
                             key = "1223",
                             status = true,
-                            video = null,
-                            updatedAt = "12-03-2025",
+                            host = "host",
+                            notificationDevice =  null,
+                            port = 80,
+                            updateRate = 6000,
+                            videoUrl = "",
+                            updatedDate = "12-03-2025",
                             groups = listOf(
-                                GroupDevicesOld(
-                                    id = 1,
+                                GroupDevice(
+                                    id = "1",
                                     name = "Perm"
                                 )
                             ),
                             params = listOf(
                                 Param(
-                                    id = 0,
-                                    idUnit = 1,
+                                    id = "0",
                                     name = "Temp",
                                     label = "tmp",
                                     value = 12.0,
                                     color = "#808080",
                                     classIcon = "wi wi-thermometer-exterior",
                                     isHidden = false,
-                                    idDevice = 0
+                                    measurementUnit = MeasurementUnit(
+                                        abbreviation = "",
+                                        id = "1",
+                                        name = "tmp"
+                                    )
                                 ),
                                 Param(
-                                    id = 0,
-                                    idUnit = 1,
+                                    id = "0",
                                     name = "Temp",
                                     label = "tmp",
                                     value = 12.0,
                                     color = "#808080",
                                     classIcon = "wi wi-thermometer-exterior",
                                     isHidden = false,
-                                    idDevice = 0
+                                    measurementUnit = MeasurementUnit(
+                                        abbreviation = "",
+                                        id = "1",
+                                        name = "tmp"
+                                    )
                                 ),
                                 Param(
-                                    id = 0,
-                                    idUnit = 1,
+                                    id = "0",
                                     name = "Temp",
                                     label = "tmp",
                                     value = 12.0,
                                     color = "#808080",
                                     classIcon = "wi wi-thermometer-exterior",
                                     isHidden = false,
-                                    idDevice = 0
+                                    measurementUnit = MeasurementUnit(
+                                        abbreviation = "",
+                                        id = "1",
+                                        name = "tmp"
+                                    )
                                 ),
                                 Param(
-                                    id = 0,
-                                    idUnit = 1,
+                                    id = "0",
                                     name = "Temp",
                                     label = "tmp",
                                     value = 12.0,
                                     color = "#808080",
                                     classIcon = "wi wi-thermometer-exterior",
                                     isHidden = false,
-                                    idDevice = 0
+                                    measurementUnit = MeasurementUnit(
+                                        abbreviation = "",
+                                        id = "1",
+                                        name = "tmp"
+                                    )
                                 ),
-                                Param(
-                                    id = 0,
-                                    idUnit = 1,
-                                    name = "Temp",
-                                    label = "tmp",
-                                    value = 12.0,
-                                    color = "#808080",
-                                    classIcon = "wi wi-thermometer-exterior",
-                                    isHidden = false,
-                                    idDevice = 0
-                                ),
-                                Param(
-                                    id = 0,
-                                    idUnit = 1,
-                                    name = "Temp",
-                                    label = "tmp",
-                                    value = 12.0,
-                                    color = "#808080",
-                                    classIcon = "wi wi-thermometer-exterior",
-                                    isHidden = false,
-                                    idDevice = 0
-                                ),
-                                Param(
-                                    id = 0,
-                                    idUnit = 1,
-                                    name = "Temp",
-                                    label = "tmp",
-                                    value = 12.0,
-                                    color = "#808080",
-                                    classIcon = "wi wi-thermometer-exterior",
-                                    isHidden = false,
-                                    idDevice = 0
-                                ),
-                                Param(
-                                    id = 0,
-                                    idUnit = 1,
-                                    name = "Temp",
-                                    label = "tmp",
-                                    value = 12.0,
-                                    color = "#808080",
-                                    classIcon = "wi wi-thermometer-exterior",
-                                    isHidden = false,
-                                    idDevice = 0
-                                )
                             ),
-                            isFavorite = true,
-                            statusNotifications = true,
                         )
                     ),
                 ),
                 Pair(
-                    GroupDevicesOld(
-                        id = 1,
+                    GroupDevice(
+                        id = "1",
                         name = "group 2"
                     ),
                     emptyList()
                 ),
                 Pair(
-                    GroupDevicesOld(
-                        id = 2,
+                    GroupDevice(
+                        id = "2",
                         name = "group 3"
                     ),
                     emptyList()
@@ -259,22 +232,22 @@ private fun DevicesSelectorGroupView2() {
             listState = rememberLazyListState(),
             devices = mapOf(
                 Pair(
-                    GroupDevicesOld(
-                        id = 0,
+                    GroupDevice(
+                        id = "0",
                         name = "group 1"
                     ),
                     emptyList()
                 ),
                 Pair(
-                    GroupDevicesOld(
-                        id = 1,
+                    GroupDevice(
+                        id = "1",
                         name = "group 2"
                     ),
                     emptyList()
                 ),
                 Pair(
-                    GroupDevicesOld(
-                        id = 2,
+                    GroupDevice(
+                        id = "2",
                         name = "group 3"
                     ),
                     emptyList()

@@ -196,7 +196,7 @@ fun DevicesScreen(
                             DevicesSelectorGroup(
                                 modifier = modifier.weight(1f),
                                 listState = listState,
-                                devices = state.devices,
+                                devices = state.filteredDevices,
                                 numberSelectedGroup = state.numberSelectedGroup,
                                 pagerState = pagerState,
                                 scope = scope,
@@ -306,7 +306,7 @@ fun DevicesScreen(
                         Spacer(modifier = modifier.height(10.dp))
                         DevicesSelectorGroup(
                             listState = listState,
-                            devices = state.devices,
+                            devices = state.filteredDevices,
                             numberSelectedGroup = state.numberSelectedGroup,
                             onClick = {
                                 DevicesEvent.SelectGroup(it)
@@ -393,7 +393,7 @@ fun DevicesScreen(
                     Spacer(modifier = modifier.height(10.dp))
                     DevicesSelectorGroup(
                         listState = listState,
-                        devices = state.devices,
+                        devices = state.filteredDevices,
                         numberSelectedGroup = state.numberSelectedGroup,
                         onClick = {
                             DevicesEvent.SelectGroup(it)
