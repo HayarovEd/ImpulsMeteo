@@ -1,9 +1,9 @@
 package com.edurda77.users_list.mapper
 
-import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserOld
 import com.edurda77.users_list.model.UserUi
 
-fun User.convertToUi(): UserUi {
+fun UserOld.convertToUi(): UserUi {
     return UserUi(
         email = this.email,
         id = this.id,

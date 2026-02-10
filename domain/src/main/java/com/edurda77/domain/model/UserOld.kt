@@ -1,7 +1,7 @@
 package com.edurda77.domain.model
 
 
-data class User(
+data class UserOld(
     val email: String,
     val id: Int,
     val name: String,

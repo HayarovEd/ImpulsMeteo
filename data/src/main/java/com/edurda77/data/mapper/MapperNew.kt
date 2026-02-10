@@ -2,6 +2,7 @@ package com.edurda77.data.mapper
 
 import com.edurda77.data.remote.newDtos.auth.AuthUserDto
 import com.edurda77.data.remote.newDtos.device.DeviceDto
+import com.edurda77.data.remote.newDtos.device.DeviceWsDto
 import com.edurda77.data.remote.newDtos.favorite.FavoriteDto
 import com.edurda77.data.remote.newDtos.group.GroupDeviceDto
 import com.edurda77.data.remote.newDtos.notification.NotificationDeviceDto
@@ -9,6 +10,7 @@ import com.edurda77.data.remote.newDtos.notification.NotificationsDeviceDtos
 import com.edurda77.data.remote.newDtos.param.MeasurementUnitDto
 import com.edurda77.data.remote.newDtos.param.ParamDto
 import com.edurda77.data.remote.newDtos.permission.PermissionDto
+import com.edurda77.data.remote.newDtos.user.UserDto
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.Favorite
@@ -18,6 +20,7 @@ import com.edurda77.domain.model.newModels.NotificationDevice
 import com.edurda77.domain.model.newModels.NotificationsDevice
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.Permission
+import com.edurda77.domain.model.newModels.User
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.convertToLocalDateTime
 
@@ -100,6 +103,23 @@ fun DeviceDto.toDevice(): Device {
     )
 }
 
+fun DeviceWsDto.convertToDevice(): Device {
+    return Device(
+        host = this.host,
+        id = this.id,
+        key = this.key,
+        name = this.name,
+        notificationDevice = null,
+        port = this.port,
+        status = this.status == STATUS_ON,
+        updateRate = this.updateRate,
+        updatedDate = convertToLocalDateTime(this.updatedDate),
+        videoUrl = this.videoUrl,
+        groups = groupsDevice.map { it.toGroupDevice() },
+        params = params.map { it.toParam() }
+    )
+}
+
 fun GroupDeviceDto.toGroupDevice(): GroupDevice {
     return GroupDevice(
         id = id,
@@ -118,6 +138,21 @@ fun AuthUserDto.toAuthUser(): AuthUser {
         name = this.name,
         password = this.password,
         permissions = this.permissionDtos.map { it.toPermission() },
+        updateAt = convertToLocalDateTime(this.updateAt),
+    )
+}
+
+fun UserDto.toUser(): User {
+    return User(
+        createdAt = this.createdAt,
+        devices = this.devices.map { it.toDevice() },
+        email = this.email,
+        favorites = this.favorites.map { it.toFavorite() },
+        id = this.id,
+        isEnabled = this.isEnabled,
+        name = this.name,
+        password = this.password,
+        permissions = this.permissions.map { it.toPermission() },
         updateAt = convertToLocalDateTime(this.updateAt),
     )
 }

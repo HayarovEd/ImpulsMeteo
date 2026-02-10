@@ -11,7 +11,7 @@ import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
-import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
@@ -32,7 +32,7 @@ interface OldRemoteRepository {
     ): ResultWork<Unit, DataError>
 
     suspend fun getPermissions(token: String): ResultWork<PermissionsOld, DataError>
-    suspend fun getUsers(token: String): ResultWork<List<User>, DataError>
+    suspend fun getUsers(token: String): ResultWork<List<UserOld>, DataError>
     suspend fun addUser(
         token: String,
         devices: List<String>,

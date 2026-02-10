@@ -2,9 +2,9 @@ package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.Subscriber
-import com.edurda77.domain.model.WebSocketMessage
+import com.edurda77.domain.model.WebSocketMessageOld
 import com.edurda77.domain.repository.OldRemoteRepository
-import com.edurda77.domain.repository.WebSocketRepository
+import com.edurda77.domain.repository.WebSocketRepositoryOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.SUBSCRIBE_EVENT
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flow
 
 
 class WebSocketUseCase(
-    private val webSocketRepository: WebSocketRepository,
+    private val webSocketRepositoryOld: WebSocketRepositoryOld,
     private val oldRemoteRepository: OldRemoteRepository,
 ) {
     operator fun invoke(
@@ -21,7 +21,7 @@ class WebSocketUseCase(
         ids: List<Int>
     ): Flow<ResultWork<DeviceOld, DataError>> {
         return flow {
-            webSocketRepository.getStateStream().collect { collector ->
+            webSocketRepositoryOld.getStateStream().collect { collector ->
                 when (collector) {
                     is ResultWork.Error -> {
                         emit(ResultWork.Error(collector.error))
@@ -31,7 +31,7 @@ class WebSocketUseCase(
                         val broadcastingAuths = mutableListOf<Subscriber>()
 
                         when (collector.data) {
-                            is WebSocketMessage.Connect -> {
+                            is WebSocketMessageOld.Connect -> {
                                 ids.forEach { id ->
                                     val resultBroadcast = oldRemoteRepository.getBroadcatingAuth(
                                         socketId = collector.data.messageWebSocketStart.socketId,
@@ -54,7 +54,7 @@ class WebSocketUseCase(
                                     }
                                 }
                                 broadcastingAuths.forEach {
-                                    webSocketRepository.sendAction(
+                                    webSocketRepositoryOld.sendAction(
                                         event = SUBSCRIBE_EVENT,
                                         deviceId = it.deviceId,
                                         auth = it.auth
@@ -62,11 +62,11 @@ class WebSocketUseCase(
                                 }
                             }
 
-                            is WebSocketMessage.SuccessSbscribe -> {
+                            is WebSocketMessageOld.SuccessSbscribe -> {
                                 println("web socket open, success subscribe ${collector.data.successSubscribe.channel}")
                             }
 
-                            is WebSocketMessage.DeviceEvent -> {
+                            is WebSocketMessageOld.DeviceEvent -> {
                                 emit(ResultWork.Success(collector.data.deviceOld))
                             }
                         }

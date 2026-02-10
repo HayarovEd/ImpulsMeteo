@@ -5,11 +5,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UsersDto(
+data class UsersDtoOld(
     @SerialName("current_page")
     val currentPage: Int,
     @SerialName("data")
-    val userDto: List<UserDto>,
+    val userDtoOld: List<UserDtoOld>,
     @SerialName("first_page_url")
     val firstPageUrl: String,
     @SerialName("from")

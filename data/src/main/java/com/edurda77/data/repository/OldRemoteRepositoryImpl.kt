@@ -35,7 +35,7 @@ import com.edurda77.data.remote.update_devices_group.UpdateDevicesGroupDto
 import com.edurda77.data.remote.update_unit.UpdateUnitDto
 import com.edurda77.data.remote.update_user.UpdateUserDto
 import com.edurda77.data.remote.update_user.UpdateUserWithPasswordDto
-import com.edurda77.data.remote.user.UsersDto
+import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.ElementHistory
@@ -47,7 +47,7 @@ import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
-import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserOld
 import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
 import com.edurda77.domain.utils.AUTH_POSTFIX
@@ -295,18 +295,18 @@ class OldRemoteRepositoryImpl(
 
     override suspend fun getUsers(
         token: String,
-    ): ResultWork<List<User>, DataError> {
+    ): ResultWork<List<UserOld>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
-                val users = mutableListOf<User>()
+                val userOlds = mutableListOf<UserOld>()
                 val resultFirst = httpClient.get(BASE_URL + USERS_POSTFIX) {
                     url {
                         bearerAuth(token)
                         parameter(PAGE_PARAMETER, 1)
                     }
                 }.call
-                    .body<UsersDto>()
-                users.addAll(resultFirst.convertToUsers())
+                    .body<UsersDtoOld>()
+                userOlds.addAll(resultFirst.convertToUsers())
                 var nextUrl = resultFirst.nextPageUrl
                 while (nextUrl != null) {
                     val nextResult = httpClient.get(nextUrl) {
@@ -314,11 +314,11 @@ class OldRemoteRepositoryImpl(
                             bearerAuth(token)
                         }
                     }.call
-                        .body<UsersDto>()
-                    users.addAll(nextResult.convertToUsers())
+                        .body<UsersDtoOld>()
+                    userOlds.addAll(nextResult.convertToUsers())
                     nextUrl = nextResult.nextPageUrl
                 }
-                users
+                userOlds
             }
         }
     }

@@ -16,7 +16,7 @@ import com.edurda77.data.remote.update_device.UpdateDeviceNotificationsParamsDto
 import com.edurda77.data.remote.update_device.UpdateDeviceParamsDto
 import com.edurda77.data.remote.update_notifications.UpdateNotificationsDto
 import com.edurda77.data.remote.update_notifications.UpdateParamsNotificationsDto
-import com.edurda77.data.remote.user.UsersDto
+import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.DeviceUser
@@ -31,7 +31,7 @@ import com.edurda77.domain.model.PermissionUserOld
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
-import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserOld
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.domain.utils.IS_HIDDEN
@@ -121,9 +121,9 @@ fun PermissionsDto.convertToPermissions(): PermissionsOld {
     )
 }
 
-fun UsersDto.convertToUsers(): List<User> {
-    return this.userDto.map { user ->
-        User(
+fun UsersDtoOld.convertToUsers(): List<UserOld> {
+    return this.userDtoOld.map { user ->
+        UserOld(
             email = user.email,
             id = user.id,
             name = user.name,

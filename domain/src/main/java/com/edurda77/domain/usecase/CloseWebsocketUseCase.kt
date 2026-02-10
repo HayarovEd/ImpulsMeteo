@@ -1,12 +1,12 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.WebSocketRepository
+import com.edurda77.domain.repository.WebSocketRepositoryOld
 
 
 class CloseWebsocketUseCase(
-    private val webSocketRepository: WebSocketRepository,
+    private val webSocketRepositoryOld: WebSocketRepositoryOld,
 ) {
     suspend operator fun invoke() {
-        webSocketRepository.close()
+        webSocketRepositoryOld.close()
     }
 }
