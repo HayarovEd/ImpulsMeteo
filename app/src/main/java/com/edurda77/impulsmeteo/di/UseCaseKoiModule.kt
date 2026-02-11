@@ -49,7 +49,7 @@ val useCaseKoiModule = module {
     single<GroupedDevicesUseCase> { GroupedDevicesUseCase(get()) }
     single<LocalTokenUseCase> { LocalTokenUseCase(get()) }
     factoryOf(::LogOffUseCase) { bind <LogOffUseCase>() }
-    single<AddDeviceUseCase> { AddDeviceUseCase(get()) }
+    factoryOf(::AddDeviceUseCase) { bind <AddDeviceUseCase>() }
     single<UsersUseCase> { UsersUseCase(get()) }
     single<DeleteParamUseCase> { DeleteParamUseCase(get()) }
     single<PermissionsUseCase> { PermissionsUseCase(get()) }

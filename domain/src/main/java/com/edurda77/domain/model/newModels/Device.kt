@@ -12,7 +12,7 @@ data class Device (
     val port: Int,
     val status: Boolean,
     val updateRate: Int,
-    val updatedDate: LocalDateTime,
+    val updatedDate: LocalDateTime?,
     val videoUrl: String,
     val groups: List<GroupDevice>,
     val params: List<Param>,

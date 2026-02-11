@@ -3,6 +3,7 @@ package com.edurda77.devices_list
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.WebSocketMessage
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddFavoriteUseCase
@@ -115,12 +116,12 @@ class DevicesViewModel(
 
             is DevicesEvent.OnInsertDevice -> {
                 viewModelScope.launch {
-                    /* insertDevice(
-                         name = event.name,
-                         key = event.key,
-                         frequency = event.frequency,
-                         groups = event.groups.map { it.id }
-                     )*/
+                    insertDevice(
+                        name = event.name,
+                        key = event.key,
+                        frequency = event.frequency,
+                        groups = event.groups
+                    )
                 }
             }
 
@@ -175,29 +176,34 @@ class DevicesViewModel(
         name: String,
         key: String,
         frequency: String,
-        groups: List<Int>
+        groups: List<GroupDevice>
     ) {
-        /* when (val result = addDeviceUseCase.invoke(
-             name = name,
-             key = key,
-             update = frequency,
-             groups = groups,
-             token = state.value.token
-         )) {
-             is ResultWork.Error -> {
-                 _state.value.copy(
-                     message = result.error.asUiText()
-                 )
-                     .updateState()
-             }
+        frequency.toIntOrNull()?.let { fr ->
+            when (val result = addDeviceUseCase.invoke(
+                name = name,
+                key = key,
+                frequency = fr,
+                groups = groups,
+            )) {
+                is ResultWork.Error -> {
+                    _state.value.copy(
+                        message = result.error.asUiText()
+                    )
+                        .updateState()
+                }
 
-             is ResultWork.Success -> {
-                 loadDevices(
-                     isRefresh = true,
-                     query = state.value.query
-                 )
-             }
-         }*/
+                is ResultWork.Success -> {
+                    state.value.authUser?.let { user ->
+                        _state.value.copy(
+                            authUser = user.copy(
+                                devices = user.devices + result.data
+                            ),
+                        )
+                            .updateState()
+                    }
+                }
+            }
+        }
     }
 
     private suspend fun loadGroups() {
@@ -358,16 +364,18 @@ class DevicesViewModel(
                                         .updateState()
                                 }
                             }
+
                             is WebSocketMessage.FavoriteUpdate -> {
                                 state.value.authUser?.let { user ->
                                     _state.value.copy(
                                         authUser = user.copy(
-                                           favorites = successResult.favorites
+                                            favorites = successResult.favorites
                                         ),
                                     )
                                         .updateState()
                                 }
                             }
+
                             is WebSocketMessage.ParamDataUpdate -> {
                                 state.value.authUser?.let { user ->
                                     _state.value.copy(
@@ -381,6 +389,7 @@ class DevicesViewModel(
                                         .updateState()
                                 }
                             }
+
                             is WebSocketMessage.ParamUpdate -> {
                                 state.value.authUser?.let { user ->
                                     _state.value.copy(
@@ -394,17 +403,19 @@ class DevicesViewModel(
                                         .updateState()
                                 }
                             }
+
                             is WebSocketMessage.UserCreate -> {}
                             is WebSocketMessage.UserDelete -> {
                                 viewModelScope.launch {
                                     state.value.authUser?.let { user ->
-                                        if (user.id ==successResult.id) {
+                                        if (user.id == successResult.id) {
                                             logoffUseCase.invoke()
                                             _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
                                         }
                                     }
                                 }
                             }
+
                             is WebSocketMessage.UserUpdate -> {
                                 state.value.authUser?.let { user ->
                                     _state.value.copy(

@@ -54,7 +54,7 @@ fun formatDateTimeChart(
 }
 
 fun formatDateTime(
-    localDateTime: LocalDateTime
+    localDateTime: LocalDateTime?
 ): String {
     val dateFormat = LocalDateTime.Format {
         year()
@@ -67,5 +67,5 @@ fun formatDateTime(
         char(':')
         minute()
     }
-    return localDateTime.format(dateFormat)
+    return localDateTime?.format(dateFormat)?:""
 }

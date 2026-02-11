@@ -88,7 +88,7 @@ fun MeasurementUnitDto.toMeasurementUnit(): MeasurementUnit {
 
 fun DeviceDto.toDevice(): Device {
     return Device(
-        host = this.host,
+        host = this.host?:"",
         id = this.id,
         key = this.key,
         name = this.name,
@@ -96,10 +96,12 @@ fun DeviceDto.toDevice(): Device {
         port = this.port,
         status = this.status == STATUS_ON,
         updateRate = this.updateRate,
-        updatedDate = convertToLocalDateTime(this.updatedDate),
+        updatedDate = this.updatedDate?.let {
+            convertToLocalDateTime(it)
+        },
         videoUrl = this.videoUrl,
         groups = groupsDevice.map { it.toGroupDevice() },
-        params = params.map { it.toParam() }
+        params = params?.map { it.toParam() }?: emptyList()
     )
 }
 
@@ -126,6 +128,14 @@ fun GroupDeviceDto.toGroupDevice(): GroupDevice {
         name = name
     )
 }
+
+fun GroupDevice.toGroupDeviceDto(): GroupDeviceDto {
+    return GroupDeviceDto(
+        id = id,
+        name = name
+    )
+}
+
 
 fun AuthUserDto.toAuthUser(): AuthUser {
     return AuthUser(

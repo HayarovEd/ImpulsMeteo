@@ -1,26 +1,32 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class AddDeviceUseCase(
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val devicesRepository: DevicesRepository,
+    private val tokenManager: TokenManager,
 ) {
     suspend operator fun invoke(
-        token: String,
-        groups: List<Int>,
-        key: String,
         name: String,
-        update: String
-    ): ResultWork<Unit, DataError> {
-        return oldRemoteRepository.addDevice(
-            groups = groups,
-            key = key,
-            name = name,
-            token = token,
-            update = update
+        key: String,
+        frequency: Int,
+        groups: List<GroupDevice>,
+    ): ResultWork<Device, DataError> {
+        return tokenManager.validateFactory(
+            data = {
+                devicesRepository.insertDevice(
+                    groups = groups,
+                    key = key,
+                    name = name,
+                    accessToken = it,
+                    frequency = frequency
+                )
+            }
         )
     }
 }

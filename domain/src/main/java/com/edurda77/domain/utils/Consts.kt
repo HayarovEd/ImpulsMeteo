@@ -57,6 +57,7 @@ const val CAMERA_DELETE = 14*/
 
 
 const val STATUS_ON = "on"
+const val STATUS_OFF = "off"
 
 const val IS_HIDDEN = 1
 

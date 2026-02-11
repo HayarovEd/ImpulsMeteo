@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DeviceDto(
     @SerialName("host")
-    val host: String,
+    val host: String?,
     @SerialName("id")
     val id: String,
     @SerialName("key")
@@ -25,11 +25,11 @@ data class DeviceDto(
     @SerialName("update_rate")
     val updateRate: Int,
     @SerialName("update_at")
-    val updatedDate: String,
+    val updatedDate: String?,
     @SerialName("video_url")
     val videoUrl: String,
     @SerialName("groups_device")
     val groupsDevice: List<GroupDeviceDto>,
     @SerialName("params_device")
-    val params: List<ParamDto>,
+    val params: List<ParamDto>?,
 )
