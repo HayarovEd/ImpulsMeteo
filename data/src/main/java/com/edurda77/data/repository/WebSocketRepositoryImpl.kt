@@ -97,7 +97,7 @@ class WebSocketRepositoryImpl(
                     }
                 }
         }.catch {
-            //emit(ResultWork.Error(DataError.WebSocketError.NOT_CONNECT))
+            emit(ResultWork.Error(DataError.WebSocketError.NOT_CONNECT))
         }
     }
 

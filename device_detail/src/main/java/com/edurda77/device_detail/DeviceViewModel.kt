@@ -20,7 +20,7 @@ import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateParamUseCase
-import com.edurda77.domain.usecase.WebSocketUseCase
+import com.edurda77.domain.usecase.WebSocketUseCaseOld
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.convertToStringDateTime
@@ -50,7 +50,7 @@ class DeviceViewModel(
     private val updateParamUseCase: UpdateParamUseCase,
     private val addFavoriteUseCase: AddFavoriteUseCase,
     private val removeFavoriteUseCase: RemoveFavoriteUseCase,
-    private val webSocketUseCase: WebSocketUseCase,
+    private val webSocketUseCaseOld: WebSocketUseCaseOld,
     private val historyUseCase: HistoryUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
     private val deleteParamUseCase: DeleteParamUseCase,
@@ -491,7 +491,7 @@ class DeviceViewModel(
 
     private suspend fun loadUpdateData() {
 
-        webSocketUseCase.invoke(
+        webSocketUseCaseOld.invoke(
             token = state.value.token,
             ids = listOf(state.value.deviceId)
         ).collect { collector ->

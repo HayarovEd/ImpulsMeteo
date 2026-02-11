@@ -34,6 +34,7 @@ import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
+import com.edurda77.domain.usecase.WebSocketUseCaseOld
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -64,7 +65,8 @@ val useCaseKoiModule = module {
     single<UpdateDevicesGroupUseCase> { UpdateDevicesGroupUseCase(get()) }
     single<UpdateUnitUseCase> { UpdateUnitUseCase(get()) }
     single<DeviceByIdUseCase> { DeviceByIdUseCase(get(), get()) }
-    single<WebSocketUseCase> { WebSocketUseCase(get(), get()) }
+    single<WebSocketUseCaseOld> { WebSocketUseCaseOld(get(), get()) }
+    factoryOf(::WebSocketUseCase) { bind <WebSocketUseCase>() }
     single<CloseWebsocketUseCase> { CloseWebsocketUseCase(get()) }
     single<UpdateNotificationsDeviceUseCase> { UpdateNotificationsDeviceUseCase(get()) }
     single<UpdateDeviceUseCase> { UpdateDeviceUseCase(get()) }

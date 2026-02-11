@@ -3,6 +3,7 @@ package com.edurda77.devices_list
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.newModels.WebSocketMessage
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
@@ -14,17 +15,16 @@ import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
+import com.edurda77.domain.usecase.WsMessageFactory
 import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import com.edurda77.domain.utils.updateDevices
 import com.edurda77.download_install.refresher.Refresher
 import com.edurda77.download_install.utils.APK_EXT
 import com.edurda77.download_install.utils.DownloadStatus
 import com.edurda77.download_install.utils.ResultDownloadWork
 import com.edurda77.download_install.utils.asUiResultText
 import com.edurda77.resources.uikit.asUiText
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -53,14 +53,16 @@ class DevicesViewModel(
     private val removeFavoriteUseCase: RemoveFavoriteUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
     private val refresher: Refresher,
-) : ViewModel() {
+
+    ) : ViewModel() {
     private var _state = MutableStateFlow(DevicesState())
     val state = _state
         .onStart {
-           // loadLocalData()
+            // loadLocalData()
             //loadUpdateData()
             checkEnableUpdates()
             loadUserData()
+            updateFromWs()
         }
         .stateIn(
             viewModelScope,
@@ -113,12 +115,12 @@ class DevicesViewModel(
 
             is DevicesEvent.OnInsertDevice -> {
                 viewModelScope.launch {
-                   /* insertDevice(
-                        name = event.name,
-                        key = event.key,
-                        frequency = event.frequency,
-                        groups = event.groups.map { it.id }
-                    )*/
+                    /* insertDevice(
+                         name = event.name,
+                         key = event.key,
+                         frequency = event.frequency,
+                         groups = event.groups.map { it.id }
+                     )*/
                 }
             }
 
@@ -149,67 +151,11 @@ class DevicesViewModel(
             }
 
             is DevicesEvent.WorkWithFavorite -> {
-                _state.value.copy(
-                    isLoading = true,
-                )
-                    .updateState()
-                viewModelScope.launch {
-                    if (event.deviceOld.isFavorite) {
-                        when (val result = removeFavoriteUseCase.invoke(
-                            deviceId = event.deviceOld.id,
-                            token = state.value.token
-                        )) {
-                            is ResultWork.Error -> {
-                                _state.value.copy(
-                                    message = result.error.asUiText(),
-                                )
-                                    .updateState()
-                            }
-                            is ResultWork.Success -> {
-                                loadDevices(
-                                    isRefresh = true,
-                                    query = state.value.query
-                                )
-                            }
-                        }
-                    } else {
-                        when (val result = addFavoriteUseCase.invoke(
-                            deviceId = event.deviceOld.id,
-                            token = state.value.token
-                        )) {
-                            is ResultWork.Error -> {
-                                _state.value.copy(
-                                    message = result.error.asUiText(),
-                                )
-                                    .updateState()
-                            }
-                            is ResultWork.Success -> {
-                                loadDevices(
-                                    isRefresh = true,
-                                    query = state.value.query
-                                )
-                            }
-                        }
-                    }
-                }
+
             }
 
             is DevicesEvent.OnDeleteDevice -> {
-                viewModelScope.launch {
-                    deleteDeviceUseCase.invoke(
-                        token = state.value.token,
-                        isFavorite = event.deviceOld.isFavorite,
-                        id = event.deviceOld.id
-                    )
-                    _state.value.copy(
-                        isLoading = true,
-                    )
-                        .updateState()
-                    loadDevices(
-                        isRefresh = true,
-                        query = state.value.query
-                    )
-                }
+
             }
 
             DevicesEvent.UpdateApp -> updateApk()
@@ -225,143 +171,33 @@ class DevicesViewModel(
     }
 
 
-    private fun loadLocalData() {
-        viewModelScope.launch {
-            localTokenUseCase.invoke().collect { collectedToken ->
-                when (collectedToken) {
-                    is ResultWork.Error -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            message = collectedToken.error.asUiText()
-                        )
-                            .updateState()
-                    }
-
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            token = collectedToken.data.accessToken
-                        )
-                            .updateState()
-                        delay(500)
-                        loadLoggedUserData(collectedToken.data.accessToken)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun loadUpdateData() {
-        viewModelScope.launch {
-            delay(5000)
-            webSocketUseCase.invoke(
-                token = state.value.token,
-                ids = state.value.devices.values.flatten().map { it.id }.toSet().toList()
-            ).collect { collector ->
-                when (collector) {
-                    is ResultWork.Error -> {
-                        _state.value.copy(
-                            message = collector.error.asUiText()
-                        )
-                            .updateState()
-                    }
-
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            devices = updateDevices(
-                                devices = state.value.devices,
-                                newDeviceOld = collector.data
-                            )
-                        )
-                            .updateState()
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun loadLoggedUserData(token: String) {
-        /*when (val result = loggedUserUseCase.invoke(token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    loggedUser = result.data
-                )
-                    .updateState()
-                viewModelScope.launch {
-                    if (state.value.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
-                        loadGroups()
-                    }
-                }
-                loadDevices(
-                    isRefresh = true,
-                    query = state.value.query
-                )
-            }
-        }*/
-    }
-
-    private suspend fun loadDevices(
-        isRefresh: Boolean,
-        query: String,
-    ) {
-        when (val result = groupedDevicesUseCase.invoke(
-            token = state.value.token,
-            query = query,
-            isRefresh = isRefresh,
-            isSorted = state.value.isSorted,
-        )) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    isLoading = false,
-                    devices = result.data
-                )
-                    .updateState()
-            }
-        }
-    }
-
     private suspend fun insertDevice(
         name: String,
         key: String,
         frequency: String,
         groups: List<Int>
     ) {
-        when (val result = addDeviceUseCase.invoke(
-            name = name,
-            key = key,
-            update = frequency,
-            groups = groups,
-            token = state.value.token
-        )) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
+        /* when (val result = addDeviceUseCase.invoke(
+             name = name,
+             key = key,
+             update = frequency,
+             groups = groups,
+             token = state.value.token
+         )) {
+             is ResultWork.Error -> {
+                 _state.value.copy(
+                     message = result.error.asUiText()
+                 )
+                     .updateState()
+             }
 
-            is ResultWork.Success -> {
-                loadDevices(
-                    isRefresh = true,
-                    query = state.value.query
-                )
-            }
-        }
+             is ResultWork.Success -> {
+                 loadDevices(
+                     isRefresh = true,
+                     query = state.value.query
+                 )
+             }
+         }*/
     }
 
     private suspend fun loadGroups() {
@@ -478,6 +314,109 @@ class DevicesViewModel(
                         .updateState()
                     if (result.data.permissions.map { it.name }.contains(DEVICES_CREATE_LABEL)) {
                         loadGroups()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateFromWs() {
+        viewModelScope.launch {
+            webSocketUseCase.invoke().collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {}
+                    is ResultWork.Success -> {
+                        when (val successResult = collector.data) {
+                            is WebSocketMessage.DeviceCreate -> {
+                                loadUserData()
+                            }
+
+                            is WebSocketMessage.DeviceDelete -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = user.copy(
+                                            devices = WsMessageFactory.deleteDevice(
+                                                devices = user.devices,
+                                                id = successResult.id
+                                            )
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+
+                            is WebSocketMessage.DeviceUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = user.copy(
+                                            devices = WsMessageFactory.updateDevice(
+                                                devices = user.devices,
+                                                device = successResult.device
+                                            )
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                            is WebSocketMessage.FavoriteUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = user.copy(
+                                           favorites = successResult.favorites
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                            is WebSocketMessage.ParamDataUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = user.copy(
+                                            devices = WsMessageFactory.updateDevice(
+                                                devices = user.devices,
+                                                device = successResult.device
+                                            )
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                            is WebSocketMessage.ParamUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = user.copy(
+                                            devices = WsMessageFactory.updateParam(
+                                                devices = user.devices,
+                                                newParam = successResult.param
+                                            )
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                            is WebSocketMessage.UserCreate -> {}
+                            is WebSocketMessage.UserDelete -> {
+                                viewModelScope.launch {
+                                    state.value.authUser?.let { user ->
+                                        if (user.id ==successResult.id) {
+                                            logoffUseCase.invoke()
+                                            _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
+                                        }
+                                    }
+                                }
+                            }
+                            is WebSocketMessage.UserUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = WsMessageFactory.updateAuthUser(
+                                            authUser = user,
+                                            newUser = successResult.user
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+                        }
                     }
                 }
             }

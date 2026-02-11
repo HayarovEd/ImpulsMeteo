@@ -1,80 +1,21 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.Subscriber
-import com.edurda77.domain.model.WebSocketMessageOld
-import com.edurda77.domain.repository.OldRemoteRepository
-import com.edurda77.domain.repository.WebSocketRepositoryOld
+
+import com.edurda77.domain.model.newModels.WebSocketMessage
+import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import com.edurda77.domain.utils.SUBSCRIBE_EVENT
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-
 
 class WebSocketUseCase(
-    private val webSocketRepositoryOld: WebSocketRepositoryOld,
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val webSocketRepository: WebSocketRepository,
+    private val tokenManager: TokenManager,
 ) {
-    operator fun invoke(
-        token: String,
-        ids: List<Int>
-    ): Flow<ResultWork<DeviceOld, DataError>> {
-        return flow {
-            webSocketRepositoryOld.getStateStream().collect { collector ->
-                when (collector) {
-                    is ResultWork.Error -> {
-                        emit(ResultWork.Error(collector.error))
-                    }
-
-                    is ResultWork.Success -> {
-                        val broadcastingAuths = mutableListOf<Subscriber>()
-
-                        when (collector.data) {
-                            is WebSocketMessageOld.Connect -> {
-                                ids.forEach { id ->
-                                    val resultBroadcast = oldRemoteRepository.getBroadcatingAuth(
-                                        socketId = collector.data.messageWebSocketStart.socketId,
-                                        token = token,
-                                        deviceId = id
-                                    )
-                                    when (resultBroadcast) {
-                                        is ResultWork.Error -> {
-                                            emit(ResultWork.Error(resultBroadcast.error))
-                                        }
-
-                                        is ResultWork.Success -> {
-                                            broadcastingAuths.add(
-                                                Subscriber(
-                                                    deviceId = id,
-                                                    auth = resultBroadcast.data
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                                broadcastingAuths.forEach {
-                                    webSocketRepositoryOld.sendAction(
-                                        event = SUBSCRIBE_EVENT,
-                                        deviceId = it.deviceId,
-                                        auth = it.auth
-                                    )
-                                }
-                            }
-
-                            is WebSocketMessageOld.SuccessSbscribe -> {
-                                println("web socket open, success subscribe ${collector.data.successSubscribe.channel}")
-                            }
-
-                            is WebSocketMessageOld.DeviceEvent -> {
-                                emit(ResultWork.Success(collector.data.deviceOld))
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
+    operator fun invoke(): Flow<ResultWork<WebSocketMessage, DataError>> {
+        return tokenManager.validateFactoryFlow(
+            data = {
+                webSocketRepository.getStateStream(it)
+            },
+        )
     }
-
 }

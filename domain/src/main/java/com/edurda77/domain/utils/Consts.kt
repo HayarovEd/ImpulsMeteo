@@ -78,8 +78,7 @@ const val FAVORITE_ID_GROUP_STRING = "-10"
 
 //New
 const val NEW_BASE_URL = "http://10.222.222.135:8081/api/"
-const val NEW_WEB_SOCKET_URL =
-    "ws://10.222.222.135:8081/api/ws"
+const val NEW_WEB_SOCKET_URL = "ws://10.222.222.135:8081/api/ws"
 const val ACCESS_TOKEN_LABEL = "access_token"
 const val REFRESH_TOKEN_LABEL = "refresh_token"
 
