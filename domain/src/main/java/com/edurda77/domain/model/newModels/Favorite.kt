@@ -5,5 +5,6 @@ data class Favorite(
     val deviceId: String,
     val id: String,
     val updateAt: String,
-    val userId: String
+    val userId: String,
+    val isUpdating: Boolean = false,
 )

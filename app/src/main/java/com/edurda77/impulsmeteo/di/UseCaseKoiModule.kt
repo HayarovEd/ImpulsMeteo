@@ -2,7 +2,7 @@ package com.edurda77.impulsmeteo.di
 
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
-import com.edurda77.domain.usecase.AddFavoriteUseCase
+import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
@@ -71,7 +71,7 @@ val useCaseKoiModule = module {
     single<UpdateNotificationsDeviceUseCase> { UpdateNotificationsDeviceUseCase(get()) }
     single<UpdateDeviceUseCase> { UpdateDeviceUseCase(get()) }
     single<UpdateParamUseCase> { UpdateParamUseCase(get()) }
-    single<AddFavoriteUseCase> { AddFavoriteUseCase(get()) }
+    factoryOf(::UpdateFavoriteUseCase) { bind <UpdateFavoriteUseCase>() }
     single<RemoveFavoriteUseCase> { RemoveFavoriteUseCase(get()) }
     single<DeleteDeviceUseCase> { DeleteDeviceUseCase(get(), get()) }
     single<HistoryUseCase> { HistoryUseCase(get()) }

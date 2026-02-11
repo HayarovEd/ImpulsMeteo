@@ -2,7 +2,6 @@ package com.edurda77.data.remote.newDtos.device
 
 
 import com.edurda77.data.remote.newDtos.group.GroupDeviceDto
-import com.edurda77.domain.utils.STATUS_OFF
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

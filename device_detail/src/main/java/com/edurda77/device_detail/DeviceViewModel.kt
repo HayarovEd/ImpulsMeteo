@@ -7,7 +7,7 @@ import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.NavigationRoute
 import com.edurda77.domain.model.NotificationDeviceOld
-import com.edurda77.domain.usecase.AddFavoriteUseCase
+import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteParamUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
@@ -48,7 +48,7 @@ class DeviceViewModel(
     private val updateDeviceUseCase: UpdateDeviceUseCase,
     private val unitsUseCase: UnitsUseCase,
     private val updateParamUseCase: UpdateParamUseCase,
-    private val addFavoriteUseCase: AddFavoriteUseCase,
+    private val updateFavoriteUseCase: UpdateFavoriteUseCase,
     private val removeFavoriteUseCase: RemoveFavoriteUseCase,
     private val webSocketUseCaseOld: WebSocketUseCaseOld,
     private val historyUseCase: HistoryUseCase,
@@ -300,7 +300,7 @@ class DeviceViewModel(
                                 }
                             }
                         } else {
-                            when (val result = addFavoriteUseCase.invoke(
+                           /* when (val result = updateFavoriteUseCase.invoke(
                                 deviceId = device.id,
                                 token = state.value.token
                             )) {
@@ -317,7 +317,7 @@ class DeviceViewModel(
                                     )
                                         .updateState()
                                 }
-                            }
+                            }*/
                         }
                     }
                 }

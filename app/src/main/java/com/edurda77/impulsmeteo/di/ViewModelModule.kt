@@ -7,6 +7,7 @@ import com.edurda77.login_screen.LoginViewModel
 import com.edurda77.splash.SplashViewModel
 import com.edurda77.users_list.UsersViewModel
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelModule = module {
@@ -29,22 +30,7 @@ val viewModelModule = module {
             get (),
         )
     }
-    viewModel {
-        DevicesViewModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-        )
-    }
+    viewModelOf(::DevicesViewModel)
     viewModel {
         DirectoriesViewModel(
             get(),

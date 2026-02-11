@@ -3,18 +3,15 @@ package com.edurda77.devices_list
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.WebSocketMessage
 import com.edurda77.domain.usecase.AddDeviceUseCase
-import com.edurda77.domain.usecase.AddFavoriteUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
-import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
-import com.edurda77.domain.usecase.GroupedDevicesUseCase
-import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
-import com.edurda77.domain.usecase.RemoveFavoriteUseCase
+import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.usecase.WsMessageFactory
 import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
@@ -42,17 +39,13 @@ const val DOWNLOAD_FILE_URL =
     "https://apps.kvadroks.ru/api/links/fd383935-944f-4a81-bb06-d31da0554d4a/file"
 
 class DevicesViewModel(
-    private val groupedDevicesUseCase: GroupedDevicesUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
-    private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
     private val addDeviceUseCase: AddDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val webSocketUseCase: WebSocketUseCase,
     private val closeWebsocketUseCase: CloseWebsocketUseCase,
-    private val addFavoriteUseCase: AddFavoriteUseCase,
-    private val removeFavoriteUseCase: RemoveFavoriteUseCase,
-    private val deleteDeviceUseCase: DeleteDeviceUseCase,
+    private val updateFavoriteUseCase: UpdateFavoriteUseCase,
     private val refresher: Refresher,
 
     ) : ViewModel() {
@@ -152,7 +145,7 @@ class DevicesViewModel(
             }
 
             is DevicesEvent.WorkWithFavorite -> {
-
+                updateFavorite(event.device)
             }
 
             is DevicesEvent.OnDeleteDevice -> {
@@ -207,7 +200,7 @@ class DevicesViewModel(
     }
 
     private suspend fun loadGroups() {
-        when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
+        when (val result = devicesGroupsUseCase.invoke()) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     message = result.error.asUiText()
@@ -320,6 +313,44 @@ class DevicesViewModel(
                         .updateState()
                     if (result.data.permissions.map { it.name }.contains(DEVICES_CREATE_LABEL)) {
                         loadGroups()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateFavorite(device: Device) {
+        viewModelScope.launch {
+            state.value.authUser?.let { user ->
+                val favorites = user.favorites.map { fv ->
+                    if (device.id == fv.deviceId) {
+                        fv.copy(
+                            isUpdating = true
+                        )
+                    } else fv
+                }
+                _state.value.copy(
+                    authUser = user.copy(favorites = favorites)
+                )
+                    .updateState()
+                when (val result =
+                    updateFavoriteUseCase.invoke(
+                        deviceId = device.id,
+                        favorites = favorites
+                    )
+                ) {
+                    is ResultWork.Error -> {
+                        _state.value.copy(
+                            message = result.error.asUiText()
+                        )
+                            .updateState()
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            authUser = user.copy(favorites = result.data)
+                        )
+                            .updateState()
                     }
                 }
             }

@@ -132,12 +132,14 @@ fun ItemDevice(
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
+
                     UiIconButton(
                         icon = if (device.id in favorites.map { it.deviceId }) ImageVector.vectorResource(
                             R.drawable.baseline_star_24
                         ) else ImageVector.vectorResource(
                             R.drawable.baseline_star_border_24
                         ),
+                        //enabled = favorites.isNotEmpty()&&!favorites.firstOrNull{ it.deviceId == device.id }?.isUpdating!!,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         onClick = onClickChangeFavorite,
                     )

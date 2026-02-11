@@ -45,9 +45,7 @@ import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.utils.DEVICES_CREATE
 import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
-import com.edurda77.domain.utils.DIRECTORY_LIST
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -473,7 +471,7 @@ fun DevicesScreen(
                                        // onGoToDevice(device.id)
                                     },
                                     onClickChangeFavorite = {
-                                       // onEvent(DevicesEvent.WorkWithFavorite(device))
+                                       onEvent(DevicesEvent.WorkWithFavorite(device))
                                     },
                                 )
                             }

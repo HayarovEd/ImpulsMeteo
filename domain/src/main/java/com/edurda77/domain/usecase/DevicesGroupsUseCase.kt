@@ -10,9 +10,7 @@ class DevicesGroupsUseCase(
     private val groupsRepository: DevicesGroupsRepository,
     private val tokenManager: TokenManager,
 ) {
-    suspend operator fun invoke(
-        token: String
-    ): ResultWork<List<GroupDevice>, DataError> {
+    suspend operator fun invoke(): ResultWork<List<GroupDevice>, DataError> {
         return tokenManager.validateFactory(
             data = {
                 groupsRepository.loadGroups(it)
