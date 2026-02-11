@@ -1,13 +1,10 @@
 package com.edurda77.data.repository
 
 import com.edurda77.data.handler.handleResponse
-import com.edurda77.data.mapper.toAuthUser
 import com.edurda77.data.mapper.toDevice
 import com.edurda77.data.mapper.toGroupDeviceDto
-import com.edurda77.data.remote.newDtos.auth.AuthUserDto
 import com.edurda77.data.remote.newDtos.device.DeviceCreateRequest
 import com.edurda77.data.remote.newDtos.device.DeviceDto
-import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.repository.DevicesRepository
@@ -18,7 +15,6 @@ import com.edurda77.domain.utils.STATUS_OFF
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
