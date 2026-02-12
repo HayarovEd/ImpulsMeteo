@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -43,13 +44,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
+import com.edurda77.domain.utils.DEVICES_LIST_LABEL
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemDevice
+import com.edurda77.resources.uikit.NoAccess
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
@@ -57,7 +59,6 @@ import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
-import kotlin.collections.emptyList
 import kotlin.random.Random
 
 
@@ -101,7 +102,7 @@ fun DevicesScreen(
     onEvent: (DevicesEvent) -> Unit,
     version: String
 ) {
-    val screenWidth = configuration.screenWidthDp.dp
+    val windowSize = LocalWindowInfo.current.containerDpSize
     val listState = rememberLazyListState()
     val pagerState =
         rememberPagerState(
@@ -112,7 +113,7 @@ fun DevicesScreen(
 
 
     LaunchedEffect(pagerState.currentPage) {
-        if (state.devices.isNotEmpty()) {
+        if (state.filteredDevices.isNotEmpty()) {
             onEvent(DevicesEvent.SelectGroup(pagerState.currentPage))
             if (pagerState.currentPage > 0 && pagerState.currentPage != listState.layoutInfo.totalItemsCount - 1) {
                 listState.animateScrollToItem(pagerState.currentPage - 1)
@@ -199,7 +200,7 @@ fun DevicesScreen(
                                 numberSelectedGroup = state.numberSelectedGroup,
                                 pagerState = pagerState,
                                 scope = scope,
-                                screenWidth = screenWidth,
+                                screenWidth = windowSize.width,
                                 onClick = {
                                     onEvent(DevicesEvent.SelectGroup(it))
                                 }
@@ -306,19 +307,15 @@ fun DevicesScreen(
                             },
                             scope = scope,
                             pagerState = pagerState,
-                            screenWidth = screenWidth,
+                            screenWidth = windowSize.width,
                         )
                     }
                 } else {
                     Row(
                         modifier = modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        //  horizontalArrangement = if (state.isShowSearch) Arrangement.spacedBy(0.dp) else Arrangement.SpaceBetween
                     ) {
-                        /* val modifierByVisibilitySearch =
-                             if (state.isShowSearch) modifier.weight(1f) else modifier*/
                         UiIconButton(
-                            //modifier = modifierByVisibilitySearch,
                             icon = if (state.isShowSearch) ImageVector.vectorResource(id = R.drawable.baseline_search_off_24) else ImageVector.vectorResource(
                                 id = R.drawable.baseline_search_24
                             ),
@@ -338,7 +335,6 @@ fun DevicesScreen(
                             )
                         } else UiTextField(
                             modifier = modifier.weight(1f),
-                            // modifier = modifier.focusRequester(focusRequester),
                             content = state.query,
                             label = stringResource(id = R.string.search),
                             onClickContent = {
@@ -371,13 +367,11 @@ fun DevicesScreen(
 
                         }
                         UiIconButton(
-                            //modifier = modifierByVisibilitySearch,
                             color = MaterialTheme.colorScheme.onBackground,
                             icon = ImageVector.vectorResource(id = R.drawable.outline_sort_24),
                             onClick = { onEvent(DevicesEvent.SortDevicesByStatus) }
                         )
                         UiIconButton(
-                            // modifier = modifierByVisibilitySearch,
                             color = MaterialTheme.colorScheme.onBackground,
                             icon = ImageVector.vectorResource(id = R.drawable.logout),
                             onClick = { isShowDialogLogOff.value = true }
@@ -393,7 +387,7 @@ fun DevicesScreen(
                         },
                         scope = scope,
                         pagerState = pagerState,
-                        screenWidth = screenWidth,
+                        screenWidth = windowSize.width,
                     )
                 }
             }
@@ -442,42 +436,48 @@ fun DevicesScreen(
                 }
             ) {
                 if (!state.isLoading) {
-                    HorizontalPager(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .padding(15.dp),
-                        state = pagerState,
-                        verticalAlignment = Alignment.Top
-                    ) { page ->
-                        val currentDevices = state.filteredDevices.values.toList()[page]
-                        val cellsCount =
-                            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        LazyVerticalGrid(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            columns = GridCells.Fixed(cellsCount),
-                            verticalArrangement = Arrangement.spacedBy(15.dp),
-                            horizontalArrangement = Arrangement.spacedBy(15.dp)
-                        ) {
-                            items(
-                                items = currentDevices,
-                                key = {
-                                    it.id
-                                }) { device ->
-                                ItemDevice(
-                                    modifier = modifier,
-                                    device = device,
-                                    configuration = configuration,
-                                    favorites = state.authUser?.favorites ?: emptyList(),
-                                    isEnableUpdate = device.id !in state.updatingDeviceIds,
-                                    onClickDevice = {
-                                        // onGoToDevice(device.id)
-                                    },
-                                    onClickChangeFavorite = {
-                                        onEvent(DevicesEvent.WorkWithFavorite(device))
-                                    },
-                                )
+                    state.authUser?.let { user->
+                        if (user.permissions.map { it.name }.contains(DEVICES_LIST_LABEL)) {
+                            HorizontalPager(
+                                modifier = modifier
+                                    .fillMaxSize()
+                                    .padding(15.dp),
+                                state = pagerState,
+                                verticalAlignment = Alignment.Top
+                            ) { page ->
+                                val currentDevices = state.filteredDevices.values.toList()[page]
+                                val cellsCount =
+                                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+                                LazyVerticalGrid(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    columns = GridCells.Fixed(cellsCount),
+                                    verticalArrangement = Arrangement.spacedBy(15.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(15.dp)
+                                ) {
+                                    items(
+                                        items = currentDevices,
+                                        key = {
+                                            it.id
+                                        }) { device ->
+                                        ItemDevice(
+                                            modifier = modifier,
+                                            device = device,
+                                            configuration = configuration,
+                                            favorites = user.favorites,
+                                            isEnableUpdate = device.id !in state.updatingDeviceIds,
+                                            onClickDevice = {
+                                                // onGoToDevice(device.id)
+                                            },
+                                            onClickChangeFavorite = {
+                                                onEvent(DevicesEvent.WorkWithFavorite(device))
+                                            },
+                                        )
+                                    }
+                                }
                             }
+                        } else {
+                            NoAccess()
                         }
                     }
                 }
@@ -583,12 +583,6 @@ private fun DevicesScreenView3() {
                         emptyList()
                     )
                 ),
-                loggedUser = LoggedUser(
-                    id = 0,
-                    name = "Edward",
-                    email = "eee@rt.rt",
-                    permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                ),
                 updatingDeviceIds = emptyList()
             ),
             version = "1.0",
@@ -663,12 +657,6 @@ private fun DevicesScreenView4() {
                         ),
                         emptyList()
                     )
-                ),
-                loggedUser = LoggedUser(
-                    id = 0,
-                    name = "Edward",
-                    email = "eee@rt.rt",
-                    permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                 ),
                 updatingDeviceIds = emptyList()
             ),

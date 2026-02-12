@@ -52,8 +52,6 @@ class DevicesViewModel(
     private var _state = MutableStateFlow(DevicesState())
     val state = _state
         .onStart {
-            // loadLocalData()
-            //loadUpdateData()
             checkEnableUpdates()
             loadUserData()
             updateFromWs()

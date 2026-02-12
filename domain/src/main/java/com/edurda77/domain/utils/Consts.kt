@@ -84,3 +84,4 @@ const val ACCESS_TOKEN_LABEL = "access_token"
 const val REFRESH_TOKEN_LABEL = "refresh_token"
 
 const val DEVICES_CREATE_LABEL = "devices-create"
+const val DEVICES_LIST_LABEL = "devices-list"

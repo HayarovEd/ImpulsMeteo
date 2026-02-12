@@ -14,7 +14,6 @@ import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
-import com.edurda77.domain.usecase.GroupedDevicesUseCase
 import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -46,7 +45,6 @@ val useCaseKoiModule = module {
     single<SaveLocalAuthorizationUseCase> { SaveLocalAuthorizationUseCase(get()) }
     factoryOf(::LoggedUserUseCase) { bind<LoggedUserUseCase>() }
     factoryOf(::TokenManager) { bind<TokenManager>() }
-    single<GroupedDevicesUseCase> { GroupedDevicesUseCase(get()) }
     single<LocalTokenUseCase> { LocalTokenUseCase(get()) }
     factoryOf(::LogOffUseCase) { bind <LogOffUseCase>() }
     factoryOf(::AddDeviceUseCase) { bind <AddDeviceUseCase>() }

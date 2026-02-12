@@ -1,45 +1,15 @@
 package com.edurda77.domain.utils
 
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.Favorite
 import com.edurda77.domain.model.newModels.GroupDevice
-import kotlinx.datetime.LocalDateTime
 
 
 fun isValidEmail(email: String): Boolean {
     val emailRegex = Regex("^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,3})+$")
     return email.matches(emailRegex)
-}
-
-
-fun convertToMapGroupedDevices(
-    deviceOlds: List<DeviceOld>,
-): Map<GroupDevicesOld, List<DeviceOld>> {
-    val groupedDevices = mutableMapOf<GroupDevicesOld, List<DeviceOld>>()
-    val groups = mutableListOf<GroupDevicesOld>()
-    val favoriteDeviceOlds = mutableListOf<DeviceOld>()
-    deviceOlds.forEach { device ->
-        if (device.isFavorite) {
-            favoriteDeviceOlds.add(device)
-        }
-        groups.addAll(device.groups.filterNot { it in groups })
-    }
-    if (favoriteDeviceOlds.isNotEmpty()) {
-        groupedDevices[GroupDevicesOld(
-            id = FAVORITE_ID_GROUP,
-            name = FAVORITE
-        )] = favoriteDeviceOlds
-    }
-    groups
-        .sortedBy { it.id }
-        .forEach { group ->
-            val enteredDevices = deviceOlds.filter { it.groups.contains(group) }
-            groupedDevices[group] = enteredDevices
-        }
-    return groupedDevices
 }
 
 
@@ -76,26 +46,6 @@ fun convertToMapGroupedDevices2(
     return groupedDevices
 }
 
-fun filterGroupedDevices(
-    devices: Map<GroupDevicesOld, List<DeviceOld>>,
-    query: String,
-    isSorted: Boolean,
-): Map<GroupDevicesOld, List<DeviceOld>> {
-    return devices
-        .mapValues { (_, current) ->
-            val searched = current.filter {
-                it.name
-                    .contains(
-                        other = query,
-                        ignoreCase = true
-                    )
-            }
-            if (isSorted) {
-                searched.sortedByDescending { it.status }
-            } else searched
-        }
-}
-
 fun filterGroupedDevices2(
     devices: Map<GroupDevice, List<Device>>,
     query: String,
@@ -114,21 +64,6 @@ fun filterGroupedDevices2(
                 searched.sortedByDescending { it.status }
             } else searched
         }
-}
-
-fun updateDevices(
-    devices: Map<GroupDevicesOld, List<DeviceOld>>,
-    newDeviceOld: DeviceOld
-): Map<GroupDevicesOld, List<DeviceOld>> {
-
-    return devices.mapValues { (_, deviceList) ->
-        deviceList.map { device ->
-            if (device.id == newDeviceOld.id) {
-                val updatedDevice = newDeviceOld.copy(isFavorite = device.isFavorite, statusNotifications = device.statusNotifications) // TODO remove statusNotifications after correct server
-                updatedDevice
-            } else device
-        }
-    }
 }
 
 fun updateDevice(

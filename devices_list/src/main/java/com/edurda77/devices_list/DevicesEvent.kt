@@ -4,23 +4,23 @@ import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.GroupDevice
 
 sealed class DevicesEvent {
-    data object Refresh : DevicesEvent()//
-    data object Logoff : DevicesEvent()//
-    class OnSearch(val query: String) : DevicesEvent()//
-    class SelectGroup(val index: Int) : DevicesEvent()//
-    data object ShowSearchField : DevicesEvent()//
-    class UpdateSelectedGroups(val groupDevices: GroupDevice) : DevicesEvent()//
-    data object ClearSelectedGroups : DevicesEvent()//
+    data object Refresh : DevicesEvent()
+    data object Logoff : DevicesEvent()
+    class OnSearch(val query: String) : DevicesEvent()
+    class SelectGroup(val index: Int) : DevicesEvent()
+    data object ShowSearchField : DevicesEvent()
+    class UpdateSelectedGroups(val groupDevices: GroupDevice) : DevicesEvent()
+    data object ClearSelectedGroups : DevicesEvent()
     class OnInsertDevice(
         val name: String,
         val key: String,
         val frequency: String,
         val groups: List<GroupDevice>,
-    ) : DevicesEvent()//
+    ) : DevicesEvent()
 
-    data object OnCloseWebSocket : DevicesEvent()//
+    data object OnCloseWebSocket : DevicesEvent()
     class WorkWithFavorite(val device: Device) : DevicesEvent()
     class OnDeleteDevice(val device: Device) : DevicesEvent()
-    data object UpdateApp:DevicesEvent()//
-    data object SortDevicesByStatus:DevicesEvent()//
+    data object UpdateApp:DevicesEvent()
+    data object SortDevicesByStatus:DevicesEvent()
 }
