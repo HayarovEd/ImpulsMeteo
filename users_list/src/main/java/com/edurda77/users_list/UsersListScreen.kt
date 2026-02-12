@@ -2,7 +2,6 @@ package com.edurda77.users_list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -28,24 +28,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.edurda77.domain.utils.USERS_CREATE
-import com.edurda77.domain.utils.USERS_DELETE
-import com.edurda77.domain.utils.USERS_EDIT
-import com.edurda77.domain.utils.USERS_LIST
+import com.edurda77.domain.utils.USERS_CREATE_LABEL
+import com.edurda77.domain.utils.USERS_DELETE_LABEL
+import com.edurda77.domain.utils.USERS_EDIT_LABEL
+import com.edurda77.domain.utils.USERS_LIST_LABEL
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.NoAccess
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
+import com.edurda77.resources.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -57,10 +60,22 @@ fun UsersListScreenRoot(
     bottomBarContent: @Composable () -> Unit = {},
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    val snackBarState = remember { SnackbarHostState() }
+
+    ObserveAsEvents(viewModel.eventFlow) { event ->
+        when (event) {
+            UiUsersEvents.LoginNavigationEvent -> onGoToLogin()
+            is UiUsersEvents.OnError -> snackBarState.showSnackbar(event.message.asString(context))
+        }
+    }
+
     val onEvent = viewModel::onEvent
     UsersListScreen(
         state = state.value,
         configuration = configuration,
+        snackBarState = snackBarState,
         bottomBarContent = bottomBarContent,
         onGoToLogin = onGoToLogin,
         onEvent = onEvent
@@ -75,6 +90,7 @@ private fun UsersListScreen(
     onGoToLogin: () -> Unit,
     configuration: Configuration,
     state: UsersState,
+    snackBarState:SnackbarHostState,
     onEvent: (UsersEvent) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
 ) {
@@ -133,7 +149,8 @@ private fun UsersListScreen(
         )
     }
     UiBaseScaffold(
-        message = state.message,
+        message = null,
+        snakeBarHostState = snackBarState,
         topBarContent = {
             Row(
                 modifier = modifier
@@ -159,7 +176,7 @@ private fun UsersListScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.loggedUser?.permissions?.contains(USERS_CREATE) == true) {
+            if (state.authUser?.permissions?.map { it.name }?.contains(USERS_CREATE_LABEL) == true) {
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.outlineVariant,
                     onClick = { expandedAddDialog.value = true }
@@ -199,82 +216,71 @@ private fun UsersListScreen(
                     }
                 }
             ) {
-                if (state.loggedUser?.permissions?.contains(USERS_LIST) == true) {
-                    if (state.users.isNotEmpty() && !state.isLoading) {
-                        val cellsCount =
-                            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        LazyVerticalStaggeredGrid(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(15.dp),
-                            columns = StaggeredGridCells.Fixed(cellsCount),
-                            verticalItemSpacing = 5.dp,
-                            horizontalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            itemsIndexed(state.users) { index, user ->
-                                ItemUser(
-                                    user = user,
-                                    onDeleteClick = {
-                                        onEvent(UsersEvent.DeleteUser(it))
-                                    },
-                                    isEnabledDelete = state.loggedUser.permissions.contains(
-                                        USERS_DELETE
-                                    ),
-                                    isEnabledUpdate = state.loggedUser.permissions.contains(
-                                        USERS_EDIT
-                                    ),
-                                    onClearSelected = {
-                                        onEvent(UsersEvent.ClearSelected)
-                                    },
-                                    onUpdateSelected = {
-                                        onEvent(UsersEvent.UpdateSelected(user))
-                                    },
-                                    devices = state.devices,
-                                    permissions = state.permissions,
-                                    selectedDevices = state.selectedDevices,
-                                    selectedPermissions = state.selectedPermissions,
-                                    isExpanded = user.isExpanded,
-                                    onUpdatePermissions = {
-                                        onEvent(UsersEvent.UpdateSelectedPermission(it))
-                                    },
-                                    onUpdateDevices = {
-                                        onEvent(UsersEvent.UpdateSelectedDevice(it))
-                                    },
-                                    onUpdateClick = { id, name, email, password, devices, permissions ->
-                                        onEvent(
-                                            UsersEvent.UpdateUser(
-                                                id = id,
-                                                name = name,
-                                                email = email,
-                                                password = password,
-                                                devices = devices,
-                                                permissions = permissions
-                                            )
+                if (!state.isLoading) {
+                    state.authUser?.let { user ->
+                        val userPermissions = user.permissions.map { it.name }
+                        if (userPermissions.contains(USERS_LIST_LABEL)) {
+                            if (state.users.isNotEmpty()) {
+                                val cellsCount =
+                                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+                                LazyVerticalStaggeredGrid(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(15.dp),
+                                    columns = StaggeredGridCells.Fixed(cellsCount),
+                                    verticalItemSpacing = 5.dp,
+                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                ) {
+                                    itemsIndexed(state.filteredUsers) { index, user ->
+                                        ItemUser(
+                                            user = user,
+                                            onDeleteClick = {
+                                                onEvent(UsersEvent.DeleteUser(it))
+                                            },
+                                            isEnabledDelete = userPermissions.contains(
+                                                USERS_DELETE_LABEL
+                                            ),
+                                            isEnabledUpdate = userPermissions.contains(
+                                                USERS_EDIT_LABEL
+                                            ),
+                                            onClearSelected = {
+                                                onEvent(UsersEvent.ClearSelected)
+                                            },
+                                            onUpdateSelected = {
+                                                // onEvent(UsersEvent.UpdateSelected(user))
+                                            },
+                                            devices = state.devices,
+                                            permissions = state.permissions,
+                                            selectedDevices = state.selectedDevices,
+                                            selectedPermissions = state.selectedPermissions,
+                                            isExpanded = user.isExpanded,
+                                            onUpdatePermissions = {
+                                                onEvent(UsersEvent.UpdateSelectedPermission(it))
+                                            },
+                                            onUpdateDevices = {
+                                                onEvent(UsersEvent.UpdateSelectedDevice(it))
+                                            },
+                                            onUpdateClick = { id, name, email, password, devices, permissions ->
+                                                onEvent(
+                                                    UsersEvent.UpdateUser(
+                                                        id = id,
+                                                        name = name,
+                                                        email = email,
+                                                        password = password,
+                                                        devices = devices,
+                                                        permissions = permissions
+                                                    )
+                                                )
+                                            },
+                                            onClickExpanded = {
+                                                onEvent(UsersEvent.ExpandUser(index))
+                                            }
                                         )
-                                    },
-                                    onClickExpanded = {
-                                        onEvent(UsersEvent.ExpandUser(index))
                                     }
-                                )
+                                }
                             }
-                        }
-                    }
-                } else {
-                    if (state.loggedUser != null) {
-                        Box(
-                            modifier = modifier
-                                .padding(paddings)
-                                .fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                modifier = modifier
-                                    .fillMaxWidth(),
-                                text = stringResource(R.string.no_access_this),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = Typography.bodyLarge,
-                                textAlign = TextAlign.Center,
-                            )
+                        } else {
+                            NoAccess()
                         }
                     }
                 }
@@ -289,13 +295,15 @@ showSystemUi = true
 )
 @Composable
 private fun UsersListScreenView() {
+    val snackBarState = remember { SnackbarHostState() }
     ImpulsMeteoTheme {
         UsersListScreen(
             onGoToLogin = {},
             bottomBarContent = {},
             configuration = LocalConfiguration.current,
             state = UsersState(),
-            onEvent = {}
+            onEvent = {},
+            snackBarState = snackBarState
         )
     }
 }
@@ -306,13 +314,15 @@ private fun UsersListScreenView() {
 )
 @Composable
 private fun UsersListScreenView2() {
+    val snackBarState = remember { SnackbarHostState() }
     ImpulsMeteoTheme {
         UsersListScreen(
             onGoToLogin = {},
             bottomBarContent = {},
             configuration = LocalConfiguration.current,
             state = UsersState(),
-            onEvent = {}
+            onEvent = {},
+            snackBarState = snackBarState
         )
     }
 }

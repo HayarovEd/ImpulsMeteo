@@ -19,7 +19,7 @@ import com.edurda77.data.remote.update_notifications.UpdateParamsNotificationsDt
 import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevicesOld
@@ -27,7 +27,7 @@ import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.PermissionUserOld
+import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteo
@@ -107,14 +107,14 @@ fun DevicesDto.convertToDevices(): List<DeviceOld> {
 fun PermissionsDto.convertToPermissions(): PermissionsOld {
     return PermissionsOld(
         permissions = this.permissionsDto.map {
-            PermissionUserOld(
+            PermissionUser(
                 displayName = it.displayName,
-                id = it.id
+                id = "it.id"
             )
         },
         devicesPermission = this.devicePermissionsDto.map {
             DeviceUser(
-                id = it.id,
+                id = "it.id",
                 name = it.name
             )
         }
@@ -129,14 +129,14 @@ fun UsersDtoOld.convertToUsers(): List<UserOld> {
             name = user.name,
             devices = user.devicesUserDto.map {
                 DeviceUser(
-                    id = it.id,
+                    id = "it.id",
                     name = it.name
                 )
             },
             permissions = user.permissionsUserDto.map {
-                PermissionUserOld(
+                PermissionUser(
                     displayName = it.displayName,
-                    id = it.id
+                    id =" it.id"
                 )
             }
         )

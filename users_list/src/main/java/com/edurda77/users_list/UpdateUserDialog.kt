@@ -39,27 +39,27 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUserOld
+import com.edurda77.domain.model.newModels.DeviceUser
+import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiTextField
-import com.edurda77.users_list.model.UserUi
+import com.edurda77.users_list.model.UserUiOld
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UpdateUserDialog(
     modifier: Modifier = Modifier,
-    user: UserUi,
+    user: UserUiOld,
     devices: List<DeviceUser>,
-    permissions: List<PermissionUserOld>,
-    selectedPermissions: List<PermissionUserOld>,
+    permissions: List<PermissionUser>,
+    selectedPermissions: List<PermissionUser>,
     selectedDevices: List<DeviceUser>,
     onCloseClick: () -> Unit,
-    onUpdatePermissions: (PermissionUserOld) -> Unit,
+    onUpdatePermissions: (PermissionUser) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUserOld>) -> Unit,
+    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
 ) {
     val name = remember { mutableStateOf(user.name) }
     val email = remember { mutableStateOf(user.email) }
@@ -230,38 +230,38 @@ fun UpdateUserDialog(
 private fun UpdateUserDialogView1() {
     ImpulsMeteoTheme {
         UpdateUserDialog(
-            user = UserUi(
+            user = UserUiOld(
                 id = 0,
                 email = "eeeee",
                 name = "Edward",
                 devices = listOf(
                     DeviceUser(
-                        id = 1,
+                        id = "1",
                         name = "Device 1"
                     ),
                     DeviceUser(
-                        id = 2,
+                        id = "2",
                         name = "Device 2"
                     )
                 ),
                 permissions = listOf(
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     ),
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     )
                 )
             ),
             devices = listOf(
                 DeviceUser(
-                    id = 1,
+                    id = "1",
                     name = "Device 1"
                 ),
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
@@ -269,24 +269,24 @@ private fun UpdateUserDialogView1() {
             onUpdatePermissions = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
             ),
             selectedDevices = listOf(
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
@@ -302,38 +302,38 @@ private fun UpdateUserDialogView1() {
 private fun UpdateUserDialog2() {
     ImpulsMeteoTheme {
         UpdateUserDialog(
-            user = UserUi(
+            user = UserUiOld(
                 id = 0,
                 email = "eeeee",
                 name = "Edward",
                 devices = listOf(
                     DeviceUser(
-                        id = 1,
+                        id = "1",
                         name = "Device 1"
                     ),
                     DeviceUser(
-                        id = 2,
+                        id = "2",
                         name = "Device 2"
                     )
                 ),
                 permissions = listOf(
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     ),
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     )
                 )
             ),
             devices = listOf(
                 DeviceUser(
-                    id = 1,
+                    id = "1",
                     name = "Device 1"
                 ),
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
@@ -341,24 +341,24 @@ private fun UpdateUserDialog2() {
             onUpdatePermissions = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
             ),
             selectedDevices = listOf(
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),

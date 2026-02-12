@@ -40,14 +40,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUserOld
+import com.edurda77.domain.model.newModels.DeviceUser
+import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemAccess
 import com.edurda77.resources.uikit.UiAlertDialog
-import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.users_list.model.UserUi
 
@@ -61,14 +60,14 @@ fun ItemUser(
     user: UserUi,
     onDeleteClick: (Int) -> Unit,
     onClearSelected: () -> Unit,
-    onUpdateSelected: (Int) -> Unit,
+    onUpdateSelected: (String) -> Unit,
     devices: List<DeviceUser>,
-    permissions: List<PermissionUserOld>,
+    permissions: List<PermissionUser>,
     selectedDevices: List<DeviceUser>,
-    selectedPermissions: List<PermissionUserOld>,
-    onUpdatePermissions: (PermissionUserOld) -> Unit,
+    selectedPermissions: List<PermissionUser>,
+    onUpdatePermissions: (PermissionUser) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUserOld>) -> Unit,
+    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
     onClickExpanded: () -> Unit,
 ) {
     val localDensity = LocalDensity.current
@@ -81,7 +80,7 @@ fun ItemUser(
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_user),
             onClickConfirm = {
-                onDeleteClick(user.id)
+                //onDeleteClick(user.id)
                 expandedDeleteDialog.value = false
             },
             onClickCancel = {
@@ -90,7 +89,7 @@ fun ItemUser(
         )
     }
     if (expandedUpdateDialog.value) {
-        UiDialog(
+        /*UiDialog(
             onCloseDialog = {
                 expandedUpdateDialog.value = false
                 onClearSelected()
@@ -124,7 +123,7 @@ fun ItemUser(
                     user = user
                 )
             }
-        )
+        )*/
     }
     Card(
         modifier = modifier
@@ -297,37 +296,39 @@ private fun ItemUserView1() {
             isEnabledUpdate = true,
             isExpanded = true,
             user = UserUi(
-                id = 0,
+                id = "0",
                 email = "eeeee",
                 name = "Edward",
                 devices = listOf(
                     DeviceUser(
-                        id = 1,
+                        id = "1",
                         name = "Device 1"
                     ),
                     DeviceUser(
-                        id = 2,
+                        id = "2",
                         name = "Device 2"
                     )
                 ),
+                isEnabled = true,
+                password = "",
                 permissions = listOf(
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     ),
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     )
                 )
             ),
             devices = listOf(
                 DeviceUser(
-                    id = 1,
+                    id = "1",
                     name = "Device 1"
                 ),
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
@@ -339,24 +340,24 @@ private fun ItemUserView1() {
             onUpdateSelected = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
             ),
             selectedDevices = listOf(
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             )
@@ -373,37 +374,40 @@ private fun ItemUserView2() {
             isEnabledUpdate = true,
             isExpanded = true,
             user = UserUi(
-                id = 0,
+                id = "0",
                 email = "eeeee",
                 name = "Edward",
                 devices = listOf(
                     DeviceUser(
-                        id = 1,
+                        id = "1",
                         name = "Device 1"
                     ),
                     DeviceUser(
-                        id = 2,
+                        id = "2",
                         name = "Device 2"
                     )
                 ),
+                isEnabled = true,
+                password = "",
                 permissions = listOf(
-                    PermissionUserOld(
-                        id = 1,
-                        displayName = "prm1"
+                    PermissionUser(
+                        id = "1",
+                        displayName = "prm1",
+
                     ),
-                    PermissionUserOld(
-                        id = 1,
+                    PermissionUser(
+                        id = "1",
                         displayName = "prm1"
                     )
                 )
             ),
             devices = listOf(
                 DeviceUser(
-                    id = 1,
+                    id = "1",
                     name = "Device 1"
                 ),
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
@@ -415,24 +419,24 @@ private fun ItemUserView2() {
             onUpdateSelected = {},
             onUpdateDevices = {},
             permissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
             ),
             selectedDevices = listOf(
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             )

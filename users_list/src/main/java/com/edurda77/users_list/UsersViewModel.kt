@@ -2,31 +2,30 @@ package com.edurda77.users_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUserOld
+import com.edurda77.domain.model.newModels.DeviceUser
+import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
-import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
+import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
-import com.edurda77.users_list.mapper.convertToUi
-import com.edurda77.users_list.model.UserUi
-import kotlinx.coroutines.delay
+import com.edurda77.users_list.mapper.convertToUserUi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class UsersViewModel(
     private val loggedUserUseCase: LoggedUserUseCase,
-    private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
     private val permissionsUseCase: PermissionsUseCase,
     private val usersUseCase: UsersUseCase,
@@ -37,7 +36,7 @@ class UsersViewModel(
     private var _state = MutableStateFlow(UsersState())
     val state = _state
         .onStart {
-            loadInitialData()
+            loadUserData()
         }
         .stateIn(
             viewModelScope,
@@ -45,7 +44,10 @@ class UsersViewModel(
             UsersState()
         )
 
-    private val baseUsers = mutableListOf<UserUi>()
+
+    private val _eventFlow = Channel<UiUsersEvents>()
+    val eventFlow = _eventFlow.receiveAsFlow()
+
 
     fun onEvent(event: UsersEvent) {
         when (event) {
@@ -54,12 +56,8 @@ class UsersViewModel(
             }
 
             UsersEvent.Refresh -> {
-                _state.value.copy(
-                    isLoading = true,
-                )
-                    .updateState()
+
                 viewModelScope.launch {
-                    delay(1000)
                     loadUsers()
                 }
             }
@@ -99,10 +97,10 @@ class UsersViewModel(
 
             is UsersEvent.UpdateSelectedPermission -> {
                 val updatedPermissions = state.value.selectedPermissions.toMutableList()
-                if (state.value.selectedPermissions.contains(event.permissionUserOld)) {
-                    updatedPermissions.remove(event.permissionUserOld)
+                if (state.value.selectedPermissions.contains(event.permissionUser)) {
+                    updatedPermissions.remove(event.permissionUser)
                 } else {
-                    updatedPermissions.add(event.permissionUserOld)
+                    updatedPermissions.add(event.permissionUser)
                 }
                 _state.value.copy(
                     selectedPermissions = updatedPermissions
@@ -117,14 +115,13 @@ class UsersViewModel(
                         id = event.id
                     )) {
                         is ResultWork.Error -> {
-                            _state.value.copy(
-                                message = result.error.asUiText()
-                            )
-                                .updateState()
+                            viewModelScope.launch {
+                                _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                            }
                         }
 
                         is ResultWork.Success -> {
-                            loadUsers()
+                            //loadUsers()
                         }
                     }
                 }
@@ -166,12 +163,6 @@ class UsersViewModel(
             is UsersEvent.SearchUser -> {
                 _state.value.copy(
                     query = event.query,
-                    users = baseUsers.filter {
-                        it.name.contains(
-                            other = event.query,
-                            ignoreCase = true
-                        )
-                    }
                 )
                     .updateState()
             }
@@ -184,25 +175,24 @@ class UsersViewModel(
         password: String,
         email: String,
         devices: List<DeviceUser>,
-        permissions: List<PermissionUserOld>
+        permissions: List<PermissionUser>
     ) {
         when (val result = addUserUseCase.invoke(
             token = state.value.token,
-            devices = devices.map { it.id.toString() },
-            permissions = permissions.map { it.id.toString() },
+            devices = devices.map { it.id },
+            permissions = permissions.map { it.id },
             email = email,
             name = name,
             password = password
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                viewModelScope.launch {
+                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
-                loadUsers()
+                //loadUsers()
             }
         }
     }
@@ -213,101 +203,48 @@ class UsersViewModel(
         password: String,
         email: String,
         devices: List<DeviceUser>,
-        permissions: List<PermissionUserOld>
+        permissions: List<PermissionUser>
     ) {
         when (val result = updateUserUseCase.invoke(
             id = id,
             token = state.value.token,
-            devices = devices.map { it.id.toString() },
-            permissions = permissions.map { it.id.toString() },
+            devices = devices.map { it.id },
+            permissions = permissions.map { it.id },
             email = email,
             name = name,
             password = password
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                loadUsers()
-            }
-        }
-    }
-
-    private fun loadInitialData() {
-        viewModelScope.launch {
-            localTokenUseCase.invoke().collect { collectedToken ->
-                when (collectedToken) {
-                    is ResultWork.Error -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            message = collectedToken.error.asUiText()
-                        )
-                            .updateState()
-                    }
-
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            token = collectedToken.data.accessToken
-                        )
-                            .updateState()
-                        delay(500)
-                        loadLoggedUserData(collectedToken.data.accessToken)
-                    }
+                viewModelScope.launch {
+                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
                 }
             }
+
+            is ResultWork.Success -> {
+                //loadUsers()
+            }
         }
     }
 
-    private suspend fun loadLoggedUserData(token: String) {
-       /* when (val result = loggedUserUseCase.invoke(token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    loggedUser = result.data
-                )
-                    .updateState()
-                loadPermissionsAndDevices()
-                loadUsers()
-            }
-        }*/
-    }
 
     private suspend fun loadUsers() {
         _state.value.copy(
             isLoading = true
         )
             .updateState()
-        when (val result = usersUseCase.invoke(state.value.token)) {
+        when (val result = usersUseCase.invoke()) {
             is ResultWork.Error -> {
+                _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
                 _state.value.copy(
                     isLoading = false,
-                    message = result.error.asUiText()
                 )
                     .updateState()
             }
 
             is ResultWork.Success -> {
-                baseUsers.clear()
-                baseUsers.addAll(result.data.map { it.convertToUi() })
                 _state.value.copy(
                     isLoading = false,
-                    users = baseUsers.filter {
-                        it.name.contains(
-                            other = state.value.query,
-                            ignoreCase = true
-                        )
-                    }
+                    users = result.data.map { it.convertToUserUi() }
                 )
                     .updateState()
             }
@@ -317,9 +254,11 @@ class UsersViewModel(
     private suspend fun loadPermissionsAndDevices() {
         when (val result = permissionsUseCase.invoke(state.value.token)) {
             is ResultWork.Error -> {
+                viewModelScope.launch {
+                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                }
                 _state.value.copy(
                     isLoading = false,
-                    message = result.error.asUiText()
                 )
                     .updateState()
             }
@@ -331,6 +270,37 @@ class UsersViewModel(
                     devices = result.data.devicesPermission
                 )
                     .updateState()
+            }
+        }
+    }
+
+    private fun loadUserData() {
+        _state.value.copy(
+            isLoading = true,
+        )
+            .updateState()
+        viewModelScope.launch {
+            when (val result = loggedUserUseCase.invoke()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        authUser = result.data,
+                       // isLoading = false,
+                    )
+                        .updateState()
+                    loadUsers()
+                }
             }
         }
     }

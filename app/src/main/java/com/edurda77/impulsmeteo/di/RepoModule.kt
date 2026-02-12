@@ -8,6 +8,7 @@ import com.edurda77.data.repository.JwtRepositoryImpl
 import com.edurda77.data.repository.LocalRepositoryImpl
 import com.edurda77.data.repository.OldRemoteRepositoryImpl
 import com.edurda77.data.repository.RemoteRepositoryImpl
+import com.edurda77.data.repository.UsersRepositoryImpl
 import com.edurda77.data.repository.WebSocketRepositoryImpl
 import com.edurda77.data.repository.WebSocketRepositoryOldImpl
 import com.edurda77.domain.repository.DataStoreRepository
@@ -18,6 +19,7 @@ import com.edurda77.domain.repository.JwtRepository
 import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.repository.RemoteRepository
+import com.edurda77.domain.repository.UsersRepository
 import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.repository.WebSocketRepositoryOld
 import org.koin.core.module.dsl.bind
@@ -35,4 +37,6 @@ val repoModule = module {
     singleOf(::WebSocketRepositoryImpl) { bind<WebSocketRepository>() }
     singleOf(::DevicesRepositoryImpl) { bind<DevicesRepository>() }
     singleOf(::FavoriteRepositoryImpl) { bind<FavoriteRepository>() }
+    singleOf(::UsersRepositoryImpl) { bind<UsersRepository>() }
+
 }

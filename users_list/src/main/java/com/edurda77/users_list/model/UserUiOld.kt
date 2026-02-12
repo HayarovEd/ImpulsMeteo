@@ -3,13 +3,11 @@ package com.edurda77.users_list.model
 import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.PermissionUser
 
-data class UserUi (
-    val devices: List<DeviceUser>,
+data class UserUiOld(
     val email: String,
-    val id: String,
-    val isEnabled: Boolean,
+    val id: Int,
     val name: String,
-    val password: String,
+    val devices: List<DeviceUser>,
     val permissions: List<PermissionUser>,
     val isExpanded: Boolean = false
 )

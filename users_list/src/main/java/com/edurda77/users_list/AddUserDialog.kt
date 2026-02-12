@@ -39,8 +39,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.DeviceUser
-import com.edurda77.domain.model.PermissionUserOld
+import com.edurda77.domain.model.newModels.DeviceUser
+import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -51,13 +51,13 @@ import com.edurda77.resources.uikit.UiTextField
 fun AddUserDialog(
     modifier: Modifier = Modifier,
     devices: List<DeviceUser>,
-    permissions: List<PermissionUserOld>,
-    selectedPermissions: List<PermissionUserOld>,
+    permissions: List<PermissionUser>,
+    selectedPermissions: List<PermissionUser>,
     selectedDevices: List<DeviceUser>,
     onCloseClick: () -> Unit,
-    onUpdatePermissions: (PermissionUserOld) -> Unit,
+    onUpdatePermissions: (PermissionUser) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onAddClick: (String, String, String, List<DeviceUser>, List<PermissionUserOld>) -> Unit,
+    onAddClick: (String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
 ) {
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
@@ -230,33 +230,33 @@ private fun AddUserDialogView() {
         AddUserDialog(
             devices = listOf(
                 DeviceUser(
-                    id = 1,
+                    id = "1",
                     name = "Device 1"
                 ),
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
             permissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
             ),
             selectedDevices = listOf(
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
@@ -277,33 +277,33 @@ private fun AddUserDialogView2() {
         AddUserDialog(
             devices = listOf(
                 DeviceUser(
-                    id = 1,
+                    id = "1",
                     name = "Device 1"
                 ),
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),
             permissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 )
             ),
             selectedPermissions = listOf(
-                PermissionUserOld(
-                    id = 1,
+                PermissionUser(
+                    id = "1",
                     displayName = "prm1"
                 ),
             ),
             selectedDevices = listOf(
                 DeviceUser(
-                    id = 2,
+                    id = "2",
                     name = "Device 2"
                 )
             ),

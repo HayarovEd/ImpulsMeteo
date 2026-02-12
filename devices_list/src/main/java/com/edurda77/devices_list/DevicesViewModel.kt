@@ -1,6 +1,5 @@
 package com.edurda77.devices_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.model.newModels.Device
@@ -21,7 +20,6 @@ import com.edurda77.download_install.refresher.Refresher
 import com.edurda77.download_install.utils.APK_EXT
 import com.edurda77.download_install.utils.DownloadStatus
 import com.edurda77.download_install.utils.ResultDownloadWork
-import com.edurda77.download_install.utils.asUiResultText
 import com.edurda77.resources.uikit.asUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,10 +82,6 @@ class DevicesViewModel(
             }
 
             DevicesEvent.Refresh -> {
-                _state.value.copy(
-                    isLoading = true,
-                )
-                    .updateState()
                 loadUserData()
             }
 
@@ -177,7 +171,11 @@ class DevicesViewModel(
                 groups = groups,
             )) {
                 is ResultWork.Error -> {
-                    _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDevicesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
+                    }
                 }
 
                 is ResultWork.Success -> {
@@ -197,7 +195,11 @@ class DevicesViewModel(
     private suspend fun loadGroups() {
         when (val result = devicesGroupsUseCase.invoke()) {
             is ResultWork.Error -> {
-                _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDevicesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
@@ -214,10 +216,7 @@ class DevicesViewModel(
             when (val result =
                 refresher.getLastVersion(DOWNLOAD_VERSION_URL)) {
                 is ResultDownloadWork.Error -> {
-                    Log.d(
-                        "TEST UPDATE METEO",
-                        "error check update ${result.error.asUiResultText()}"
-                    )
+
                 }
 
                 is ResultDownloadWork.Success -> {
@@ -225,8 +224,6 @@ class DevicesViewModel(
                         release = result.data
                     )
                         .updateState()
-                    Log.d("TEST UPDATE METEO", "name ${result.data.name}")
-                    Log.d("TEST UPDATE METEO", "version ${result.data.lastVersion}")
                     val currentVersion = refresher.getCurrentVersion()
                     currentVersion?.let {
                         _state.value.copy(
@@ -248,10 +245,7 @@ class DevicesViewModel(
                 ).collect { collector ->
                     when (collector) {
                         is DownloadStatus.Error -> {
-                            Log.d(
-                                "TEST UPDATE METEO",
-                                "error update ${collector.error.asUiResultText()}"
-                            )
+
                         }
 
                         is DownloadStatus.InProgress -> {
@@ -262,7 +256,6 @@ class DevicesViewModel(
                         }
 
                         DownloadStatus.Started -> {
-                            Log.d("TEST UPDATE METEO", "update started")
                             _state.value.copy(
                                 isUpdating = true
                             )
@@ -282,7 +275,10 @@ class DevicesViewModel(
     }
 
     private fun loadUserData() {
-
+        _state.value.copy(
+            isLoading = true,
+        )
+            .updateState()
         viewModelScope.launch {
             when (val result = loggedUserUseCase.invoke()) {
                 is ResultWork.Error -> {
@@ -325,7 +321,11 @@ class DevicesViewModel(
                     )
                 ) {
                     is ResultWork.Error -> {
-                        _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
+                        if (result.error is DataError.TokenError) {
+                            _eventFlow.send(UiDevicesEvents.LoginNavigationEvent)
+                        } else {
+                            _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
+                        }
                     }
 
                     is ResultWork.Success -> {

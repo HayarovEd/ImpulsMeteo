@@ -11,7 +11,7 @@ import com.edurda77.download_install.model.LastVersionApp
 import com.edurda77.resources.uikit.UiText
 
 data class DevicesState(
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val query: String = "",
     val numberSelectedGroup: Int = 0,
     val devices: Map<GroupDevicesOld, List<DeviceOld>> = emptyMap(),

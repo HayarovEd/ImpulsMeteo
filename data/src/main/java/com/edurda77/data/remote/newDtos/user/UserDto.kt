@@ -24,7 +24,7 @@ data class UserDto(
     @SerialName("name")
     val name: String,
     @SerialName("password")
-    val password: String,
+    val password: String?,
     @SerialName("permissions")
     val permissions: List<PermissionDto>,
     @SerialName("update_at")

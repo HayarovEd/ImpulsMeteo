@@ -161,7 +161,7 @@ fun UserDto.toUser(): User {
         id = this.id,
         isEnabled = this.isEnabled,
         name = this.name,
-        password = this.password,
+        password = this.password?:"",
         permissions = this.permissions.map { it.toPermission() },
         updateAt = convertToLocalDateTime(this.updateAt),
     )

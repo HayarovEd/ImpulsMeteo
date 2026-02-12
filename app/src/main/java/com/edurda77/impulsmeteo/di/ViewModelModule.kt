@@ -58,16 +58,5 @@ val viewModelModule = module {
             get(),
         )
     }
-    viewModel {
-        UsersViewModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-        )
-    }
+    viewModelOf(::UsersViewModel)
 }
