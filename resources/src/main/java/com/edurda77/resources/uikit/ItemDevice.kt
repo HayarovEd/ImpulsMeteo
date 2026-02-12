@@ -18,8 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,24 +49,11 @@ fun ItemDevice(
     modifier: Modifier = Modifier,
     device: Device,
     favorites: List<Favorite>,
+    isEnableUpdate: Boolean,
     configuration: Configuration,
     onClickDevice: () -> Unit,
     onClickChangeFavorite: () -> Unit,
 ) {
-
-    val expandedDeleteDialog = remember { mutableStateOf(false) }
-    if (expandedDeleteDialog.value) {
-        /*UiAlertDialog(
-            title = stringResource(R.string.sure_delete_device),
-            onClickConfirm = {
-                onDeleteClick(device.id)
-                expandedDeleteDialog.value = false
-            },
-            onClickCancel = {
-                expandedDeleteDialog.value = false
-            }
-        )*/
-    }
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -139,7 +124,7 @@ fun ItemDevice(
                         ) else ImageVector.vectorResource(
                             R.drawable.baseline_star_border_24
                         ),
-                        //enabled = favorites.isNotEmpty()&&!favorites.firstOrNull{ it.deviceId == device.id }?.isUpdating!!,
+                        enabled = isEnableUpdate,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         onClick = onClickChangeFavorite,
                     )
@@ -235,6 +220,7 @@ private fun ItemDeviceView1() {
                     value = false
                 )
             ),
+            isEnableUpdate = true,
             favorites = favorites,
             configuration = LocalConfiguration.current,
             onClickDevice = {},

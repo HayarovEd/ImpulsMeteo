@@ -322,21 +322,14 @@ class DevicesViewModel(
     private fun updateFavorite(device: Device) {
         viewModelScope.launch {
             state.value.authUser?.let { user ->
-                val favorites = user.favorites.map { fv ->
-                    if (device.id == fv.deviceId) {
-                        fv.copy(
-                            isUpdating = true
-                        )
-                    } else fv
-                }
                 _state.value.copy(
-                    authUser = user.copy(favorites = favorites)
+                    updatingDeviceIds = state.value.updatingDeviceIds + device.id
                 )
                     .updateState()
                 when (val result =
                     updateFavoriteUseCase.invoke(
                         deviceId = device.id,
-                        favorites = favorites
+                        favorites = user.favorites
                     )
                 ) {
                     is ResultWork.Error -> {
@@ -353,6 +346,10 @@ class DevicesViewModel(
                             .updateState()
                     }
                 }
+                _state.value.copy(
+                    updatingDeviceIds = state.value.updatingDeviceIds - device.id
+                )
+                    .updateState()
             }
         }
     }

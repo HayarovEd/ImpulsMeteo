@@ -29,6 +29,7 @@ data class DevicesState(
     val isSorted: Boolean = false,
     //
     val authUser: AuthUser? = null,
+    val updatingDeviceIds: List<String> = emptyList()
 ) {
    /* val nonHiddenDevices = authUser?.devices.mapValues { (_, devices) ->
         devices.map { device ->

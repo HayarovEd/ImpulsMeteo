@@ -57,6 +57,7 @@ import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
+import kotlin.collections.emptyList
 import kotlin.random.Random
 
 
@@ -399,7 +400,8 @@ fun DevicesScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.authUser?.permissions?.map { it.name }?.contains(DEVICES_CREATE_LABEL) == true) {
+            if (state.authUser?.permissions?.map { it.name }
+                    ?.contains(DEVICES_CREATE_LABEL) == true) {
                 FloatingActionButton(
                     containerColor = MaterialTheme.colorScheme.outlineVariant,
                     onClick = { expandedAddDialog.value = true }
@@ -466,12 +468,13 @@ fun DevicesScreen(
                                     modifier = modifier,
                                     device = device,
                                     configuration = configuration,
-                                    favorites = state.authUser?.favorites?: emptyList(),
+                                    favorites = state.authUser?.favorites ?: emptyList(),
+                                    isEnableUpdate = device.id !in state.updatingDeviceIds,
                                     onClickDevice = {
-                                       // onGoToDevice(device.id)
+                                        // onGoToDevice(device.id)
                                     },
                                     onClickChangeFavorite = {
-                                       onEvent(DevicesEvent.WorkWithFavorite(device))
+                                        onEvent(DevicesEvent.WorkWithFavorite(device))
                                     },
                                 )
                             }
@@ -529,7 +532,7 @@ private fun DevicesScreenView3() {
             value = Random.nextDouble(-10.0, 25.0),
             color = "#808080",
             classIcon = "wi wi-thermometer-exterior",
-            isHidden = it%2!=0,
+            isHidden = it % 2 != 0,
             idDevice = 0
         )
     }
@@ -538,7 +541,7 @@ private fun DevicesScreenView3() {
             id = it,
             name = "Auto N$it",
             key = "00$it",
-            status = it%3!=0,
+            status = it % 3 != 0,
             video = null,
             updatedAt = "12-03-2025",
             groups = listOf(
@@ -548,8 +551,8 @@ private fun DevicesScreenView3() {
                 )
             ),
             params = params,
-            isFavorite = it%2==0,
-            statusNotifications = it%2==0,
+            isFavorite = it % 2 == 0,
+            statusNotifications = it % 2 == 0,
         )
     }
     ImpulsMeteoTheme {
@@ -564,7 +567,7 @@ private fun DevicesScreenView3() {
                             name = "group 1"
                         ),
                         deviceOlds
-                        ),
+                    ),
                     Pair(
                         GroupDevicesOld(
                             id = 1,
@@ -585,7 +588,8 @@ private fun DevicesScreenView3() {
                     name = "Edward",
                     email = "eee@rt.rt",
                     permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                )
+                ),
+                updatingDeviceIds = emptyList()
             ),
             version = "1.0",
             configuration = LocalConfiguration.current,
@@ -609,7 +613,7 @@ private fun DevicesScreenView4() {
             value = Random.nextDouble(-10.0, 25.0),
             color = "#808080",
             classIcon = "wi wi-thermometer-exterior",
-            isHidden = it%2!=0,
+            isHidden = it % 2 != 0,
             idDevice = 0
         )
     }
@@ -618,7 +622,7 @@ private fun DevicesScreenView4() {
             id = it,
             name = "Auto N$it",
             key = "00$it",
-            status = it%3!=0,
+            status = it % 3 != 0,
             video = null,
             updatedAt = "12-03-2025",
             groups = listOf(
@@ -628,8 +632,8 @@ private fun DevicesScreenView4() {
                 )
             ),
             params = params,
-            isFavorite = it%2==0,
-            statusNotifications = it%2==0,
+            isFavorite = it % 2 == 0,
+            statusNotifications = it % 2 == 0,
         )
     }
     ImpulsMeteoTheme {
@@ -665,7 +669,8 @@ private fun DevicesScreenView4() {
                     name = "Edward",
                     email = "eee@rt.rt",
                     permissions = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                )
+                ),
+                updatingDeviceIds = emptyList()
             ),
             version = "1.0",
             configuration = LocalConfiguration.current,
