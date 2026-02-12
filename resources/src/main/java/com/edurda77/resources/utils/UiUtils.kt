@@ -1,7 +1,15 @@
 package com.edurda77.resources.utils
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import kotlin.math.pow
 
 fun hexToBrush(
@@ -63,4 +71,25 @@ fun calculateLuminance(hex: String): Double {
     val sg = if (green <= 0.03928) green / 12.92 else ((green + 0.055) / 1.055).pow(2.4)
     val sb = if (blue <= 0.03928) blue / 12.92 else ((blue + 0.055) / 1.055).pow(2.4)
     return 0.2126 * sr + 0.7152 * sg + 0.0722 * sb
+}
+
+@Composable
+fun <T> ObserveAsEvents(
+    flow: Flow<T>,
+    key1: Any? = null,
+    kwy2: Any? = null,
+    onEvent: suspend  (T) -> Unit,
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(
+        lifecycleOwner,
+        key1,
+        kwy2
+    ) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            withContext(Dispatchers.Main.immediate) {
+                flow.collect ( onEvent )
+            }
+        }
+    }
 }

@@ -23,11 +23,11 @@ import com.edurda77.download_install.utils.DownloadStatus
 import com.edurda77.download_install.utils.ResultDownloadWork
 import com.edurda77.download_install.utils.asUiResultText
 import com.edurda77.resources.uikit.asUiText
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -62,15 +62,15 @@ class DevicesViewModel(
             DevicesState()
         )
 
-    private val _eventFlow = MutableSharedFlow<UiDevicesEvents>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = Channel<UiDevicesEvents>()
+    val eventFlow = _eventFlow.receiveAsFlow()
 
     fun onEvent(event: DevicesEvent) {
         when (event) {
             DevicesEvent.Logoff -> {
                 viewModelScope.launch {
                     logoffUseCase.invoke()
-                    _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
+                    _eventFlow.send(UiDevicesEvents.LoginNavigationEvent)
                 }
             }
 
@@ -177,10 +177,7 @@ class DevicesViewModel(
                 groups = groups,
             )) {
                 is ResultWork.Error -> {
-                    _state.value.copy(
-                        message = result.error.asUiText()
-                    )
-                        .updateState()
+                    _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
                 }
 
                 is ResultWork.Success -> {
@@ -200,10 +197,7 @@ class DevicesViewModel(
     private suspend fun loadGroups() {
         when (val result = devicesGroupsUseCase.invoke()) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
             }
 
             is ResultWork.Success -> {
@@ -293,11 +287,11 @@ class DevicesViewModel(
             when (val result = loggedUserUseCase.invoke()) {
                 is ResultWork.Error -> {
                     if (result.error is DataError.TokenError) {
-                        _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
+                        _eventFlow.send(UiDevicesEvents.LoginNavigationEvent)
                     } else {
+                        _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
                         _state.value.copy(
                             isLoading = false,
-                            message = result.error.asUiText()
                         )
                             .updateState()
                     }
@@ -331,10 +325,7 @@ class DevicesViewModel(
                     )
                 ) {
                     is ResultWork.Error -> {
-                        _state.value.copy(
-                            message = result.error.asUiText()
-                        )
-                            .updateState()
+                        _eventFlow.send(UiDevicesEvents.OnError(result.error.asUiText()))
                     }
 
                     is ResultWork.Success -> {
@@ -436,7 +427,7 @@ class DevicesViewModel(
                                     state.value.authUser?.let { user ->
                                         if (user.id == successResult.id) {
                                             logoffUseCase.invoke()
-                                            _eventFlow.emit(UiDevicesEvents.LoginNavigationEvent)
+                                            _eventFlow.send(UiDevicesEvents.LoginNavigationEvent)
                                         }
                                     }
                                 }

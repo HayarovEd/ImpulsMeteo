@@ -4,14 +4,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun UiBaseScaffold(
@@ -20,18 +16,10 @@ fun UiBaseScaffold(
     topBarContent: @Composable () -> Unit = {},
     bottomBarContent: @Composable () -> Unit = {},
     fabContent: @Composable () -> Unit = {},
+    snakeBarHostState: SnackbarHostState = SnackbarHostState(),
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val snakeBarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
-    LaunchedEffect(key1 = message) {
-        if (message != null && message.asString(context).isNotBlank()) {
-            snakeBarHostState.showSnackbar(
-                message = message.asString(context),
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,

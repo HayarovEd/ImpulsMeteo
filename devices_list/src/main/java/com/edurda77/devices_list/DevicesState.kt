@@ -11,7 +11,6 @@ import com.edurda77.download_install.model.LastVersionApp
 import com.edurda77.resources.uikit.UiText
 
 data class DevicesState(
-    val message: UiText? = null,
     val isLoading: Boolean = true,
     val query: String = "",
     val numberSelectedGroup: Int = 0,
@@ -42,4 +41,5 @@ data class DevicesState(
 
 sealed interface UiDevicesEvents {
     data object LoginNavigationEvent : UiDevicesEvents
+    data class OnError(val message: UiText) : UiDevicesEvents
 }

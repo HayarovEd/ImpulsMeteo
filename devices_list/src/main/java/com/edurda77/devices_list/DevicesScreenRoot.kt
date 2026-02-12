@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
-import kotlinx.coroutines.flow.collectLatest
+import com.edurda77.resources.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 import kotlin.random.Random
 
@@ -72,21 +73,23 @@ fun DevicesScreenRoot(
 ) {
     val context = LocalContext.current
     val version = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+    val state = viewModel.state.collectAsStateWithLifecycle()
+    val snackBarState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                UiDevicesEvents.LoginNavigationEvent -> onGoToLogin()
-            }
+    ObserveAsEvents(viewModel.eventFlow) { event ->
+        when (event) {
+            UiDevicesEvents.LoginNavigationEvent -> onGoToLogin()
+            is UiDevicesEvents.OnError -> snackBarState.showSnackbar(event.message.asString(context))
         }
     }
 
     DevicesScreen(
-        state = viewModel.state.collectAsStateWithLifecycle().value,
+        state = state.value,
         configuration = configuration,
         version = version,
         onGoToDevice = onGoToDevice,
         bottomBarContent = bottomBarContent,
+        snackBarState = snackBarState,
         onEvent = viewModel::onEvent,
     )
 }
@@ -100,7 +103,8 @@ fun DevicesScreen(
     onGoToDevice: (Int) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DevicesEvent) -> Unit,
-    version: String
+    version: String,
+    snackBarState:SnackbarHostState,
 ) {
     val windowSize = LocalWindowInfo.current.containerDpSize
     val listState = rememberLazyListState()
@@ -168,7 +172,8 @@ fun DevicesScreen(
         )
     }
     UiBaseScaffold(
-        message = state.message,
+        message = null,
+        snakeBarHostState = snackBarState,
         topBarContent = {
             Column(
                 modifier = modifier
@@ -436,7 +441,7 @@ fun DevicesScreen(
                 }
             ) {
                 if (!state.isLoading) {
-                    state.authUser?.let { user->
+                    state.authUser?.let { user ->
                         if (user.permissions.map { it.name }.contains(DEVICES_LIST_LABEL)) {
                             HorizontalPager(
                                 modifier = modifier
@@ -492,10 +497,12 @@ fun DevicesScreen(
 )
 @Composable
 private fun DevicesScreenView1() {
+    val snackBarState = remember { SnackbarHostState() }
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(),
             version = "1.0",
+            snackBarState = snackBarState,
             configuration = LocalConfiguration.current,
             onGoToDevice = {},
             onEvent = {},
@@ -506,10 +513,12 @@ private fun DevicesScreenView1() {
 @Preview
 @Composable
 private fun DevicesScreenView2() {
+    val snackBarState = remember { SnackbarHostState() }
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(),
             version = "1.0",
+            snackBarState = snackBarState,
             configuration = LocalConfiguration.current,
             onGoToDevice = {},
             onEvent = {},
@@ -523,6 +532,7 @@ private fun DevicesScreenView2() {
 )
 @Composable
 private fun DevicesScreenView3() {
+    val snackBarState = remember { SnackbarHostState() }
     val params = (1..10).map {
         Param(
             id = it,
@@ -586,6 +596,7 @@ private fun DevicesScreenView3() {
                 updatingDeviceIds = emptyList()
             ),
             version = "1.0",
+            snackBarState = snackBarState,
             configuration = LocalConfiguration.current,
             onGoToDevice = {},
             onEvent = {},
@@ -598,6 +609,7 @@ private fun DevicesScreenView3() {
 )
 @Composable
 private fun DevicesScreenView4() {
+    val snackBarState = remember { SnackbarHostState() }
     val params = (1..10).map {
         Param(
             id = it,
@@ -661,6 +673,7 @@ private fun DevicesScreenView4() {
                 updatingDeviceIds = emptyList()
             ),
             version = "1.0",
+            snackBarState = snackBarState,
             configuration = LocalConfiguration.current,
             onGoToDevice = {},
             onEvent = {},
