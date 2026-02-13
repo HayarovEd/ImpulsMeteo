@@ -59,7 +59,7 @@ fun ItemUser(
     isEnabledUpdate: Boolean,
     isExpanded: Boolean,
     user: UserUi,
-    onDeleteClick: (Int) -> Unit,
+    onDeleteClick: (String) -> Unit,
     onClearSelected: () -> Unit,
     onUpdateSelected: (String) -> Unit,
     devices: List<DeviceUser>,
@@ -81,7 +81,7 @@ fun ItemUser(
         UiAlertDialog(
             title = stringResource(R.string.sure_delete_user),
             onClickConfirm = {
-                //onDeleteClick(user.id)
+                onDeleteClick(user.id)
                 expandedDeleteDialog.value = false
             },
             onClickCancel = {

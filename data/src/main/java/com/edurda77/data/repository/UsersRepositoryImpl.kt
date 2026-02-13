@@ -18,6 +18,7 @@ import com.edurda77.domain.utils.ResultWork
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
@@ -88,6 +89,21 @@ class UsersRepositoryImpl(
                     )
                 }
                 result.call.body<UserDto>().toUser()
+            }
+        }
+    }
+
+    override suspend fun deleteUser(
+        accessToken: String,
+        userId: String
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete (NEW_BASE_URL + "users/"+userId) {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(accessToken)
+                }
+                Unit
             }
         }
     }

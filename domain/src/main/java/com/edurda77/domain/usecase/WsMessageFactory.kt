@@ -85,9 +85,9 @@ object WsMessageFactory {
     }
 
     fun deleteUser(
-        users: List<User>,
+        users: List<UserUi>,
         id: String
-    ): List<User> {
+    ): List<UserUi> {
         return users.filter { it.id != id }
     }
 

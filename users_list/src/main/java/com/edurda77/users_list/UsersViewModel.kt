@@ -119,8 +119,7 @@ class UsersViewModel(
             is UsersEvent.DeleteUser -> {
                 viewModelScope.launch {
                     when (val result = deleteUserUseCase.invoke(
-                        token = state.value.token,
-                        id = event.id
+                        userId = event.id
                     )) {
                         is ResultWork.Error -> {
                             viewModelScope.launch {
@@ -129,7 +128,13 @@ class UsersViewModel(
                         }
 
                         is ResultWork.Success -> {
-                            //loadUsers()
+                            _state.value.copy(
+                                users = WsMessageFactory.deleteUser(
+                                    users = state.value.users,
+                                    id = event.id
+                                )
+                            )
+                                .updateState()
                         }
                     }
                 }

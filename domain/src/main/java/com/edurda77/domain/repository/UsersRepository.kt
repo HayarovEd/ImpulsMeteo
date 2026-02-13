@@ -19,4 +19,5 @@ interface UsersRepository {
     ): ResultWork<User, DataError>
 
     suspend fun updateUser(accessToken: String, userUi: UserUi): ResultWork<User, DataError>
+    suspend fun deleteUser(accessToken: String, userId: String): ResultWork<Unit, DataError>
 }
