@@ -48,7 +48,8 @@ import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemAccess
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiIconButton
-import com.edurda77.users_list.model.UserUi
+import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.resources.uikit.UiDialog
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -67,7 +68,7 @@ fun ItemUser(
     selectedPermissions: List<PermissionUser>,
     onUpdatePermissions: (PermissionUser) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
+    onUpdateClick: (String, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
     onClickExpanded: () -> Unit,
 ) {
     val localDensity = LocalDensity.current
@@ -89,7 +90,7 @@ fun ItemUser(
         )
     }
     if (expandedUpdateDialog.value) {
-        /*UiDialog(
+        UiDialog(
             onCloseDialog = {
                 expandedUpdateDialog.value = false
                 onClearSelected()
@@ -123,7 +124,7 @@ fun ItemUser(
                     user = user
                 )
             }
-        )*/
+        )
     }
     Card(
         modifier = modifier
@@ -197,6 +198,7 @@ fun ItemUser(
                                 },
                                 onClick = {
                                     expandedUpdateDialog.value = true
+                                    expandedDropDownloads.value = false
                                     onUpdateSelected(user.id)
                                 },
                                 text = {
@@ -218,6 +220,7 @@ fun ItemUser(
                                     )
                                 },
                                 onClick = {
+                                    expandedDropDownloads.value = false
                                     expandedDeleteDialog.value = true
                                 },
                                 text = {
@@ -335,7 +338,7 @@ private fun ItemUserView1() {
             onClickExpanded = {},
             onDeleteClick = {},
             onClearSelected = {},
-            onUpdateClick = { id, name, email, password, devices, permissions -> },
+            onUpdateClick = { _, _, _, _, _, _ -> },
             onUpdatePermissions = {},
             onUpdateSelected = {},
             onUpdateDevices = {},
@@ -414,7 +417,7 @@ private fun ItemUserView2() {
             onClickExpanded = {},
             onDeleteClick = {},
             onClearSelected = {},
-            onUpdateClick = { id, name, email, password, devices, permissions -> },
+            onUpdateClick = { _, _, _, _, _, _ -> },
             onUpdatePermissions = {},
             onUpdateSelected = {},
             onUpdateDevices = {},

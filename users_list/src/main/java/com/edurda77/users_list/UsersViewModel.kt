@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.PermissionUser
+import com.edurda77.domain.model.newModels.UserUi
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DevicesUseCase
@@ -12,6 +13,7 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
+import com.edurda77.domain.usecase.WsMessageFactory
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
@@ -134,16 +136,14 @@ class UsersViewModel(
             }
 
             is UsersEvent.UpdateUser -> {
-                viewModelScope.launch {
-                    updateUser(
-                        id = event.id,
-                        name = event.name,
-                        password = event.password,
-                        email = event.email,
-                        devices = event.devices,
-                        permissions = event.permissions
-                    )
-                }
+                updateUser(
+                    id = event.id,
+                    name = event.name,
+                    password = event.password,
+                    email = event.email,
+                    devices = event.devices,
+                    permissions = event.permissions
+                )
             }
 
             is UsersEvent.UpdateSelected -> {
@@ -205,31 +205,41 @@ class UsersViewModel(
         }
     }
 
-    private suspend fun updateUser(
-        id: Int,
+    private fun updateUser(
+        id: String,
         name: String,
         password: String,
         email: String,
         devices: List<DeviceUser>,
         permissions: List<PermissionUser>
     ) {
-        when (val result = updateUserUseCase.invoke(
-            id = id,
-            token = state.value.token,
-            devices = devices.map { it.id },
-            permissions = permissions.map { it.id },
-            email = email,
-            name = name,
-            password = password
-        )) {
-            is ResultWork.Error -> {
-                viewModelScope.launch {
-                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+        viewModelScope.launch {
+            when (val result = updateUserUseCase.invoke(
+                UserUi(
+                    id = id,
+                    devices = devices,
+                    email = email,
+                    isEnabled = true,
+                    name = name,
+                    password = password,
+                    permissions = permissions
+                )
+            )) {
+                is ResultWork.Error -> {
+                    viewModelScope.launch {
+                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    }
                 }
-            }
 
-            is ResultWork.Success -> {
-                //loadUsers()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        users = WsMessageFactory.updateUser(
+                            users = state.value.users,
+                            newUser = result.data.convertToUserUi()
+                        ),
+                    )
+                        .updateState()
+                }
             }
         }
     }
@@ -262,23 +272,14 @@ class UsersViewModel(
     }
 
     private fun loadPermissionsAndDevices() {
-        _state.value.copy(
-            isLoading = true,
-        )
-            .updateState()
         viewModelScope.launch {
             when (val result = permissionsUseCase.invoke()) {
                 is ResultWork.Error -> {
                     _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
-                    _state.value.copy(
-                        isLoading = false,
-                    )
-                        .updateState()
                 }
 
                 is ResultWork.Success -> {
                     _state.value.copy(
-                        isLoading = false,
                         permissions = result.data.map { it.convertToPermissionUser() },
                     )
                         .updateState()
@@ -289,15 +290,10 @@ class UsersViewModel(
             when (val result = devicesUseCase.invoke()) {
                 is ResultWork.Error -> {
                     _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
-                    _state.value.copy(
-                        isLoading = false,
-                    )
-                        .updateState()
                 }
 
                 is ResultWork.Success -> {
                     _state.value.copy(
-                        isLoading = false,
                         devices = result.data.map { it.convertToDeviceUser() },
                     )
                         .updateState()

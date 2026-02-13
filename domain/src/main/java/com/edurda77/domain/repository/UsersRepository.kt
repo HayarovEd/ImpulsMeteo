@@ -3,6 +3,7 @@ package com.edurda77.domain.repository
 import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.newModels.User
+import com.edurda77.domain.model.newModels.UserUi
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
@@ -16,4 +17,6 @@ interface UsersRepository {
         devices: List<DeviceUser>,
         permissions: List<PermissionUser>
     ): ResultWork<User, DataError>
+
+    suspend fun updateUser(accessToken: String, userUi: UserUi): ResultWork<User, DataError>
 }

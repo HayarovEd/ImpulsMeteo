@@ -41,17 +41,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.PermissionUser
+import com.edurda77.domain.model.newModels.UserUi
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiTextField
-import com.edurda77.users_list.model.UserUiOld
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UpdateUserDialog(
     modifier: Modifier = Modifier,
-    user: UserUiOld,
+    user: UserUi,
     devices: List<DeviceUser>,
     permissions: List<PermissionUser>,
     selectedPermissions: List<PermissionUser>,
@@ -59,7 +59,7 @@ fun UpdateUserDialog(
     onCloseClick: () -> Unit,
     onUpdatePermissions: (PermissionUser) -> Unit,
     onUpdateDevices: (DeviceUser) -> Unit,
-    onUpdateClick: (Int, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
+    onUpdateClick: (String, String, String, String, List<DeviceUser>, List<PermissionUser>) -> Unit,
 ) {
     val name = remember { mutableStateOf(user.name) }
     val email = remember { mutableStateOf(user.email) }
@@ -230,8 +230,8 @@ fun UpdateUserDialog(
 private fun UpdateUserDialogView1() {
     ImpulsMeteoTheme {
         UpdateUserDialog(
-            user = UserUiOld(
-                id = 0,
+            user = UserUi(
+                id = "0",
                 email = "eeeee",
                 name = "Edward",
                 devices = listOf(
@@ -244,6 +244,8 @@ private fun UpdateUserDialogView1() {
                         name = "Device 2"
                     )
                 ),
+                isEnabled = true,
+                password = "",
                 permissions = listOf(
                     PermissionUser(
                         id = "1",
@@ -265,7 +267,7 @@ private fun UpdateUserDialogView1() {
                     name = "Device 2"
                 )
             ),
-            onUpdateClick = { id, name, email, password, devices, permissions -> },
+            onUpdateClick = { _, _, _, _, _, _ -> },
             onUpdatePermissions = {},
             onUpdateDevices = {},
             permissions = listOf(
@@ -302,8 +304,8 @@ private fun UpdateUserDialogView1() {
 private fun UpdateUserDialog2() {
     ImpulsMeteoTheme {
         UpdateUserDialog(
-            user = UserUiOld(
-                id = 0,
+            user = UserUi(
+                id = "0",
                 email = "eeeee",
                 name = "Edward",
                 devices = listOf(
@@ -316,6 +318,8 @@ private fun UpdateUserDialog2() {
                         name = "Device 2"
                     )
                 ),
+                password = "dfddf",
+                isEnabled = true,
                 permissions = listOf(
                     PermissionUser(
                         id = "1",
@@ -337,7 +341,7 @@ private fun UpdateUserDialog2() {
                     name = "Device 2"
                 )
             ),
-            onUpdateClick = { id, name, email, password, devices, permissions -> },
+            onUpdateClick = { _, _, _, _, _, _ -> },
             onUpdatePermissions = {},
             onUpdateDevices = {},
             permissions = listOf(

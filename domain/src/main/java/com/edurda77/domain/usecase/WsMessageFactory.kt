@@ -4,6 +4,7 @@ import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.User
+import com.edurda77.domain.model.newModels.UserUi
 
 object WsMessageFactory {
 
@@ -50,9 +51,9 @@ object WsMessageFactory {
     }
 
     fun updateUser(
-        users: List<User>,
-        newUser: User
-    ): List<User> {
+        users: List<UserUi>,
+        newUser: UserUi
+    ): List<UserUi> {
         val deviceExists = users.any { it.id == newUser.id }
         return if (deviceExists) {
             users.map { dv ->

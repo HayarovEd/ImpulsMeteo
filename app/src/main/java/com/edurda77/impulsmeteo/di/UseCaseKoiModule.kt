@@ -54,7 +54,7 @@ val useCaseKoiModule = module {
     factoryOf(::PermissionsUseCase) { bind <PermissionsUseCase>() }
     factoryOf(::AddUserUseCase) { bind <AddUserUseCase>() }
     single<DeleteUserUseCase> { DeleteUserUseCase(get()) }
-    single<UpdateUserUseCase> { UpdateUserUseCase(get()) }
+    factoryOf(::UpdateUserUseCase) { bind <UpdateUserUseCase>() }
     factoryOf(::DevicesGroupsUseCase) { bind <DevicesGroupsUseCase>() }
     single<UnitsUseCase> { UnitsUseCase(get()) }
     single<AddDevicesGroupUseCase> { AddDevicesGroupUseCase(get()) }

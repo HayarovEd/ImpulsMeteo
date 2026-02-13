@@ -13,6 +13,7 @@ import com.edurda77.data.remote.newDtos.permission.PermissionDto
 import com.edurda77.data.remote.newDtos.user.DeviceUserRequest
 import com.edurda77.data.remote.newDtos.user.PermissionUserRequest
 import com.edurda77.data.remote.newDtos.user.UserDto
+import com.edurda77.data.remote.newDtos.user.UserUpdateRequest
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.DeviceUser
@@ -25,6 +26,7 @@ import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.Permission
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.newModels.User
+import com.edurda77.domain.model.newModels.UserUi
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.convertToLocalDateTime
 
@@ -179,5 +181,17 @@ fun DeviceUser.toDeviceUserRequest(): DeviceUserRequest {
 fun PermissionUser.toPermissionUserRequest(): PermissionUserRequest {
     return PermissionUserRequest(
         id = id
+    )
+}
+
+fun UserUi.toUserUpdateRequest(): UserUpdateRequest {
+    return UserUpdateRequest(
+        deviceUserRequests = this.devices.map { it.toDeviceUserRequest() },
+        email = this.email,
+        id = this.id,
+        isEnabled = this.isEnabled,
+        name = this.name,
+        password = password.ifBlank { null },
+        permissionUserRequests = this.permissions.map { it.toPermissionUserRequest()},
     )
 }

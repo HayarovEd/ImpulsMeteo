@@ -5,7 +5,7 @@ import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.Permission
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.newModels.User
-import com.edurda77.users_list.model.UserUi
+import com.edurda77.domain.model.newModels.UserUi
 
 
 fun User.convertToUserUi(): UserUi {

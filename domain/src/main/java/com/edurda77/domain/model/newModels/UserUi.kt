@@ -1,7 +1,4 @@
-package com.edurda77.users_list.model
-
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.PermissionUser
+package com.edurda77.domain.model.newModels
 
 data class UserUi (
     val devices: List<DeviceUser>,

@@ -247,7 +247,7 @@ private fun UsersListScreen(
                                                 onEvent(UsersEvent.ClearSelected)
                                             },
                                             onUpdateSelected = {
-                                                // onEvent(UsersEvent.UpdateSelected(user))
+                                                onEvent(UsersEvent.UpdateSelected(user))
                                             },
                                             devices = state.devices,
                                             permissions = state.permissions,
