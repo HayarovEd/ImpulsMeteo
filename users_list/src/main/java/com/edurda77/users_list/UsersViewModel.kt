@@ -393,6 +393,11 @@ class UsersViewModel(
                                     ),
                                 )
                                     .updateState()
+                                state.value.authUser?.let { user ->
+                                    if (successResult.id == user.id) {
+                                        _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                                    }
+                                }
                             }
 
                             is WebSocketMessage.UserUpdate -> {
@@ -403,6 +408,17 @@ class UsersViewModel(
                                     ),
                                 )
                                     .updateState()
+                                state.value.authUser?.let { user ->
+                                    if (successResult.user.id == user.id) {
+                                        _state.value.copy(
+                                            authUser = WsMessageFactory.updateAuthUser(
+                                                authUser = user,
+                                                newUser = successResult.user
+                                            )
+                                        )
+                                            .updateState()
+                                    }
+                                }
                             }
 
                             else -> {}
