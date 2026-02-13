@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.domain.model.newModels.WebSocketMessage
 import com.edurda77.domain.usecase.AddUserUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DevicesUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -13,6 +15,7 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
 import com.edurda77.domain.usecase.WsMessageFactory
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -38,12 +41,15 @@ class UsersViewModel(
     private val addUserUseCase: AddUserUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
+    private val webSocketUseCase: WebSocketUseCase,
+    private val closeWebsocketUseCase: CloseWebsocketUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(UsersState())
     val state = _state
         .onStart {
             loadUserData()
             loadPermissionsAndDevices()
+            updateFromWs()
         }
         .stateIn(
             viewModelScope,
@@ -338,10 +344,86 @@ class UsersViewModel(
         }
     }
 
+    private fun updateFromWs() {
+        viewModelScope.launch {
+            webSocketUseCase.invoke().collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {}
+                    is ResultWork.Success -> {
+                        when (val successResult = collector.data) {
+                            is WebSocketMessage.DeviceCreate -> {
+                                _state.value.copy(
+                                    devices = state.value.devices + successResult.device.convertToDeviceUser(),
+                                )
+                                    .updateState()
+                            }
+
+                            is WebSocketMessage.DeviceDelete -> {
+                                _state.value.copy(
+                                    devices = WsMessageFactory.deleteDeviceUser(
+                                        devices = state.value.devices,
+                                        id = successResult.id
+                                    )
+                                )
+                                    .updateState()
+                            }
+
+                            is WebSocketMessage.DeviceUpdate -> {
+                                _state.value.copy(
+                                    devices = WsMessageFactory.updateDeviceUser(
+                                        devices = state.value.devices,
+                                        device = successResult.device.convertToDeviceUser()
+                                    )
+                                )
+                                    .updateState()
+                            }
+
+                            is WebSocketMessage.UserCreate -> {
+                                _state.value.copy(
+                                    users = state.value.users + successResult.user.convertToUserUi(),
+                                )
+                                    .updateState()
+                            }
+
+                            is WebSocketMessage.UserDelete -> {
+                                _state.value.copy(
+                                    users = WsMessageFactory.deleteUser(
+                                        users = state.value.users,
+                                        id = successResult.id
+                                    ),
+                                )
+                                    .updateState()
+                            }
+
+                            is WebSocketMessage.UserUpdate -> {
+                                _state.value.copy(
+                                    users = WsMessageFactory.updateUser(
+                                        users = state.value.users,
+                                        newUser = successResult.user.convertToUserUi()
+                                    ),
+                                )
+                                    .updateState()
+                            }
+
+                            else -> {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun UsersState.updateState() {
         _state.update {
             this
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch {
+            closeWebsocketUseCase.invoke()
         }
     }
 }

@@ -2,6 +2,7 @@ package com.edurda77.domain.usecase
 
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.User
 import com.edurda77.domain.model.newModels.UserUi
@@ -22,10 +23,31 @@ object WsMessageFactory {
         } else devices
     }
 
+    fun updateDeviceUser(
+        devices: List<DeviceUser>,
+        device: DeviceUser
+    ): List<DeviceUser> {
+        val deviceExists = devices.any { it.id == device.id }
+        return if (deviceExists) {
+            devices.map { dv ->
+                if (dv.id == device.id) {
+                    device
+                } else dv
+            }
+        } else devices
+    }
+
     fun deleteDevice(
         devices: List<Device>,
         id: String
     ): List<Device> {
+        return devices.filter { it.id != id }
+    }
+
+    fun deleteDeviceUser(
+        devices: List<DeviceUser>,
+        id: String
+    ): List<DeviceUser> {
         return devices.filter { it.id != id }
     }
 
