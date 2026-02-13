@@ -13,4 +13,6 @@ interface DevicesRepository {
         frequency: Int,
         groups: List<GroupDevice>
     ): ResultWork<Device, DataError>
+
+    suspend fun getDevices(accessToken: String): ResultWork<List<Device>, DataError>
 }

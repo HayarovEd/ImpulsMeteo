@@ -14,6 +14,7 @@ import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
+import com.edurda77.domain.usecase.DevicesUseCase
 import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
@@ -50,7 +51,7 @@ val useCaseKoiModule = module {
     factoryOf(::AddDeviceUseCase) { bind <AddDeviceUseCase>() }
     factoryOf(::UsersUseCase) { bind <UsersUseCase>() }
     single<DeleteParamUseCase> { DeleteParamUseCase(get()) }
-    single<PermissionsUseCase> { PermissionsUseCase(get()) }
+    factoryOf(::PermissionsUseCase) { bind <PermissionsUseCase>() }
     single<AddUserUseCase> { AddUserUseCase(get()) }
     single<DeleteUserUseCase> { DeleteUserUseCase(get()) }
     single<UpdateUserUseCase> { UpdateUserUseCase(get()) }
@@ -70,6 +71,7 @@ val useCaseKoiModule = module {
     single<UpdateDeviceUseCase> { UpdateDeviceUseCase(get()) }
     single<UpdateParamUseCase> { UpdateParamUseCase(get()) }
     factoryOf(::UpdateFavoriteUseCase) { bind <UpdateFavoriteUseCase>() }
+    factoryOf(::DevicesUseCase) { bind <DevicesUseCase>() }
     single<RemoveFavoriteUseCase> { RemoveFavoriteUseCase(get()) }
     single<DeleteDeviceUseCase> { DeleteDeviceUseCase(get(), get()) }
     single<HistoryUseCase> { HistoryUseCase(get()) }

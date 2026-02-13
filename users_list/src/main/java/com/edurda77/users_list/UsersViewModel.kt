@@ -6,6 +6,7 @@ import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase
+import com.edurda77.domain.usecase.DevicesUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
@@ -14,6 +15,8 @@ import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
+import com.edurda77.users_list.mapper.convertToDeviceUser
+import com.edurda77.users_list.mapper.convertToPermissionUser
 import com.edurda77.users_list.mapper.convertToUserUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +32,7 @@ class UsersViewModel(
     private val logoffUseCase: LogOffUseCase,
     private val permissionsUseCase: PermissionsUseCase,
     private val usersUseCase: UsersUseCase,
+    private val devicesUseCase: DevicesUseCase,
     private val addUserUseCase: AddUserUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
@@ -37,6 +41,7 @@ class UsersViewModel(
     val state = _state
         .onStart {
             loadUserData()
+            loadPermissionsAndDevices()
         }
         .stateIn(
             viewModelScope,
@@ -52,14 +57,15 @@ class UsersViewModel(
     fun onEvent(event: UsersEvent) {
         when (event) {
             UsersEvent.Logoff -> {
-                viewModelScope.launch { logoffUseCase.invoke() }
+                viewModelScope.launch {
+                    logoffUseCase.invoke()
+                    _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                }
             }
 
             UsersEvent.Refresh -> {
-
-                viewModelScope.launch {
-                    loadUsers()
-                }
+                loadUsers()
+                loadPermissionsAndDevices()
             }
 
             UsersEvent.ClearSelected -> {
@@ -227,49 +233,73 @@ class UsersViewModel(
     }
 
 
-    private suspend fun loadUsers() {
+    private fun loadUsers() {
         _state.value.copy(
             isLoading = true
         )
             .updateState()
-        when (val result = usersUseCase.invoke()) {
-            is ResultWork.Error -> {
-                _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
-                _state.value.copy(
-                    isLoading = false,
-                )
-                    .updateState()
-            }
+        viewModelScope.launch {
+            when (val result = usersUseCase.invoke()) {
+                is ResultWork.Error -> {
+                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    _state.value.copy(
+                        isLoading = false,
+                    )
+                        .updateState()
+                }
 
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    isLoading = false,
-                    users = result.data.map { it.convertToUserUi() }
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        users = result.data.map { it.convertToUserUi() }
+                    )
+                        .updateState()
+                }
             }
         }
     }
 
-    private suspend fun loadPermissionsAndDevices() {
-        when (val result = permissionsUseCase.invoke(state.value.token)) {
-            is ResultWork.Error -> {
-                viewModelScope.launch {
+    private fun loadPermissionsAndDevices() {
+        _state.value.copy(
+            isLoading = true,
+        )
+            .updateState()
+        viewModelScope.launch {
+            when (val result = permissionsUseCase.invoke()) {
+                is ResultWork.Error -> {
                     _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    _state.value.copy(
+                        isLoading = false,
+                    )
+                        .updateState()
                 }
-                _state.value.copy(
-                    isLoading = false,
-                )
-                    .updateState()
-            }
 
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    isLoading = false,
-                    permissions = result.data.permissions,
-                    devices = result.data.devicesPermission
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        permissions = result.data.map { it.convertToPermissionUser() },
+                    )
+                        .updateState()
+                }
+            }
+        }
+        viewModelScope.launch {
+            when (val result = devicesUseCase.invoke()) {
+                is ResultWork.Error -> {
+                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    _state.value.copy(
+                        isLoading = false,
+                    )
+                        .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        isLoading = false,
+                        devices = result.data.map { it.convertToDeviceUser() },
+                    )
+                        .updateState()
+                }
             }
         }
     }
@@ -296,7 +326,7 @@ class UsersViewModel(
                 is ResultWork.Success -> {
                     _state.value.copy(
                         authUser = result.data,
-                       // isLoading = false,
+                        // isLoading = false,
                     )
                         .updateState()
                     loadUsers()

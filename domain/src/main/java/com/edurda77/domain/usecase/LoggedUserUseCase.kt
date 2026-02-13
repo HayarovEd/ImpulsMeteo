@@ -11,9 +11,6 @@ class LoggedUserUseCase(
     private val tokenManager: TokenManager,
 ) {
     suspend operator fun invoke(): ResultWork<AuthUser, DataError> {
-        /*return oldRemoteRepository.authorizedUser(
-            token = token
-        )*/
         return tokenManager.validateFactory(
             data = {
                 remoteRepository.loadAuthUserData(it)

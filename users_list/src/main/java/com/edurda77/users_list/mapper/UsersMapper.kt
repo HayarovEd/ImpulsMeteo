@@ -29,7 +29,7 @@ fun Device.convertToDeviceUser(): DeviceUser {
 
 fun Permission.convertToPermissionUser(): PermissionUser {
     return PermissionUser(
-        displayName = this.name,
+        displayName = this.displayName,
         id = id
     )
 }

@@ -7,6 +7,7 @@ import com.edurda77.data.repository.FavoriteRepositoryImpl
 import com.edurda77.data.repository.JwtRepositoryImpl
 import com.edurda77.data.repository.LocalRepositoryImpl
 import com.edurda77.data.repository.OldRemoteRepositoryImpl
+import com.edurda77.data.repository.PermissionsRepositoryImpl
 import com.edurda77.data.repository.RemoteRepositoryImpl
 import com.edurda77.data.repository.UsersRepositoryImpl
 import com.edurda77.data.repository.WebSocketRepositoryImpl
@@ -18,6 +19,7 @@ import com.edurda77.domain.repository.FavoriteRepository
 import com.edurda77.domain.repository.JwtRepository
 import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.repository.PermissionsRepository
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.repository.UsersRepository
 import com.edurda77.domain.repository.WebSocketRepository
@@ -38,5 +40,5 @@ val repoModule = module {
     singleOf(::DevicesRepositoryImpl) { bind<DevicesRepository>() }
     singleOf(::FavoriteRepositoryImpl) { bind<FavoriteRepository>() }
     singleOf(::UsersRepositoryImpl) { bind<UsersRepository>() }
-
+    singleOf(::PermissionsRepositoryImpl) { bind<PermissionsRepository>() }
 }
