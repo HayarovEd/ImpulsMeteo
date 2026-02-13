@@ -10,9 +10,12 @@ import com.edurda77.data.remote.newDtos.notification.NotificationsDeviceDtos
 import com.edurda77.data.remote.newDtos.param.MeasurementUnitDto
 import com.edurda77.data.remote.newDtos.param.ParamDto
 import com.edurda77.data.remote.newDtos.permission.PermissionDto
+import com.edurda77.data.remote.newDtos.user.DeviceUserRequest
+import com.edurda77.data.remote.newDtos.user.PermissionUserRequest
 import com.edurda77.data.remote.newDtos.user.UserDto
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.DeviceUser
 import com.edurda77.domain.model.newModels.Favorite
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.MeasurementUnit
@@ -20,6 +23,7 @@ import com.edurda77.domain.model.newModels.NotificationDevice
 import com.edurda77.domain.model.newModels.NotificationsDevice
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.Permission
+import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.newModels.User
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.convertToLocalDateTime
@@ -164,5 +168,16 @@ fun UserDto.toUser(): User {
         password = this.password?:"",
         permissions = this.permissions.map { it.toPermission() },
         updateAt = convertToLocalDateTime(this.updateAt),
+    )
+}
+
+fun DeviceUser.toDeviceUserRequest(): DeviceUserRequest {
+    return DeviceUserRequest(
+        id = id
+    )
+}
+fun PermissionUser.toPermissionUserRequest(): PermissionUserRequest {
+    return PermissionUserRequest(
+        id = id
     )
 }

@@ -184,9 +184,8 @@ class UsersViewModel(
         permissions: List<PermissionUser>
     ) {
         when (val result = addUserUseCase.invoke(
-            token = state.value.token,
-            devices = devices.map { it.id },
-            permissions = permissions.map { it.id },
+            devices = devices,
+            permissions = permissions,
             email = email,
             name = name,
             password = password
@@ -198,7 +197,10 @@ class UsersViewModel(
             }
 
             is ResultWork.Success -> {
-                //loadUsers()
+                _state.value.copy(
+                    users = state.value.users + result.data.convertToUserUi(),
+                )
+                    .updateState()
             }
         }
     }

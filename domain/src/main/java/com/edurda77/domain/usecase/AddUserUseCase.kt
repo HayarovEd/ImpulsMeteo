@@ -1,22 +1,25 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.model.newModels.DeviceUser
+import com.edurda77.domain.model.newModels.PermissionUser
+import com.edurda77.domain.model.newModels.User
+import com.edurda77.domain.repository.UsersRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.isValidEmail
 
 
 class AddUserUseCase(
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val usersRepository: UsersRepository,
+    private val tokenManager: TokenManager,
 ) {
     suspend operator fun invoke(
-        token: String,
-        devices: List<String>,
-        permissions: List<String>,
+        devices: List<DeviceUser>,
+        permissions: List<PermissionUser>,
         email: String,
         name: String,
         password: String,
-    ): ResultWork<Unit, DataError> {
+    ): ResultWork<User, DataError> {
         if (name.isBlank()) return ResultWork.Error(DataError.NameError.NAME_BLANK)
         if (email.isBlank()) {
             return ResultWork.Error(DataError.EmailError.EMAIL_BLANK)
@@ -24,14 +27,17 @@ class AddUserUseCase(
             return ResultWork.Error(DataError.EmailError.EMAIL_NOT_VALID)
         }
         if (password.isBlank()) return ResultWork.Error(DataError.PasswordError.PASSWORD_BLANK)
-
-        return oldRemoteRepository.addUser(
-            devices = devices,
-            permissions = permissions,
-            name = name,
-            token = token,
-            email = email,
-            password = password
+        return tokenManager.validateFactory(
+            data = {
+                usersRepository.insertUser(
+                    name = name,
+                    accessToken = it,
+                    password = password,
+                    email = email,
+                    devices = devices,
+                    permissions = permissions
+                )
+            }
         )
     }
 }
