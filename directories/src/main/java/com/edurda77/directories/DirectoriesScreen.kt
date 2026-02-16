@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +44,7 @@ import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
+import com.edurda77.resources.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -53,10 +56,23 @@ fun DirectoriesScreenRoot(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val onEvent = viewModel::onEvent
+
+    val snackBarState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+
+    ObserveAsEvents(viewModel.eventFlow) { event ->
+        when (event) {
+            UiDirectoriesEvents.LoginNavigationEvent -> onGoToLogin()
+            is UiDirectoriesEvents.OnError -> snackBarState.showSnackbar(event.message.asString(context))
+        }
+    }
+
     DirectoriesScreen(
         state = state.value,
         configuration = configuration,
         bottomBarContent = bottomBarContent,
+        snackBarState = snackBarState,
         onEvent = onEvent,
         onGoToLogin = onGoToLogin
     )
@@ -70,6 +86,7 @@ private fun DirectoriesScreen(
     modifier: Modifier = Modifier,
     state: DirectoriesState,
     configuration: Configuration,
+    snackBarState:SnackbarHostState,
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DirectoriesEvent) -> Unit,
     onGoToLogin: () -> Unit,
@@ -124,7 +141,8 @@ private fun DirectoriesScreen(
 
 
     UiBaseScaffold(
-        message = state.message,
+        message = null,
+        snakeBarHostState = snackBarState,
         topBarContent = {
             Row(
                 modifier = modifier
@@ -304,10 +322,12 @@ private fun DirectoriesScreen(
 )
 @Composable
 private fun DirectoriesScreenView() {
+    val snackBarState = remember { SnackbarHostState() }
     ImpulsMeteoTheme {
         DirectoriesScreen(
             onGoToLogin = {},
             bottomBarContent = {},
+            snackBarState = snackBarState,
             configuration = LocalConfiguration.current,
             state = DirectoriesState(),
             onEvent = {}
@@ -321,11 +341,13 @@ private fun DirectoriesScreenView() {
 )
 @Composable
 private fun DirectoriesScreenView2() {
+    val snackBarState = remember { SnackbarHostState() }
     ImpulsMeteoTheme {
         DirectoriesScreen(
             onGoToLogin = {},
             bottomBarContent = {},
             configuration = LocalConfiguration.current,
+            snackBarState = snackBarState,
             state = DirectoriesState(),
             onEvent = {}
         )

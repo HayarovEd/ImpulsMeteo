@@ -203,7 +203,15 @@ class UsersViewModel(
         )) {
             is ResultWork.Error -> {
                 viewModelScope.launch {
-                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
                 }
             }
 
@@ -238,7 +246,15 @@ class UsersViewModel(
             )) {
                 is ResultWork.Error -> {
                     viewModelScope.launch {
-                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                        if (result.error is DataError.TokenError) {
+                            _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                        } else {
+                            _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                            _state.value.copy(
+                                isLoading = false,
+                            )
+                                .updateState()
+                        }
                     }
                 }
 
@@ -264,11 +280,15 @@ class UsersViewModel(
         viewModelScope.launch {
             when (val result = usersUseCase.invoke()) {
                 is ResultWork.Error -> {
-                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
-                    _state.value.copy(
-                        isLoading = false,
-                    )
-                        .updateState()
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
                 }
 
                 is ResultWork.Success -> {
@@ -286,7 +306,15 @@ class UsersViewModel(
         viewModelScope.launch {
             when (val result = permissionsUseCase.invoke()) {
                 is ResultWork.Error -> {
-                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
                 }
 
                 is ResultWork.Success -> {
@@ -300,7 +328,15 @@ class UsersViewModel(
         viewModelScope.launch {
             when (val result = devicesUseCase.invoke()) {
                 is ResultWork.Error -> {
-                    _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiUsersEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiUsersEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
                 }
 
                 is ResultWork.Success -> {

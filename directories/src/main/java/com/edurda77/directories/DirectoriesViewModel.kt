@@ -15,12 +15,15 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDevicesGroupUseCase
 import com.edurda77.domain.usecase.UpdateUnitUseCase
+import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -41,7 +44,7 @@ class DirectoriesViewModel(
     private var _state = MutableStateFlow(DirectoriesState())
     val state = _state
         .onStart {
-            loadInitialData()
+            loadUserData()
         }
         .stateIn(
             viewModelScope,
@@ -51,6 +54,9 @@ class DirectoriesViewModel(
 
     private val baseGroups = mutableListOf<GroupDevicesOld>()
     private val baseUnits = mutableListOf<UnitMeteo>()
+
+    private val _eventFlow = Channel<UiDirectoriesEvents>()
+    val eventFlow = _eventFlow.receiveAsFlow()
 
     fun onEvent(event: DirectoriesEvent) {
         when (event) {
@@ -140,51 +146,34 @@ class DirectoriesViewModel(
         }
     }
 
-
-    private fun loadInitialData() {
+    private fun loadUserData() {
+        _state.value.copy(
+            isLoading = true,
+        )
+            .updateState()
         viewModelScope.launch {
-            localTokenUseCase.invoke().collect { collectedToken ->
-                when (collectedToken) {
-                    is ResultWork.Error -> {
+            when (val result = loggedUserUseCase.invoke()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
                         _state.value.copy(
                             isLoading = false,
-                            message = collectedToken.error.asUiText()
                         )
                             .updateState()
                     }
+                }
 
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            token = collectedToken.data.accessToken
-                        )
-                            .updateState()
-                        delay(500)
-                        loadLoggedUserData(collectedToken.data.accessToken)
-                    }
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        authUser = result.data,
+                        isLoading = false,
+                    )
+                        .updateState()
                 }
             }
         }
-    }
-
-    private suspend fun loadLoggedUserData(token: String) {
-        /*when (val result = loggedUserUseCase.invoke(token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    loggedUser = result.data
-                )
-                    .updateState()
-                loadGroups()
-                loadUnits()
-            }
-        }*/
     }
 
     private suspend fun loadUnits() {
@@ -194,11 +183,15 @@ class DirectoriesViewModel(
             .updateState()
         when (val result = unitsUseCase.invoke(state.value.token)) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    _state.value.copy(
+                        isLoading = false,
+                    )
+                        .updateState()
+                }
             }
 
             is ResultWork.Success -> {
@@ -245,10 +238,11 @@ class DirectoriesViewModel(
             name = name,
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
@@ -267,10 +261,11 @@ class DirectoriesViewModel(
             short = short
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
@@ -285,10 +280,11 @@ class DirectoriesViewModel(
             id = id
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
@@ -303,10 +299,11 @@ class DirectoriesViewModel(
             id = id
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
@@ -322,10 +319,11 @@ class DirectoriesViewModel(
             name = name
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
@@ -346,10 +344,11 @@ class DirectoriesViewModel(
             short = short
         )) {
             is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                if (result.error is DataError.TokenError) {
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                } else {
+                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                }
             }
 
             is ResultWork.Success -> {
