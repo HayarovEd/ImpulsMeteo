@@ -8,21 +8,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.GroupDevicesOld
+import com.edurda77.domain.model.newModels.GroupDevice
 
 
 @Composable
 fun DirectoryScreenGroups(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
     isEnableUpdate: Boolean,
-    groups: List<GroupDevicesOld>,
+    groups: List<GroupDevice>,
     cellsCount: Int,
     onDeleteClick: (Int) -> Unit,
     onUpdateClick: (Int, String) -> Unit,
     titleDelete: String
 ) {
-    if (groups.isNotEmpty() && !isLoading) {
+    if (groups.isNotEmpty()) {
         LazyVerticalStaggeredGrid(
             modifier = modifier
                 .fillMaxSize(),
@@ -34,10 +33,10 @@ fun DirectoryScreenGroups(
                 ItemDevicesGroupDirectory(
                     title = group.name,
                     isEnabledUpdate = isEnableUpdate,
-                    onDeleteClick = { onDeleteClick(group.id) },
+                    onDeleteClick = { /*onDeleteClick(group.id)*/ },
                     titleDelete = titleDelete,
                     onUpdateClick = { name ->
-                        onUpdateClick(group.id, name)
+                       /* onUpdateClick(group.id, name)*/
                     }
                 )
             }

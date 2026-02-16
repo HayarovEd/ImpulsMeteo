@@ -62,7 +62,7 @@ import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
@@ -113,7 +113,7 @@ fun LandscapeScreen(
     historyParams: List<Param>,
     screenWidth: Dp,
     onDeleteDevice: () -> Unit,
-    units: List<UnitMeteo>,
+    units: List<UnitMeteoOld>,
     isLoadingHistory: Boolean,
     histories: List<List<ElementHistory>>,
 ) {
@@ -596,7 +596,7 @@ private fun LandscapeScreenView() {
     }
     val units = remember {
         (0..5).map {
-            UnitMeteo(
+            UnitMeteoOld(
                 id = it,
                 name = "Param $it",
                 short = "prm$it"
@@ -787,7 +787,7 @@ private fun LandscapeScreenView2() {
     }
     val units = remember {
         (0..5).map {
-            UnitMeteo(
+            UnitMeteoOld(
                 id = it,
                 name = "Param $it",
                 short = "prm$it"

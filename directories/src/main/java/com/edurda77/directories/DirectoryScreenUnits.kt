@@ -8,21 +8,20 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.newModels.MeasurementUnit
 
 
 @Composable
 fun DirectoryScreenUnits(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
     isEnableUpdate: Boolean,
-    units: List<UnitMeteo>,
+    units: List<MeasurementUnit>,
     cellsCount: Int,
     onDeleteClick: (Int) -> Unit,
     onUpdateClick: (Int, String, String) -> Unit,
     titleDelete: String
 ) {
-    if (units.isNotEmpty() && !isLoading) {
+    if (units.isNotEmpty()) {
         LazyVerticalStaggeredGrid(
             modifier = modifier
                 .fillMaxSize(),
@@ -33,16 +32,16 @@ fun DirectoryScreenUnits(
             items(units) { unit ->
                 ItemUnitDirectory(
                     currentName = unit.name,
-                    currentShort = unit.short,
+                    currentShort = unit.abbreviation,
                     isEnabledUpdate = isEnableUpdate,
-                    onDeleteClick = { onDeleteClick(unit.id) },
+                    onDeleteClick = { /*onDeleteClick(unit.id)*/ },
                     titleDelete = titleDelete,
                     onUpdateClick = { name, short ->
-                        onUpdateClick(
+                       /* onUpdateClick(
                             unit.id,
                             name,
                             short
-                        )
+                        )*/
                     }
                 )
             }

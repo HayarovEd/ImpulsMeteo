@@ -30,7 +30,7 @@ import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.domain.model.UserOld
 import com.edurda77.domain.utils.DEVICES_LIST
 import com.edurda77.domain.utils.DIRECTORY_LIST
@@ -143,9 +143,9 @@ fun UsersDtoOld.convertToUsers(): List<UserOld> {
     }
 }
 
-fun UnitsDto.convertToUnits(): List<UnitMeteo> {
+fun UnitsDto.convertToUnits(): List<UnitMeteoOld> {
     return this.units.map {
-        UnitMeteo(
+        UnitMeteoOld(
             id = it.id,
             name = it.name,
             short = it.short

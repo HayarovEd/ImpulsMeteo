@@ -66,7 +66,7 @@ import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.TEMPERATURE_ID
 import com.edurda77.resources.R
@@ -118,7 +118,7 @@ fun PortraitScreen(
     isLoadingHistory: Boolean,
     histories: List<List<ElementHistory>>,
     screenWidth: Dp,
-    units: List<UnitMeteo>,
+    units: List<UnitMeteoOld>,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -602,7 +602,7 @@ private fun PortraitScreenView() {
     }
     val units = remember {
         (0..5).map {
-            UnitMeteo(
+            UnitMeteoOld(
                 id = it,
                 name = "Param $it",
                 short = "prm$it"
@@ -789,7 +789,7 @@ private fun DirectoriesScreenView2() {
     }
     val units = remember {
         (0..5).map {
-            UnitMeteo(
+            UnitMeteoOld(
                 id = it,
                 name = "Param $it",
                 short = "prm$it"

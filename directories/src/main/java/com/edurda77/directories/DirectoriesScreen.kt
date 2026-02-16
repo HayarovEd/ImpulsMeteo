@@ -2,7 +2,6 @@ package com.edurda77.directories
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,11 +33,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.edurda77.domain.utils.DIRECTORY_EDIT
-import com.edurda77.domain.utils.DIRECTORY_LIST
+import com.edurda77.domain.utils.DIRECTORY_EDIT_LABEL
+import com.edurda77.domain.utils.DIRECTORY_LIST_LABEL
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
+import com.edurda77.resources.uikit.NoAccess
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDialog
@@ -64,7 +64,11 @@ fun DirectoriesScreenRoot(
     ObserveAsEvents(viewModel.eventFlow) { event ->
         when (event) {
             UiDirectoriesEvents.LoginNavigationEvent -> onGoToLogin()
-            is UiDirectoriesEvents.OnError -> snackBarState.showSnackbar(event.message.asString(context))
+            is UiDirectoriesEvents.OnError -> snackBarState.showSnackbar(
+                event.message.asString(
+                    context
+                )
+            )
         }
     }
 
@@ -79,14 +83,13 @@ fun DirectoriesScreenRoot(
 }
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DirectoriesScreen(
     modifier: Modifier = Modifier,
     state: DirectoriesState,
     configuration: Configuration,
-    snackBarState:SnackbarHostState,
+    snackBarState: SnackbarHostState,
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DirectoriesEvent) -> Unit,
     onGoToLogin: () -> Unit,
@@ -168,18 +171,21 @@ private fun DirectoriesScreen(
         },
         bottomBarContent = bottomBarContent,
         fabContent = {
-            if (state.loggedUser?.permissions?.contains(DIRECTORY_EDIT) == true) {
-                FloatingActionButton(
-                    containerColor = MaterialTheme.colorScheme.outlineVariant,
-                    onClick = { expandedAddDialog.value = true }
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.plus),
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.background
-                    )
+            state.authUser?.let { user ->
+                if (user.permissions.map { it.name }.contains(DIRECTORY_EDIT_LABEL)) {
+                    FloatingActionButton(
+                        containerColor = MaterialTheme.colorScheme.outlineVariant,
+                        onClick = { expandedAddDialog.value = true }
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.plus),
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.background
+                        )
+                    }
                 }
             }
+
         },
         content = { paddings ->
             Column(
@@ -241,73 +247,58 @@ private fun DirectoriesScreen(
                         }
                     }
                 ) {
-                    if (state.loggedUser?.permissions?.contains(DIRECTORY_LIST) == true) {
-                        val cellsCount =
-                            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
-                        when (state.directoriesType) {
-                            DirectoriesType.GROUPS -> {
-                                DirectoryScreenGroups(
-                                    isLoading = state.isLoading,
-                                    isEnableUpdate = state.loggedUser.permissions.contains(
-                                        DIRECTORY_EDIT
-                                    ),
-                                    groups = state.groups,
-                                    cellsCount = cellsCount,
-                                    onDeleteClick = {
-                                        onEvent(DirectoriesEvent.DeleteDevicesGroup(it))
-                                    },
-                                    titleDelete = stringResource(R.string.sure_delete_group),
-                                    onUpdateClick = { id, name ->
-                                        onEvent(
-                                            DirectoriesEvent.UpdateDevicesGroup(
-                                                id = id,
-                                                name = name
-                                            )
+                    if (!state.isLoading) {
+                        state.authUser?.let { user ->
+                            val enableUpdate = user.permissions.map { it.name }.contains(
+                                DIRECTORY_EDIT_LABEL
+                            )
+                            if (user.permissions.map { it.name }.contains(DIRECTORY_LIST_LABEL)) {
+                                val cellsCount =
+                                    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
+                                when (state.directoriesType) {
+                                    DirectoriesType.GROUPS -> {
+                                        DirectoryScreenGroups(
+                                            isEnableUpdate = enableUpdate,
+                                            groups = state.filteredGtoups,
+                                            cellsCount = cellsCount,
+                                            onDeleteClick = {
+                                                onEvent(DirectoriesEvent.DeleteDevicesGroup(it))
+                                            },
+                                            titleDelete = stringResource(R.string.sure_delete_group),
+                                            onUpdateClick = { id, name ->
+                                                onEvent(
+                                                    DirectoriesEvent.UpdateDevicesGroup(
+                                                        id = id,
+                                                        name = name
+                                                    )
+                                                )
+                                            }
                                         )
                                     }
-                                )
-                            }
 
-                            DirectoriesType.UNITS -> {
-                                DirectoryScreenUnits(
-                                    isLoading = state.isLoading,
-                                    isEnableUpdate = state.loggedUser.permissions.contains(
-                                        DIRECTORY_EDIT
-                                    ),
-                                    units = state.units,
-                                    cellsCount = cellsCount,
-                                    onDeleteClick = {
-                                        onEvent(DirectoriesEvent.DeleteUnit(it))
-                                    },
-                                    titleDelete = stringResource(R.string.sure_delete_unit),
-                                    onUpdateClick = { id, name, short ->
-                                        onEvent(
-                                            DirectoriesEvent.UpdateUnit(
-                                                id = id,
-                                                name = name,
-                                                short = short
-                                            )
+                                    DirectoriesType.UNITS -> {
+                                        DirectoryScreenUnits(
+                                            isEnableUpdate = enableUpdate,
+                                            units = state.filteredMeasurementUnits,
+                                            cellsCount = cellsCount,
+                                            onDeleteClick = {
+                                                onEvent(DirectoriesEvent.DeleteUnit(it))
+                                            },
+                                            titleDelete = stringResource(R.string.sure_delete_unit),
+                                            onUpdateClick = { id, name, short ->
+                                                onEvent(
+                                                    DirectoriesEvent.UpdateUnit(
+                                                        id = id,
+                                                        name = name,
+                                                        short = short
+                                                    )
+                                                )
+                                            }
                                         )
                                     }
-                                )
-                            }
-                        }
-                    } else {
-                        if (state.loggedUser != null) {
-                            Box(
-                                modifier = modifier
-                                    .padding(paddings)
-                                    .fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    modifier = modifier
-                                        .fillMaxWidth(),
-                                    text = stringResource(R.string.no_access_this),
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    style = Typography.bodyLarge,
-                                    textAlign = TextAlign.Center,
-                                )
+                                }
+                            } else {
+                                NoAccess()
                             }
                         }
                     }

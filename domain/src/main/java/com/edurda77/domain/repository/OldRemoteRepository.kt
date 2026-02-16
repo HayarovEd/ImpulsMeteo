@@ -10,7 +10,7 @@ import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.domain.model.UserOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
@@ -56,7 +56,7 @@ interface OldRemoteRepository {
         token: String,
     ): ResultWork<List<GroupDevicesOld>, DataError>
 
-    suspend fun getUnits(token: String): ResultWork<List<UnitMeteo>, DataError>
+    suspend fun getUnits(token: String): ResultWork<List<UnitMeteoOld>, DataError>
     suspend fun addDevicesGroup(token: String, name: String): ResultWork<Unit, DataError>
     suspend fun addUnit(token: String, name: String, short: String): ResultWork<Unit, DataError>
     suspend fun deleteUnit(token: String, id: Int): ResultWork<Unit, DataError>

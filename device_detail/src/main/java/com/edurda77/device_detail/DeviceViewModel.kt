@@ -472,7 +472,7 @@ class DeviceViewModel(
     }
 
     private suspend fun loadUnits() {
-        when (val result = unitsUseCase.invoke(state.value.token)) {
+        /*when (val result = unitsUseCase.invoke(state.value.token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
                     message = result.error.asUiText()
@@ -486,7 +486,7 @@ class DeviceViewModel(
                 )
                     .updateState()
             }
-        }
+        }*/
     }
 
     private suspend fun loadUpdateData() {

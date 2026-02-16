@@ -1,19 +1,20 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.UnitMeteo
-import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.repository.MeasurementUnitRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class UnitsUseCase(
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val measurementUnitRepository: MeasurementUnitRepository,
+    private val tokenManager: TokenManager,
 ) {
-    suspend operator fun invoke(
-        token: String
-    ): ResultWork<List<UnitMeteo>, DataError> {
-        return oldRemoteRepository.getUnits(
-            token = token,
+    suspend operator fun invoke(): ResultWork<List<MeasurementUnit>, DataError> {
+        return tokenManager.validateFactory(
+            data = {
+                measurementUnitRepository.getUnits(it)
+            },
         )
     }
 }

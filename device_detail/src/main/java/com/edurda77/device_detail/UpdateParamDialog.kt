@@ -34,7 +34,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -44,7 +44,7 @@ import com.edurda77.resources.uikit.UiTextField
 fun UpdateParamDialog(
     modifier: Modifier = Modifier,
     param: Param,
-    units: List<UnitMeteo>,
+    units: List<UnitMeteoOld>,
     onCloseClick: () -> Unit,
     onUpdateClick: (Param) -> Unit,
 ) {
@@ -189,7 +189,7 @@ fun UpdateParamDialog(
 @Composable
 private fun UpdateParamDialogView1() {
     val units = remember { (0..5).map {
-        UnitMeteo(
+        UnitMeteoOld(
             id = it,
             name = "Param $it",
             short = "prm$it"
@@ -221,7 +221,7 @@ private fun UpdateParamDialogView1() {
 @Composable
 private fun UpdateParamDialog2() {
     val units = remember { (0..5).map {
-        UnitMeteo(
+        UnitMeteoOld(
             id = it,
             name = "Param $it",
             short = "prm$it"

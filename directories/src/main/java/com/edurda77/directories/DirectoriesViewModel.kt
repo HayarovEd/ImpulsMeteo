@@ -2,14 +2,11 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.UnitMeteo
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
 import com.edurda77.domain.usecase.DeleteUnitUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
-import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LogOffUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
@@ -18,8 +15,8 @@ import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.resources.uikit.asUiText
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -30,7 +27,6 @@ import kotlinx.coroutines.launch
 
 class DirectoriesViewModel(
     private val loggedUserUseCase: LoggedUserUseCase,
-    private val localTokenUseCase: LocalTokenUseCase,
     private val logoffUseCase: LogOffUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val unitsUseCase: UnitsUseCase,
@@ -52,28 +48,20 @@ class DirectoriesViewModel(
             DirectoriesState()
         )
 
-    private val baseGroups = mutableListOf<GroupDevicesOld>()
-    private val baseUnits = mutableListOf<UnitMeteo>()
-
     private val _eventFlow = Channel<UiDirectoriesEvents>()
     val eventFlow = _eventFlow.receiveAsFlow()
 
     fun onEvent(event: DirectoriesEvent) {
         when (event) {
             DirectoriesEvent.Logoff -> {
-                viewModelScope.launch { logoffUseCase.invoke() }
+                viewModelScope.launch {
+                    logoffUseCase.invoke()
+                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                }
             }
 
             DirectoriesEvent.Refresh -> {
-                _state.value.copy(
-                    isLoading = true,
-                )
-                    .updateState()
-                viewModelScope.launch {
-                    delay(1000)
-                    loadUnits()
-                    loadGroups()
-                }
+                loadUserData()
             }
 
             is DirectoriesEvent.SwitchDirectoriesType -> {
@@ -138,8 +126,6 @@ class DirectoriesViewModel(
             is DirectoriesEvent.OnSearch -> {
                 _state.value.copy(
                     query = event.query,
-                    groups = baseGroups.filter { it.name.contains(event.query, ignoreCase = true) },
-                    units = baseUnits.filter { it.name.contains(event.query, ignoreCase = true) }
                 )
                     .updateState()
             }
@@ -168,68 +154,59 @@ class DirectoriesViewModel(
                 is ResultWork.Success -> {
                     _state.value.copy(
                         authUser = result.data,
-                        isLoading = false,
                     )
                         .updateState()
+                    loadGroupsAndUnits()
                 }
             }
         }
     }
 
-    private suspend fun loadUnits() {
+    private fun loadGroupsAndUnits() {
         _state.value.copy(
             isLoading = true
         )
             .updateState()
-        when (val result = unitsUseCase.invoke(state.value.token)) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+        viewModelScope.launch {
+            val resultGroupsDiff = async { devicesGroupsUseCase.invoke() }
+            val resultUnitsDiff = async { unitsUseCase.invoke() }
+            when (val result = resultGroupsDiff.await()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
                     _state.value.copy(
-                        isLoading = false,
+                        groups = result.data
                     )
                         .updateState()
                 }
             }
+            when (val result = resultUnitsDiff.await()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
 
-            is ResultWork.Success -> {
-                baseUnits.clear()
-                baseUnits.addAll(result.data)
-                _state.value.copy(
-                    isLoading = false,
-                    units = baseUnits
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        units = result.data
+                    )
+                        .updateState()
+                }
             }
+            _state.value.copy(
+                isLoading = false,
+            )
+                .updateState()
         }
-    }
-
-    private suspend fun loadGroups() {
-        _state.value.copy(
-            isLoading = true
-        )
-            .updateState()
-      /*  when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                baseGroups.clear()
-                baseGroups.addAll(result.data)
-                _state.value.copy(
-                    isLoading = false,
-                    groups = baseGroups
-                )
-                    .updateState()
-            }
-        }*/
     }
 
     private suspend fun insertDevicesGroup(name: String) {
@@ -246,7 +223,7 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadGroups()
+                //   loadGroups()
             }
         }
     }
@@ -269,7 +246,7 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadUnits()
+                //  loadUnits()
             }
         }
     }
@@ -288,7 +265,7 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadGroups()
+                //   loadGroups()
             }
         }
     }
@@ -307,7 +284,7 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadUnits()
+                //loadUnits()
             }
         }
     }
@@ -327,7 +304,7 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadGroups()
+                //  loadGroups()
             }
         }
     }
@@ -352,7 +329,7 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                loadUnits()
+                //  loadUnits()
             }
         }
     }

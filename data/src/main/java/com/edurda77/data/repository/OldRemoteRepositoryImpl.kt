@@ -46,7 +46,7 @@ import com.edurda77.domain.model.NotificationsOld
 import com.edurda77.domain.model.Param
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.domain.model.UserOld
 import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.utils.AUTH_LOGGED_USER_POSTFIX
@@ -514,7 +514,7 @@ class OldRemoteRepositoryImpl(
 
     override suspend fun getUnits(
         token: String,
-    ): ResultWork<List<UnitMeteo>, DataError> {
+    ): ResultWork<List<UnitMeteoOld>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val responseGroups = httpClient.get(BASE_URL + UNITS_POSTFIX) {

@@ -5,7 +5,7 @@ import com.edurda77.domain.model.ElementHistory
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteo
+import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.uikit.UiText
 import kotlinx.datetime.DateTimePeriod
@@ -24,7 +24,7 @@ data class DeviceState @OptIn(ExperimentalTime::class) constructor(
     val deviceId: Int = NEGATIVE_ID,
     val loggedUser: LoggedUser? = null,
     val device: SingleDevice? = null,
-    val units: List<UnitMeteo> = emptyList(),
+    val units: List<UnitMeteoOld> = emptyList(),
     val groups: List<GroupDevicesOld> = emptyList(),
     val toDate: LocalDateTime = LocalDateTime.now(),
     val fromDate: LocalDateTime = Clock.System.now()

@@ -31,32 +31,8 @@ val viewModelModule = module {
         )
     }
     viewModelOf(::DevicesViewModel)
-    viewModel {
-        DirectoriesViewModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get()
-        )
-    }
-    viewModel {
-        LoginViewModel(
-            get(),
-            get(),
-            get(),
-        )
-    }
-    viewModel {
-        SplashViewModel(
-            get(),
-        )
-    }
+    viewModelOf(::DirectoriesViewModel)
+    viewModelOf(::LoginViewModel)
+    viewModelOf(::SplashViewModel)
     viewModelOf(::UsersViewModel)
 }
