@@ -265,11 +265,10 @@ private fun DirectoriesScreen(
                                                 onEvent(DirectoriesEvent.DeleteDevicesGroup(it))
                                             },
                                             titleDelete = stringResource(R.string.sure_delete_group),
-                                            onUpdateClick = { id, name ->
+                                            onUpdateClick = { groupDevice ->
                                                 onEvent(
                                                     DirectoriesEvent.UpdateDevicesGroup(
-                                                        id = id,
-                                                        name = name
+                                                        groupDevice
                                                     )
                                                 )
                                             }

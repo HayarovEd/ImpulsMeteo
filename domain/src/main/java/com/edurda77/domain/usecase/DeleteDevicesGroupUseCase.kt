@@ -1,20 +1,24 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.repository.DevicesGroupsRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class DeleteDevicesGroupUseCase(
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val devicesGroupsRepository: DevicesGroupsRepository,
+    private val tokenManager: TokenManager
 ) {
     suspend operator fun invoke(
-        token: String,
-        id: Int
+        groupId: String
     ): ResultWork<Unit, DataError> {
-        return oldRemoteRepository.deleteDevicesGroup(
-            token = token,
-            id = id
+        return tokenManager.validateFactory(
+            data = {
+                devicesGroupsRepository.deleteGroup(
+                    accessToken = it,
+                    groupId = groupId
+                )
+            }
         )
     }
 }

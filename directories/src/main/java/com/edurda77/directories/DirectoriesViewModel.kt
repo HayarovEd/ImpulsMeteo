@@ -2,6 +2,7 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
@@ -107,8 +108,7 @@ class DirectoriesViewModel(
             is DirectoriesEvent.UpdateDevicesGroup -> {
                 viewModelScope.launch {
                     updateDevicesGroup(
-                        id = event.id,
-                        name = event.name
+                        event.groupDevice
                     )
                 }
             }
@@ -211,7 +211,6 @@ class DirectoriesViewModel(
 
     private suspend fun insertDevicesGroup(name: String) {
         when (val result = addDevicesGroupUseCase.invoke(
-            token = state.value.token,
             name = name,
         )) {
             is ResultWork.Error -> {
@@ -223,7 +222,10 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                //   loadGroups()
+                _state.value.copy(
+                    groups = state.value.groups + result.data
+                )
+                    .updateState()
             }
         }
     }
@@ -251,10 +253,9 @@ class DirectoriesViewModel(
         }
     }
 
-    private suspend fun deleteDevicesGroup(id: Int) {
+    private suspend fun deleteDevicesGroup(id: String) {
         when (val result = deleteDevicesGroupUseCase.invoke(
-            token = state.value.token,
-            id = id
+            groupId = id
         )) {
             is ResultWork.Error -> {
                 if (result.error is DataError.TokenError) {
@@ -265,7 +266,10 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                //   loadGroups()
+                _state.value.copy(
+                    groups = state.value.groups.filter { it.id != id }
+                )
+                    .updateState()
             }
         }
     }
@@ -289,11 +293,9 @@ class DirectoriesViewModel(
         }
     }
 
-    private suspend fun updateDevicesGroup(id: Int, name: String) {
+    private suspend fun updateDevicesGroup(groupDevice: GroupDevice) {
         when (val result = updateDevicesGroupUseCase.invoke(
-            token = state.value.token,
-            id = id,
-            name = name
+            groupDevice
         )) {
             is ResultWork.Error -> {
                 if (result.error is DataError.TokenError) {
@@ -304,7 +306,14 @@ class DirectoriesViewModel(
             }
 
             is ResultWork.Success -> {
-                //  loadGroups()
+                _state.value.copy(
+                    groups = state.value.groups.map {
+                        if (it.id == result.data.id) {
+                            result.data
+                        } else it
+                    }
+                )
+                    .updateState()
             }
         }
     }
