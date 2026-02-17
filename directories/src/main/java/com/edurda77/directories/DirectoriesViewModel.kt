@@ -3,6 +3,7 @@ package com.edurda77.directories
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
@@ -73,54 +74,40 @@ class DirectoriesViewModel(
             }
 
             is DirectoriesEvent.AddDevicesGroup -> {
-                viewModelScope.launch {
-                    insertDevicesGroup(
-                        name = event.name,
-                    )
-                }
+                insertDevicesGroup(
+                    name = event.name,
+                )
             }
 
             is DirectoriesEvent.AddUnit -> {
-                viewModelScope.launch {
-                    insertUnit(
-                        name = event.name,
-                        short = event.short
-                    )
-                }
+                insertUnit(
+                    name = event.name,
+                    short = event.short
+                )
             }
 
             is DirectoriesEvent.DeleteDevicesGroup -> {
-                viewModelScope.launch {
-                    deleteDevicesGroup(
-                        id = event.id
-                    )
-                }
+                deleteDevicesGroup(
+                    id = event.id
+                )
             }
 
             is DirectoriesEvent.DeleteUnit -> {
-                viewModelScope.launch {
-                    deleteUnit(
-                        id = event.id
-                    )
-                }
+                deleteUnit(
+                    id = event.id
+                )
             }
 
             is DirectoriesEvent.UpdateDevicesGroup -> {
-                viewModelScope.launch {
-                    updateDevicesGroup(
-                        event.groupDevice
-                    )
-                }
+                updateDevicesGroup(
+                    event.groupDevice
+                )
             }
 
             is DirectoriesEvent.UpdateUnit -> {
-                viewModelScope.launch {
-                    updateUnit(
-                        id = event.id,
-                        name = event.name,
-                        short = event.short
-                    )
-                }
+                updateUnit(
+                    event.measurementUnit
+                )
             }
 
             is DirectoriesEvent.OnSearch -> {
@@ -209,138 +196,162 @@ class DirectoriesViewModel(
         }
     }
 
-    private suspend fun insertDevicesGroup(name: String) {
-        when (val result = addDevicesGroupUseCase.invoke(
-            name = name,
-        )) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
-                }
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    groups = state.value.groups + result.data
-                )
-                    .updateState()
-            }
-        }
-    }
-
-    private suspend fun insertUnit(
-        name: String,
-        short: String
-    ) {
-        when (val result = addUnitUseCase.invoke(
-            token = state.value.token,
-            name = name,
-            short = short
-        )) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
-                }
-            }
-
-            is ResultWork.Success -> {
-                //  loadUnits()
-            }
-        }
-    }
-
-    private suspend fun deleteDevicesGroup(id: String) {
-        when (val result = deleteDevicesGroupUseCase.invoke(
-            groupId = id
-        )) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
-                }
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    groups = state.value.groups.filter { it.id != id }
-                )
-                    .updateState()
-            }
-        }
-    }
-
-    private suspend fun deleteUnit(id: Int) {
-        when (val result = deleteUnitUseCase.invoke(
-            token = state.value.token,
-            id = id
-        )) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
-                }
-            }
-
-            is ResultWork.Success -> {
-                //loadUnits()
-            }
-        }
-    }
-
-    private suspend fun updateDevicesGroup(groupDevice: GroupDevice) {
-        when (val result = updateDevicesGroupUseCase.invoke(
-            groupDevice
-        )) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
-                }
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    groups = state.value.groups.map {
-                        if (it.id == result.data.id) {
-                            result.data
-                        } else it
+    private fun insertDevicesGroup(name: String) {
+        viewModelScope.launch {
+            when (val result = addDevicesGroupUseCase.invoke(
+                name = name,
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
                     }
-                )
-                    .updateState()
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        groups = state.value.groups + result.data
+                    )
+                        .updateState()
+                }
             }
         }
+
     }
 
-    private suspend fun updateUnit(
-        id: Int,
+    private fun insertUnit(
         name: String,
         short: String
     ) {
-        when (val result = updateUnitUseCase.invoke(
-            token = state.value.token,
-            id = id,
-            name = name,
-            short = short
-        )) {
-            is ResultWork.Error -> {
-                if (result.error is DataError.TokenError) {
-                    _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
-                } else {
-                    _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+        viewModelScope.launch {
+            when (val result = addUnitUseCase.invoke(
+                name = name,
+                short = short
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        units = state.value.units + result.data
+                    )
+                        .updateState()
                 }
             }
+        }
 
-            is ResultWork.Success -> {
-                //  loadUnits()
+    }
+
+    private fun deleteDevicesGroup(id: String) {
+        viewModelScope.launch {
+            when (val result = deleteDevicesGroupUseCase.invoke(
+                groupId = id
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        groups = state.value.groups.filter { it.id != id }
+                    )
+                        .updateState()
+                }
             }
         }
+
+    }
+
+    private fun deleteUnit(id: String) {
+        viewModelScope.launch {
+            when (val result = deleteUnitUseCase.invoke(
+                id = id
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        units = state.value.units.filter { it.id != id }
+                    )
+                        .updateState()
+                }
+            }
+        }
+
+    }
+
+    private fun updateDevicesGroup(groupDevice: GroupDevice) {
+        viewModelScope.launch {
+            when (val result = updateDevicesGroupUseCase.invoke(
+                groupDevice
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        groups = state.value.groups.map {
+                            if (it.id == result.data.id) {
+                                result.data
+                            } else it
+                        }
+                    )
+                        .updateState()
+                }
+            }
+        }
+
+    }
+
+    private fun updateUnit(
+        measurementUnit: MeasurementUnit,
+    ) {
+        viewModelScope.launch {
+            when (val result = updateUnitUseCase.invoke(
+                measurementUnit = measurementUnit
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDirectoriesEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDirectoriesEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        units = state.value.units.map {
+                            if (it.id == result.data.id) {
+                                result.data
+                            } else it
+                        }
+                    )
+                        .updateState()
+                }
+            }
+        }
+
     }
 
     private fun DirectoriesState.updateState() {

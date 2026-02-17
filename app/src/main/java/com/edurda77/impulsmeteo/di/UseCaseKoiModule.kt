@@ -58,11 +58,11 @@ val useCaseKoiModule = module {
     factoryOf(::DevicesGroupsUseCase) { bind <DevicesGroupsUseCase>() }
     factoryOf(::UnitsUseCase) { bind <UnitsUseCase>() }
     factoryOf(::AddDevicesGroupUseCase) { bind <AddDevicesGroupUseCase>() }
-    single<AddUnitUseCase> { AddUnitUseCase(get()) }
+    factoryOf(::AddUnitUseCase) { bind <AddUnitUseCase>() }
     factoryOf(::DeleteDevicesGroupUseCase) { bind <DeleteDevicesGroupUseCase>() }
-    single<DeleteUnitUseCase> { DeleteUnitUseCase(get()) }
+    factoryOf(::DeleteUnitUseCase) { bind <DeleteUnitUseCase>() }
     factoryOf(::UpdateDevicesGroupUseCase) { bind <UpdateDevicesGroupUseCase>() }
-    single<UpdateUnitUseCase> { UpdateUnitUseCase(get()) }
+    factoryOf(::UpdateUnitUseCase) { bind <UpdateUnitUseCase>() }
     single<DeviceByIdUseCase> { DeviceByIdUseCase(get(), get()) }
     single<WebSocketUseCaseOld> { WebSocketUseCaseOld(get(), get()) }
     factoryOf(::WebSocketUseCase) { bind <WebSocketUseCase>() }

@@ -284,12 +284,10 @@ private fun DirectoriesScreen(
                                                 onEvent(DirectoriesEvent.DeleteUnit(it))
                                             },
                                             titleDelete = stringResource(R.string.sure_delete_unit),
-                                            onUpdateClick = { id, name, short ->
+                                            onUpdateClick = { unit ->
                                                 onEvent(
                                                     DirectoriesEvent.UpdateUnit(
-                                                        id = id,
-                                                        name = name,
-                                                        short = short
+                                                        measurementUnit = unit
                                                     )
                                                 )
                                             }

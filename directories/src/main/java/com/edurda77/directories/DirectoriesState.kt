@@ -7,7 +7,6 @@ import com.edurda77.resources.uikit.UiText
 
 data class DirectoriesState(
     val isLoading: Boolean = true,
-    val token: String = "",
     val directoriesType: DirectoriesType = DirectoriesType.GROUPS,
     val groups: List<GroupDevice> = emptyList(),
     val units: List<MeasurementUnit> = emptyList(),

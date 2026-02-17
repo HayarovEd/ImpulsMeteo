@@ -1,6 +1,7 @@
 package com.edurda77.directories
 
 import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.MeasurementUnit
 
 sealed class DirectoriesEvent {
     data object Refresh : DirectoriesEvent()//
@@ -13,15 +14,13 @@ sealed class DirectoriesEvent {
     ) : DirectoriesEvent()
 
     class DeleteDevicesGroup(val id: String) : DirectoriesEvent()
-    class DeleteUnit(val id: Int) : DirectoriesEvent()
+    class DeleteUnit(val id: String) : DirectoriesEvent()
     class UpdateDevicesGroup(
         val groupDevice: GroupDevice
     ) : DirectoriesEvent()
 
     class UpdateUnit(
-        val id: Int,
-        val name: String,
-        val short: String,
+        val measurementUnit: MeasurementUnit,
     ) : DirectoriesEvent()
 
     class OnSearch(val query:String) : DirectoriesEvent()//

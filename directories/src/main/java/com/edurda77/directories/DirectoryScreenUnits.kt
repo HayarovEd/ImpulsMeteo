@@ -17,8 +17,8 @@ fun DirectoryScreenUnits(
     isEnableUpdate: Boolean,
     units: List<MeasurementUnit>,
     cellsCount: Int,
-    onDeleteClick: (Int) -> Unit,
-    onUpdateClick: (Int, String, String) -> Unit,
+    onDeleteClick: (String) -> Unit,
+    onUpdateClick: (MeasurementUnit) -> Unit,
     titleDelete: String
 ) {
     if (units.isNotEmpty()) {
@@ -34,14 +34,16 @@ fun DirectoryScreenUnits(
                     currentName = unit.name,
                     currentShort = unit.abbreviation,
                     isEnabledUpdate = isEnableUpdate,
-                    onDeleteClick = { /*onDeleteClick(unit.id)*/ },
+                    onDeleteClick = { onDeleteClick(unit.id) },
                     titleDelete = titleDelete,
                     onUpdateClick = { name, short ->
-                       /* onUpdateClick(
-                            unit.id,
-                            name,
-                            short
-                        )*/
+                        onUpdateClick(
+                            MeasurementUnit(
+                                id = unit.id,
+                                name = name,
+                                abbreviation = short
+                            )
+                        )
                     }
                 )
             }

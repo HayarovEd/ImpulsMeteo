@@ -92,6 +92,15 @@ fun MeasurementUnitDto.toMeasurementUnit(): MeasurementUnit {
     )
 }
 
+fun MeasurementUnit.toMeasurementUnitDto(): MeasurementUnitDto {
+    return MeasurementUnitDto(
+        id = id,
+        abbreviation = abbreviation,
+        name = name
+    )
+}
+
+
 fun DeviceDto.toDevice(): Device {
     return Device(
         host = this.host?:"",
