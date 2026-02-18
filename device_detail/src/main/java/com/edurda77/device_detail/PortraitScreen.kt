@@ -38,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -49,8 +50,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -60,15 +61,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
-import com.edurda77.domain.model.ElementHistory
-import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.NotificationDeviceOld
-import com.edurda77.domain.model.NotificationsOld
-import com.edurda77.domain.model.Param
-import com.edurda77.domain.model.SingleDevice
-import com.edurda77.domain.model.UnitMeteoOld
-import com.edurda77.domain.utils.DataError
-import com.edurda77.domain.utils.TEMPERATURE_ID
+import com.edurda77.domain.model.newModels.AuthUser
+import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.newModels.NotificationDevice
+import com.edurda77.domain.model.newModels.NotificationParam
+import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.utils.TEMPERATURE_ABB
+import com.edurda77.domain.utils.formatDateTime
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -76,10 +78,11 @@ import com.edurda77.resources.uikit.UiBaseScaffold
 import com.edurda77.resources.uikit.UiDateContent
 import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiRowDeviceValueWithClick
-import com.edurda77.resources.uikit.UiText
 import com.edurda77.resources.uikit.asUiImageParam
-import com.edurda77.resources.uikit.asUiText
 import com.edurda77.resources.uikit.asUiTextParam
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,13 +90,14 @@ import com.edurda77.resources.uikit.asUiTextParam
 fun PortraitScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    message: UiText?,
+    snackBarState: SnackbarHostState,
     dateFrom: String,
     dateTo: String,
     openFromDateDialog: () -> Unit,
     openToDateDialog: () -> Unit,
     isLoading: Boolean,
-    device: SingleDevice?,
+    device: Device,
+    user: AuthUser,
     currentLimit: Int,
     limits: List<Int>,
     isEnableEdit: Boolean,
@@ -103,7 +107,7 @@ fun PortraitScreen(
     onClickChangeVisibleLimit: () -> Unit,
     onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
-    onAddNotificationToListClick: (Int, String, Int) -> Unit,
+    onAddNotificationToListClick: (String, String, Int) -> Unit,
     onDeleteNotificationFromListClick: (Int) -> Unit,
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onUpdateNotificationClick: () -> Unit,
@@ -118,15 +122,16 @@ fun PortraitScreen(
     isLoadingHistory: Boolean,
     histories: List<List<ElementHistory>>,
     screenWidth: Dp,
-    units: List<UnitMeteoOld>,
+    units: List<MeasurementUnit>,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
     val expandedDropDownloads = remember { mutableStateOf(false) }
-    val configuration = LocalConfiguration.current
+    val windowSize = LocalWindowInfo.current.containerDpSize
 
     UiBaseScaffold(
-        message = message,
+        message = null,
+        snakeBarHostState = snackBarState,
         topBarContent = {
             if (!isLoading) {
                 Row(
@@ -145,13 +150,13 @@ fun PortraitScreen(
                     Column {
                         Text(
                             modifier = modifier,
-                            text = device?.name ?: "",
+                            text = device.name,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = Typography.titleLarge,
                         )
                         Text(
                             modifier = modifier,
-                            text = device?.key ?: "",
+                            text = device.key,
                             style = Typography.titleSmall,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.outline,
@@ -201,7 +206,7 @@ fun PortraitScreen(
                             DropdownMenuItem(
                                 leadingIcon = {
                                     Icon(
-                                        imageVector = if (device?.isFavorite == true) ImageVector.vectorResource(
+                                        imageVector = if (device.id in user.favorites.map { it.deviceId }) ImageVector.vectorResource(
                                             R.drawable.baseline_star_24
                                         ) else ImageVector.vectorResource(
                                             R.drawable.baseline_star_border_24
@@ -303,8 +308,8 @@ fun PortraitScreen(
                         onDeleteNotificationFromListClick = {
                             onDeleteNotificationFromListClick(it)
                         },
-                        notificationsOld = device?.notificationsOld,
-                        params = device?.params ?: emptyList(),
+                        notifications = device.notificationDevice,
+                        params = device.params,
                         onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
                             onUpdateNotificationInListClick(
                                 index,
@@ -352,13 +357,16 @@ fun PortraitScreen(
                         Column {
                             Text(
                                 modifier = modifier,
-                                text = "${stringResource(R.string.updated_data)} ${device?.updatedAt?:""}",
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                text = "${stringResource(R.string.updated_data)} ${
+                                    formatDateTime(
+                                        device.updatedDate
+                                    )
+                                }",                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 style = Typography.bodyLarge,
                             )
                             Text(
                                 modifier = modifier,
-                                text = "${stringResource(R.string.update)} ${(device?.frequency ?: 0) / 1000} ${
+                                text = "${stringResource(R.string.update)} ${device.updateRate / 1000} ${
                                     stringResource(
                                         R.string.sec_unit
                                     )
@@ -396,26 +404,26 @@ fun PortraitScreen(
                         items(historyParams) { param ->
                             val expandedDialog = remember { mutableStateOf(false) }
                             UiRowDeviceValueWithClick(
-                                modifier = modifier.fillMaxWidth(0.4f),
-                                image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                                modifier = modifier,
+                                image = if (param.measurementUnit.abbreviation == TEMPERATURE_ABB && param.value >= 0.0) param.measurementUnit.asUiImageParam(
                                     true
-                                ) else param.idUnit.asUiImageParam(),
+                                ) else param.measurementUnit.asUiImageParam(),
                                 value = param.value,
-                                unit = param.idUnit.asUiTextParam(),
+                                unit = param.measurementUnit.asUiTextParam(),
                                 name = param.label,
                                 hexColor = param.color,
                                 content = {
-                                    UpdateParamDialog(
-                                        param = param,
-                                        units = units,
-                                        onCloseClick = {
-                                            expandedDialog.value = false
-                                        },
-                                        onUpdateClick = {
-                                            expandedDialog.value = false
-                                            onUpdateClick(it)
-                                        }
-                                    )
+                                    /* UpdateParamDialog(
+                                         param = param,
+                                         units = units,
+                                         onCloseClick = {
+                                             expandedDialog.value = false
+                                         },
+                                         onUpdateClick = { param ->
+                                             expandedDialog.value = false
+                                             onUpdateClick(param)
+                                         }
+                                     )*/
                                 },
                                 expandedDialog = expandedDialog.value,
                                 onCloseClick = {
@@ -523,14 +531,14 @@ fun PortraitScreen(
                                     modifier = modifier.align(Alignment.CenterHorizontally),
                                 )
                             } else {
-                            LazyColumn(
-                                modifier = modifier
-                                    .height(configuration.screenHeightDp.dp / 2)
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(35.dp)
-                            ) {
-                                itemsIndexed(histories) { index, history ->
+                                LazyColumn(
+                                    modifier = modifier
+                                        .height(windowSize.height/ 2)
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(35.dp)
+                                ) {
+                                    itemsIndexed(histories) { index, history ->
                                         if (histories.isNotEmpty()) {
                                             Column(
                                                 modifier = modifier
@@ -540,7 +548,7 @@ fun PortraitScreen(
                                                     val param = historyParams[index]
                                                     Text(
                                                         modifier = modifier,
-                                                        text = "${param.label}(${param.idUnit.asUiTextParam()})",
+                                                        text = "${param.label}(${param.measurementUnit.asUiTextParam()})",
                                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                                         style = Typography.titleLarge,
                                                     )
@@ -550,7 +558,7 @@ fun PortraitScreen(
                                                             .aspectRatio(16 / 9f)
                                                             .padding(5.dp),
                                                         infos = history,
-                                                        unit = param.idUnit.asUiTextParam(),
+                                                        unit = param.measurementUnit.asUiTextParam(),
                                                         chartColor = MaterialTheme.colorScheme.outlineVariant,
                                                         textColor = MaterialTheme.colorScheme.onBackground,
                                                         maxValue = stringResource(R.string.max_value),
@@ -585,161 +593,84 @@ fun PortraitScreen(
 )
 @Composable
 private fun PortraitScreenView() {
+    val snackBarState = remember { SnackbarHostState() }
     val params = remember {
         (0..5).map {
             Param(
-                id = it,
-                idUnit = it,
+                id = "$it",
                 name = "Param $it",
                 label = "label",
                 value = it + 5.0,
                 color = "#50e3c2",
                 classIcon = "wi wi-thermometer",
                 isHidden = false,
-                idDevice = 1
+                measurementUnit = MeasurementUnit(
+                    abbreviation = "°C",
+                    id = "6",
+                    name = "temp"
+                )
             )
         }
     }
     val units = remember {
         (0..5).map {
-            UnitMeteoOld(
-                id = it,
+            MeasurementUnit(
+                id = "$it",
                 name = "Param $it",
-                short = "prm$it"
+                abbreviation = "prm$it"
             )
         }
     }
     ImpulsMeteoTheme {
-        PortraitScreen(
+        LandscapeScreen(
             onUpdateClick = {},
             onClickChangeFavorite = {},
             onClickRequestHistory = {},
+            openFilter = {},
             onClickLimit = {},
             onBackClick = {},
-            message = DataError.DataStore.ERROR_READ_DATA.asUiText(),
+            snackBarState = snackBarState,
             dateFrom = "01.04.2025",
             dateTo = "21.04.2025",
             isLoading = false,
             isEnableEdit = true,
+            isOpenFilter = false,
             openFromDateDialog = {},
             openToDateDialog = {},
-            device = SingleDevice(
-                id = 0,
+            device = Device(
+                id = "0",
                 name = "Auto",
                 key = "1223",
                 status = true,
-                video = null,
-                updatedAt = "12-03-2025",
+                videoUrl = "",
+                updatedDate = Instant.parse("12-03-2025")
+                    .toLocalDateTime(TimeZone.currentSystemDefault()),
                 groups = listOf(
-                    GroupDevicesOld(
-                        id = 1,
+                    GroupDevice(
+                        id = "1",
                         name = "Perm"
                     )
                 ),
-                params = listOf(
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    )
-                ),
-                isFavorite = true,
+                params = params,
                 host = "host",
                 port = 0,
-                frequency = 60000,
-                notificationsOld = NotificationsOld(
-                    deviceStatus = true,
-                    notifications = listOf(
-                        NotificationDeviceOld(
-                            condition = "nt1",
-                            idParam = 1,
+                updateRate = 60000,
+                notificationDevice = NotificationDevice(
+                    deviceId = "0",
+                    id = "1",
+                    notificationParam = (1..3).map {
+                        NotificationParam(
+                            condition = "<",
+                            id = "$it",
+                            isSend = true,
+                            paramId = "1",
+                            userId = "1",
                             value = 3
                         )
-                    )
-                )
+                    },
+                    userId = "1",
+                    value = true
+                ),
             ),
             currentLimit = 1,
             limits = listOf(0, 1, 2, 3),
@@ -752,15 +683,27 @@ private fun PortraitScreenView() {
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
             onAddNotificationToListClick = { _, _, _ -> },
-            screenWidth = 800.dp,
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
             isLoadingHistory = false,
             histories = emptyList(),
             units = units,
+            user = AuthUser(
+                createdAt = "12-03-2025",
+                devices = emptyList(),
+                email = "qq@wwe.rt",
+                favorites = emptyList(),
+                id = "1",
+                isEnabled = true,
+                name = "vova",
+                password = null,
+                permissions = emptyList(),
+                updateAt = Instant.parse("12-03-2025")
+                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+            ),
             onDeleteDevice = {},
-            onClickClearSensors = {},
+            onClickClearSensors = {}
         )
     }
 }
@@ -772,161 +715,84 @@ private fun PortraitScreenView() {
 )
 @Composable
 private fun DirectoriesScreenView2() {
+    val snackBarState = remember { SnackbarHostState() }
     val params = remember {
         (0..5).map {
             Param(
-                id = it,
-                idUnit = it,
+                id = "$it",
                 name = "Param $it",
                 label = "label",
                 value = it + 5.0,
                 color = "#50e3c2",
                 classIcon = "wi wi-thermometer",
                 isHidden = false,
-                idDevice = 1
+                measurementUnit = MeasurementUnit(
+                    abbreviation = "°C",
+                    id = "6",
+                    name = "temp"
+                )
             )
         }
     }
     val units = remember {
         (0..5).map {
-            UnitMeteoOld(
-                id = it,
+            MeasurementUnit(
+                id = "$it",
                 name = "Param $it",
-                short = "prm$it"
+                abbreviation = "prm$it"
             )
         }
     }
     ImpulsMeteoTheme {
-        PortraitScreen(
+        LandscapeScreen(
             onUpdateClick = {},
             onClickChangeFavorite = {},
             onClickRequestHistory = {},
+            openFilter = {},
             onClickLimit = {},
             onBackClick = {},
-            message = DataError.DataStore.ERROR_READ_DATA.asUiText(),
+            snackBarState = snackBarState,
             dateFrom = "01.04.2025",
             dateTo = "21.04.2025",
             isLoading = false,
             isEnableEdit = true,
+            isOpenFilter = false,
             openFromDateDialog = {},
             openToDateDialog = {},
-            device = SingleDevice(
-                id = 0,
+            device = Device(
+                id = "0",
                 name = "Auto",
                 key = "1223",
                 status = true,
-                video = null,
-                updatedAt = "12-03-2025",
+                videoUrl = "",
+                updatedDate = Instant.parse("12-03-2025")
+                    .toLocalDateTime(TimeZone.currentSystemDefault()),
                 groups = listOf(
-                    GroupDevicesOld(
-                        id = 1,
+                    GroupDevice(
+                        id = "1",
                         name = "Perm"
                     )
                 ),
-                params = listOf(
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    ),
-                    Param(
-                        id = 0,
-                        idUnit = 1,
-                        name = "Temp",
-                        label = "tmp",
-                        value = 12.0,
-                        color = "#808080",
-                        classIcon = "wi wi-thermometer-exterior",
-                        isHidden = false,
-                        idDevice = 0
-                    )
-                ),
-                isFavorite = true,
+                params = params,
                 host = "host",
                 port = 0,
-                frequency = 60000,
-                notificationsOld = NotificationsOld(
-                    deviceStatus = true,
-                    notifications = listOf(
-                        NotificationDeviceOld(
-                            condition = "nt1",
-                            idParam = 1,
+                updateRate = 60000,
+                notificationDevice = NotificationDevice(
+                    deviceId = "0",
+                    id = "1",
+                    notificationParam = (1..3).map {
+                        NotificationParam(
+                            condition = "<",
+                            id = "$it",
+                            isSend = true,
+                            paramId = "1",
+                            userId = "1",
                             value = 3
                         )
-                    )
-                )
+                    },
+                    userId = "1",
+                    value = true
+                ),
             ),
             currentLimit = 1,
             limits = listOf(0, 1, 2, 3),
@@ -939,15 +805,27 @@ private fun DirectoriesScreenView2() {
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
             onAddNotificationToListClick = { _, _, _ -> },
-            screenWidth = 800.dp,
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
             isLoadingHistory = false,
-            histories = emptyList(),
+            user = AuthUser(
+                createdAt = "12-03-2025",
+                devices = emptyList(),
+                email = "qq@wwe.rt",
+                favorites = emptyList(),
+                id = "1",
+                isEnabled = true,
+                name = "vova",
+                password = null,
+                permissions = emptyList(),
+                updateAt = Instant.parse("12-03-2025")
+                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+            ),
             units = units,
+            histories = emptyList(),
             onDeleteDevice = {},
-            onClickClearSensors = {},
+            onClickClearSensors = {}
         )
     }
 }

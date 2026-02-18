@@ -29,7 +29,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.edurda77.domain.model.NavigationRoute
+import com.edurda77.resources.model.NavigationRoute
 import com.edurda77.resources.R
 import com.edurda77.resources.model.TopLevelRoute
 import com.edurda77.resources.theme.ImpulsMeteoTheme

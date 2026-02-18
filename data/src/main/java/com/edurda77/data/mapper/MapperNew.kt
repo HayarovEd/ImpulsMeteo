@@ -21,7 +21,7 @@ import com.edurda77.domain.model.newModels.Favorite
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.domain.model.newModels.NotificationDevice
-import com.edurda77.domain.model.newModels.NotificationsDevice
+import com.edurda77.domain.model.newModels.NotificationParam
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.model.newModels.Permission
 import com.edurda77.domain.model.newModels.PermissionUser
@@ -40,8 +40,8 @@ fun PermissionDto.toPermission(): Permission {
     )
 }
 
-fun NotificationsDeviceDtos.toNotificationsDevice(): NotificationsDevice {
-    return NotificationsDevice(
+fun NotificationsDeviceDtos.toNotificationsDevice(): NotificationParam {
+    return NotificationParam(
         condition = this.condition,
         id = this.id,
         isSend = this.isSend,
@@ -55,7 +55,7 @@ fun NotificationDeviceDto.toNotificationDevice(): NotificationDevice {
     return NotificationDevice(
         deviceId = this.deviceId,
         id = this.id,
-        notificationsDevice = this.notificationsDeviceDtos.map { it.toNotificationsDevice() },
+        notificationParam = this.notificationsDeviceDtos.map { it.toNotificationsDevice() },
         userId = this.userId,
         value = this.value
     )

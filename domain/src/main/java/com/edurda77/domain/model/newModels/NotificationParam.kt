@@ -1,7 +1,7 @@
 package com.edurda77.domain.model.newModels
 
 
-data class NotificationsDevice(
+data class NotificationParam(
     val condition: String,
     val id: String,
     val isSend: Boolean,

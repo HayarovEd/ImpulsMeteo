@@ -85,9 +85,11 @@ const val REFRESH_TOKEN_LABEL = "refresh_token"
 
 const val DEVICES_CREATE_LABEL = "devices-create"
 const val DEVICES_LIST_LABEL = "devices-list"
+const val DEVICES_EDIT_LABEL = "devices-edit"
 const val USERS_LIST_LABEL = "users-list"
 const val USERS_CREATE_LABEL = "users-create"
 const val USERS_EDIT_LABEL = "users-edit"
 const val USERS_DELETE_LABEL = "users-delete"
 const val DIRECTORY_LIST_LABEL = "directory-list"
 const val DIRECTORY_EDIT_LABEL = "directory-edit"
+

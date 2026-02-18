@@ -20,13 +20,13 @@ import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.newModels.ElementHistory
 import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationDeviceOld
 import com.edurda77.domain.model.NotificationsOld
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.model.newModels.PermissionUser
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
@@ -86,7 +86,7 @@ fun DevicesDto.convertToDevices(): List<DeviceOld> {
                 )
             },
             params = device.paramDtos.map { param ->
-                Param(
+                ParamOld(
                     classIcon = param.classIcon,
                     name = param.name,
                     label = param.label,
@@ -172,7 +172,7 @@ fun BodyDeviceDto.convertToSingleDevice(): SingleDevice {
             )
         },
         params = this.singleDeviceDto.first().params.map {
-            Param(
+            ParamOld(
                 classIcon = it.classIcon,
                 name = it.name,
                 label = it.label,
@@ -254,7 +254,7 @@ fun SingleDevice.convertToSingleDeviceDto(): UpdateDeviceDto {
     )
 }
 
-fun Param.convertToParamDto(): ParamDto {
+fun ParamOld.convertToParamDto(): ParamDto {
     return ParamDto(
         classIcon = this.classIcon,
         id = this.id,

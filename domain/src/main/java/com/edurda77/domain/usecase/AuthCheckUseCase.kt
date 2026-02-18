@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.LocalAuthResult
+import com.edurda77.domain.model.newModels.LocalAuthResult
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.repository.JwtRepository
 import com.edurda77.domain.repository.RemoteRepository

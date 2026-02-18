@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -58,5 +59,8 @@ dependencies {
 
     //Icons
     api(libs.compose.material.icons)
+
+    //Serialization
+    implementation(libs.ktor.serialization.kotlinx.json)
 
 }

@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
 import com.edurda77.domain.utils.DEVICES_LIST_LABEL
 import com.edurda77.resources.R
@@ -66,7 +66,7 @@ import kotlin.random.Random
 @Composable
 fun DevicesScreenRoot(
     onGoToLogin: () -> Unit,
-    onGoToDevice: (Int) -> Unit,
+    onGoToDevice: (String) -> Unit,
     viewModel: DevicesViewModel = koinViewModel(),
     configuration: Configuration,
     bottomBarContent: @Composable () -> Unit = {},
@@ -100,11 +100,11 @@ fun DevicesScreen(
     modifier: Modifier = Modifier,
     state: DevicesState,
     configuration: Configuration,
-    onGoToDevice: (Int) -> Unit,
+    onGoToDevice: (String) -> Unit,
     bottomBarContent: @Composable () -> Unit = {},
     onEvent: (DevicesEvent) -> Unit,
     version: String,
-    snackBarState:SnackbarHostState,
+    snackBarState: SnackbarHostState,
 ) {
     val windowSize = LocalWindowInfo.current.containerDpSize
     val listState = rememberLazyListState()
@@ -472,7 +472,7 @@ fun DevicesScreen(
                                             favorites = user.favorites,
                                             isEnableUpdate = device.id !in state.updatingDeviceIds,
                                             onClickDevice = {
-                                                // onGoToDevice(device.id)
+                                                onGoToDevice(device.id)
                                             },
                                             onClickChangeFavorite = {
                                                 onEvent(DevicesEvent.WorkWithFavorite(device))
@@ -533,66 +533,12 @@ private fun DevicesScreenView2() {
 @Composable
 private fun DevicesScreenView3() {
     val snackBarState = remember { SnackbarHostState() }
-    val params = (1..10).map {
-        Param(
-            id = it,
-            idUnit = 1,
-            name = "Temp",
-            label = "tmp",
-            value = Random.nextDouble(-10.0, 25.0),
-            color = "#808080",
-            classIcon = "wi wi-thermometer-exterior",
-            isHidden = it % 2 != 0,
-            idDevice = 0
-        )
-    }
-    val deviceOlds = (1..10).map {
-        DeviceOld(
-            id = it,
-            name = "Auto N$it",
-            key = "00$it",
-            status = it % 3 != 0,
-            video = null,
-            updatedAt = "12-03-2025",
-            groups = listOf(
-                GroupDevicesOld(
-                    id = 1,
-                    name = "Perm"
-                )
-            ),
-            params = params,
-            isFavorite = it % 2 == 0,
-            statusNotifications = it % 2 == 0,
-        )
-    }
+
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(
                 isLoading = false,
                 isShowSearch = true,
-                devices = mapOf(
-                    Pair(
-                        GroupDevicesOld(
-                            id = 0,
-                            name = "group 1"
-                        ),
-                        deviceOlds
-                    ),
-                    Pair(
-                        GroupDevicesOld(
-                            id = 1,
-                            name = "group 2"
-                        ),
-                        emptyList()
-                    ),
-                    Pair(
-                        GroupDevicesOld(
-                            id = 2,
-                            name = "group 3"
-                        ),
-                        emptyList()
-                    )
-                ),
                 updatingDeviceIds = emptyList()
             ),
             version = "1.0",
@@ -610,66 +556,11 @@ private fun DevicesScreenView3() {
 @Composable
 private fun DevicesScreenView4() {
     val snackBarState = remember { SnackbarHostState() }
-    val params = (1..10).map {
-        Param(
-            id = it,
-            idUnit = 1,
-            name = "Temp",
-            label = "tmp",
-            value = Random.nextDouble(-10.0, 25.0),
-            color = "#808080",
-            classIcon = "wi wi-thermometer-exterior",
-            isHidden = it % 2 != 0,
-            idDevice = 0
-        )
-    }
-    val deviceOlds = (1..10).map {
-        DeviceOld(
-            id = it,
-            name = "Auto N$it",
-            key = "00$it",
-            status = it % 3 != 0,
-            video = null,
-            updatedAt = "12-03-2025",
-            groups = listOf(
-                GroupDevicesOld(
-                    id = 1,
-                    name = "Perm"
-                )
-            ),
-            params = params,
-            isFavorite = it % 2 == 0,
-            statusNotifications = it % 2 == 0,
-        )
-    }
     ImpulsMeteoTheme {
         DevicesScreen(
             state = DevicesState(
                 isLoading = false,
                 isShowSearch = true,
-                devices = mapOf(
-                    Pair(
-                        GroupDevicesOld(
-                            id = 0,
-                            name = "group 1"
-                        ),
-                        deviceOlds
-                    ),
-                    Pair(
-                        GroupDevicesOld(
-                            id = 1,
-                            name = "group 2"
-                        ),
-                        emptyList()
-                    ),
-                    Pair(
-                        GroupDevicesOld(
-                            id = 2,
-                            name = "group 3"
-                        ),
-                        emptyList()
-                    )
-                ),
                 updatingDeviceIds = emptyList()
             ),
             version = "1.0",

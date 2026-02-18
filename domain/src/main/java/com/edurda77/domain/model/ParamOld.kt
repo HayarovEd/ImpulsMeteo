@@ -1,6 +1,6 @@
 package com.edurda77.domain.model
 
-data class Param(
+data class ParamOld(
     val id: Int,
     val idUnit: Int,
     val name: String,

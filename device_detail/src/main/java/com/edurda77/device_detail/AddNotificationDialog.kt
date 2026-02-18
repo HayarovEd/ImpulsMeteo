@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.Typography
@@ -34,7 +34,7 @@ fun AddNotificationDialog(
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
     onConfirmClick: (Int, String, Int) -> Unit,
-    params: List<Param>,
+    params: List<ParamOld>,
 ) {
 
     val condition = remember { mutableStateOf("") }

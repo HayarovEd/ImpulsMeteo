@@ -1,4 +1,4 @@
-package com.edurda77.domain.model
+package com.edurda77.domain.model.newModels
 
 sealed interface LocalAuthResult {
     data object LocalNotSession: LocalAuthResult

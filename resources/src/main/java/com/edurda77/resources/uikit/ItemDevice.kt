@@ -215,7 +215,7 @@ private fun ItemDeviceView1() {
                 notificationDevice = NotificationDevice(
                     deviceId = "1",
                     id = "0",
-                    notificationsDevice = emptyList(),
+                    notificationParam = emptyList(),
                     userId = "8",
                     value = false
                 )

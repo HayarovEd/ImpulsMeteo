@@ -33,7 +33,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.edurda77.domain.model.NotificationDeviceOld
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.utils.NEGATIVE_ID
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
@@ -47,7 +47,7 @@ fun UpdateNotificationDialog(
     onCloseClick: () -> Unit,
     notificationDeviceOld: NotificationDeviceOld,
     onConfirmClick: (Int, Int, String, Int) -> Unit,
-    params: List<Param>,
+    params: List<ParamOld>,
 ) {
     val condition = remember { mutableStateOf(notificationDeviceOld.condition) }
     val value = remember { mutableStateOf(notificationDeviceOld.value.toString()) }
@@ -237,7 +237,7 @@ fun UpdateNotificationDialog(
 private fun UpdateNotificationDialogView() {
     val params = remember {
         (0..5).map {
-            Param(
+            ParamOld(
                 id = it,
                 idUnit = it,
                 name = "Param $it",
@@ -271,7 +271,7 @@ private fun UpdateNotificationDialogView() {
 private fun UpdateNotificationDialogView2() {
     val params = remember {
         (0..5).map {
-            Param(
+            ParamOld(
                 id = it,
                 idUnit = it,
                 name = "Param $it",

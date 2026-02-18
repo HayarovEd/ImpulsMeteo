@@ -1,4 +1,4 @@
-package com.edurda77.domain.model
+package com.edurda77.resources.model
 
 import kotlinx.serialization.Serializable
 

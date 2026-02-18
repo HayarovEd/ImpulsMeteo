@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.newModels.ElementHistory
 import com.edurda77.domain.utils.calculateInterval
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.domain.utils.formatted

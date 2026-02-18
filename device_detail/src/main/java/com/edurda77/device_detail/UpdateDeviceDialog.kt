@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.GroupDevicesOld
+import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -45,10 +45,10 @@ fun UpdateDeviceDialog(
     label: String,
     key: String,
     frequency: Int,
-    groups: List<GroupDevicesOld>,
+    groups: List<GroupDevice>,
     onUpdateClick: (String, String, String) -> Unit,
-    onUpdateGroups: (GroupDevicesOld) -> Unit,
-    selectedGroups: List<GroupDevicesOld>,
+    onUpdateGroups: (GroupDevice) -> Unit,
+    selectedGroups: List<GroupDevice>,
 ) {
     val currentName = remember { mutableStateOf(label) }
     val currentKey = remember { mutableStateOf(key) }
@@ -190,20 +190,20 @@ private fun UpdateDeviceDialogView() {
             key = "key",
             frequency = 60000,
             groups = listOf(
-                GroupDevicesOld(
-                    id = 1,
+                GroupDevice(
+                    id = "1",
                     name = "Perm"
                 ),
-                GroupDevicesOld(
-                    id = 2,
+                GroupDevice(
+                    id = "2",
                     name = "All"
                 )
             ),
             onUpdateClick = { _, _, _ -> },
             onUpdateGroups = {},
             selectedGroups = listOf(
-                GroupDevicesOld(
-                    id = 1,
+                GroupDevice(
+                    id = "1",
                     name = "Perm"
                 )
             ),
@@ -223,20 +223,20 @@ private fun UpdateDeviceDialogView2() {
             key = "key",
             frequency = 60000,
             groups = listOf(
-                GroupDevicesOld(
-                    id = 1,
+                GroupDevice(
+                    id = "1",
                     name = "Perm"
                 ),
-                GroupDevicesOld(
-                    id = 2,
+                GroupDevice(
+                    id = "2",
                     name = "All"
                 )
             ),
             onUpdateClick = { _, _, _ -> },
             onUpdateGroups = {},
             selectedGroups = listOf(
-                GroupDevicesOld(
-                    id = 1,
+                GroupDevice(
+                    id = "1",
                     name = "Perm"
                 )
             ),

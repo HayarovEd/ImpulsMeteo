@@ -8,7 +8,7 @@ import com.edurda77.data.remote.websocket_success_subscribe.SuccessSubscribeDto
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.MessageWebSocketStart
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.model.SuccessSubscribe
 import com.edurda77.domain.utils.IS_HIDDEN
 import com.edurda77.domain.utils.STATUS_ON
@@ -62,7 +62,7 @@ fun convertDeviceMessageToDevice(message: String): DeviceOld {
             )
         },
         params = originalData.wsDevices.first().wsParams.map { param ->
-            Param(
+            ParamOld(
                 classIcon = param.classIcon,
                 name = param.name,
                 label = param.label,

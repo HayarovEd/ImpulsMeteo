@@ -15,4 +15,5 @@ interface DevicesRepository {
     ): ResultWork<Device, DataError>
 
     suspend fun getDevices(accessToken: String): ResultWork<List<Device>, DataError>
+    suspend fun getDeviceById(accessToken: String, deviceId: String): ResultWork<Device, DataError>
 }

@@ -6,30 +6,11 @@ import com.edurda77.directories.DirectoriesViewModel
 import com.edurda77.login_screen.LoginViewModel
 import com.edurda77.splash.SplashViewModel
 import com.edurda77.users_list.UsersViewModel
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel {
-        DeviceViewModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get (),
-        )
-    }
+    viewModelOf(::DeviceViewModel)
     viewModelOf(::DevicesViewModel)
     viewModelOf(::DirectoriesViewModel)
     viewModelOf(::LoginViewModel)

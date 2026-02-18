@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.model.UnitMeteoOld
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
@@ -43,10 +43,10 @@ import com.edurda77.resources.uikit.UiTextField
 @Composable
 fun UpdateParamDialog(
     modifier: Modifier = Modifier,
-    param: Param,
+    param: ParamOld,
     units: List<UnitMeteoOld>,
     onCloseClick: () -> Unit,
-    onUpdateClick: (Param) -> Unit,
+    onUpdateClick: (ParamOld) -> Unit,
 ) {
     val label = remember { mutableStateOf(param.label) }
     val selectedUnit =
@@ -197,7 +197,7 @@ private fun UpdateParamDialogView1() {
     } }
     ImpulsMeteoTheme {
         UpdateParamDialog(
-            param = Param(
+            param = ParamOld(
                 id = 0,
                 idUnit = 0,
                 name = "Param 0",
@@ -229,7 +229,7 @@ private fun UpdateParamDialog2() {
     } }
     ImpulsMeteoTheme {
         UpdateParamDialog(
-            param = Param(
+            param = ParamOld(
                 id = 0,
                 idUnit = 0,
                 name = "Param 0",

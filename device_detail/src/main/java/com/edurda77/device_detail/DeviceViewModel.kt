@@ -5,9 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.NavigationRoute
-import com.edurda77.domain.model.NotificationDeviceOld
-import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteParamUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
@@ -18,25 +15,23 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
+import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.WebSocketUseCaseOld
-import com.edurda77.domain.utils.NEGATIVE_ID
+import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import com.edurda77.domain.utils.convertToStringDateTime
-import com.edurda77.domain.utils.updateDevice
+import com.edurda77.resources.model.NavigationRoute
 import com.edurda77.resources.uikit.asUiText
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class DeviceViewModel(
     private val deviceByIdUseCase: DeviceByIdUseCase,
@@ -55,10 +50,11 @@ class DeviceViewModel(
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
     private val deleteParamUseCase: DeleteParamUseCase,
 ) : ViewModel() {
+    private val deviceId = savedStateHandle.toRoute<NavigationRoute.Device>().id
     private var _state = MutableStateFlow(DeviceState())
     val state = _state
         .onStart {
-            loadLocalData()
+            loadUserData()
         }
         .stateIn(
             viewModelScope,
@@ -67,8 +63,9 @@ class DeviceViewModel(
         )
     private var _startGroups = MutableStateFlow<List<GroupDevicesOld>>(emptyList())
 
-    private val _eventFlow = MutableSharedFlow<UiDeviceEvents>()
-    val eventFlow = _eventFlow.asSharedFlow()
+
+    private val _eventFlow = Channel<UiDeviceEvents>()
+    val eventFlow = _eventFlow.receiveAsFlow()
 
     private val mutex = Mutex()
 
@@ -93,7 +90,7 @@ class DeviceViewModel(
             }
 
             is DeviceEvent.AddNewNotificationToList -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     val updateList =
                         state.value.device?.notificationsOld?.notifications?.toMutableList()
                     updateList?.add(
@@ -113,11 +110,11 @@ class DeviceViewModel(
                         )
                             .updateState()
                     }
-                }
+                }*/
             }
 
             is DeviceEvent.DeleteNotificationFromList -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     val updateList =
                         state.value.device?.notificationsOld?.notifications?.toMutableList()
                     updateList?.removeAt(event.index)
@@ -131,11 +128,11 @@ class DeviceViewModel(
                         )
                             .updateState()
                     }
-                }
+                }*/
             }
 
             is DeviceEvent.UpdateNotificationInList -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     val updateList =
                         state.value.device?.notificationsOld?.notifications?.toMutableList()
                     if (state.value.device != null) {
@@ -156,11 +153,11 @@ class DeviceViewModel(
                         )
                             .updateState()
                     }
-                }
+                }*/
             }
 
             DeviceEvent.ChangeStatusNotifications -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     if (state.value.device != null) {
                         _state.value.copy(
                             device = state.value.device?.copy(
@@ -171,11 +168,11 @@ class DeviceViewModel(
                         )
                             .updateState()
                     }
-                }
+                }*/
             }
 
             DeviceEvent.UpdateNotifications -> {
-                if (state.value.device != null) {
+                /*if (state.value.device != null) {
                     viewModelScope.launch {
                         when (val result = updateNotificationsDeviceUseCase.invoke(
                             token = state.value.token,
@@ -194,28 +191,28 @@ class DeviceViewModel(
                             }
                         }
                     }
-                }
+                }*/
             }
 
             is DeviceEvent.UpdateSelectedGroups -> {
-                if (state.value.device != null) {
-                    val updatedGroups = state.value.device!!.groups.toMutableList()
-                    if (updatedGroups.contains(event.groupDevicesOld)) {
-                        updatedGroups.remove(event.groupDevicesOld)
-                    } else {
-                        updatedGroups.add(event.groupDevicesOld)
-                    }
-                    _state.value.copy(
-                        device = state.value.device!!.copy(
-                            groups = updatedGroups
-                        )
-                    )
-                        .updateState()
-                }
+                /* if (state.value.device != null) {
+                     val updatedGroups = state.value.device!!.groups.toMutableList()
+                     if (updatedGroups.contains(event.groupDevicesOld)) {
+                         updatedGroups.remove(event.groupDevicesOld)
+                     } else {
+                         updatedGroups.add(event.groupDevicesOld)
+                     }
+                     _state.value.copy(
+                         device = state.value.device!!.copy(
+                             groups = updatedGroups
+                         )
+                     )
+                         .updateState()
+                 }*/
             }
 
             is DeviceEvent.UpdateDevice -> {
-                if (state.value.device != null) {
+                /*if (state.value.device != null) {
                     viewModelScope.launch {
                         val device = state.value.device!!.copy(
                             name = event.name,
@@ -241,22 +238,22 @@ class DeviceViewModel(
                             }
                         }
                     }
-                }
+                }*/
             }
 
             DeviceEvent.BackStartGroups -> {
-                if (state.value.device != null) {
-                    _state.value.copy(
-                        device = state.value.device!!.copy(
-                            groups = _startGroups.value
-                        )
-                    )
-                        .updateState()
-                }
+                /* if (state.value.device != null) {
+                     _state.value.copy(
+                         device = state.value.device!!.copy(
+                             groups = _startGroups.value
+                         )
+                     )
+                         .updateState()
+                 }*/
             }
 
             is DeviceEvent.UpdateParam -> {
-                if (state.value.device != null) {
+                /*if (state.value.device != null) {
                     viewModelScope.launch {
                         when (val result = updateParamUseCase.invoke(
                             token = state.value.token,
@@ -274,11 +271,11 @@ class DeviceViewModel(
                             }
                         }
                     }
-                }
+                }*/
             }
 
             is DeviceEvent.WorkWithFavorite -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     state.value.device?.let { device ->
                         if (device.isFavorite) {
                             when (val result = removeFavoriteUseCase.invoke(
@@ -300,7 +297,7 @@ class DeviceViewModel(
                                 }
                             }
                         } else {
-                           /* when (val result = updateFavoriteUseCase.invoke(
+                           *//* when (val result = updateFavoriteUseCase.invoke(
                                 deviceId = device.id,
                                 token = state.value.token
                             )) {
@@ -317,14 +314,14 @@ class DeviceViewModel(
                                     )
                                         .updateState()
                                 }
-                            }*/
+                            }*//*
                         }
                     }
-                }
+                }*/
             }
 
             DeviceEvent.DeleteDevice -> {
-                viewModelScope.launch {
+                /*viewModelScope.launch {
                     _state.value.copy(
                         isLoading = true,
                     )
@@ -350,7 +347,7 @@ class DeviceViewModel(
                             _eventFlow.emit(UiDeviceEvents.BackNavigationEvent)
                         }
                     }
-                }
+                }*/
             }
 
             DeviceEvent.ClearDeviceSensorData -> {
@@ -359,40 +356,39 @@ class DeviceViewModel(
         }
     }
 
-
-    private fun loadLocalData() {
+    private fun loadUserData() {
+        _state.value.copy(
+            isLoading = true,
+        )
+            .updateState()
         viewModelScope.launch {
-            localTokenUseCase.invoke().collect { collectedToken ->
-                when (collectedToken) {
-                    is ResultWork.Error -> {
+            when (val result = loggedUserUseCase.invoke()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
                         _state.value.copy(
                             isLoading = false,
-                            message = collectedToken.error.asUiText()
                         )
                             .updateState()
                     }
+                }
 
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            token = collectedToken.data.accessToken
-                        )
-                            .updateState()
-                        delay(500)
-                        loadLoggedUserData(collectedToken.data.accessToken)
-                    }
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        authUser = result.data,
+                    )
+                        .updateState()
+                    loadDevice()
                 }
             }
         }
     }
 
-    private suspend fun loadLoggedUserData(token: String) {
-        val deviceId = savedStateHandle.toRoute<NavigationRoute.Device>().id
 
-        _state.value.copy(
-            deviceId = deviceId.toIntOrNull() ?: NEGATIVE_ID
-        )
-            .updateState()
-        delay(500)
+    private suspend fun loadLoggedUserData() {
+
         /*when (val result = loggedUserUseCase.invoke(token)) {
             is ResultWork.Error -> {
                 _state.value.copy(
@@ -424,30 +420,27 @@ class DeviceViewModel(
         }*/
     }
 
-    private suspend fun loadDevice() {
-        val deviceId = state.value.deviceId
-        if (deviceId != NEGATIVE_ID) {
-            deviceByIdUseCase.invoke(
-                token = state.value.token,
-                id = deviceId
-            ).collect { collector ->
-                when (collector) {
-                    is ResultWork.Error -> {
+    private fun loadDevice() {
+        viewModelScope.launch {
+            when (val result = deviceByIdUseCase.invoke(deviceId)) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
                         _state.value.copy(
                             isLoading = false,
-                            message = collector.error.asUiText()
                         )
                             .updateState()
                     }
+                }
 
-                    is ResultWork.Success -> {
-                        _state.value.copy(
-                            isLoading = false,
-                            device = collector.data
-                        )
-                            .updateState()
-                        _startGroups.value = collector.data.groups
-                    }
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        device = result.data,
+                        isLoading = false
+                    )
+                        .updateState()
                 }
             }
         }
@@ -491,7 +484,7 @@ class DeviceViewModel(
 
     private suspend fun loadUpdateData() {
 
-        webSocketUseCaseOld.invoke(
+      /*  webSocketUseCaseOld.invoke(
             token = state.value.token,
             ids = listOf(state.value.deviceId)
         ).collect { collector ->
@@ -515,7 +508,7 @@ class DeviceViewModel(
                     }
                 }
             }
-        }
+        }*/
     }
 
     private fun loadHistory(limit: Int) {
@@ -524,7 +517,7 @@ class DeviceViewModel(
             historyStates = emptyList(),
         )
             .updateState()
-        viewModelScope.launch {
+        /*viewModelScope.launch {
             when (val result = historyUseCase.invoke(
                 token = state.value.token,
                 id = state.value.deviceId,
@@ -548,7 +541,7 @@ class DeviceViewModel(
                         .updateState()
                 }
             }
-        }
+        }*/
     }
 
     private fun clearSensors() {
@@ -559,7 +552,7 @@ class DeviceViewModel(
                 .updateState()
 
             var count = 0
-            viewModelScope.launch {
+            /*viewModelScope.launch {
                 device.params.forEach { param ->
                     when (val result = deleteParamUseCase(
                         token = state.value.token,
@@ -597,7 +590,7 @@ class DeviceViewModel(
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 

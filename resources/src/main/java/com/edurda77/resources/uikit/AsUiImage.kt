@@ -18,6 +18,7 @@ fun Int.asUiIconParam(): ImageVector {
         else -> ImageVector.vectorResource(R.drawable.no_icon)
     }
 }*/
+/*
 @Composable
 fun Int.asUiImageParam(isHeightZero: Boolean = false): Painter {
     return when (this) {
@@ -29,15 +30,16 @@ fun Int.asUiImageParam(isHeightZero: Boolean = false): Painter {
         else -> painterResource(R.drawable.not_available)
     }
 }
+*/
 
 @Composable
-fun MeasurementUnit.asUiImageParam(isHeightZero: Boolean = false): Painter {
-    return when (this.abbreviation) {
+fun MeasurementUnit?.asUiImageParam(isHeightZero: Boolean = false): Painter {
+    return when (this?.abbreviation) {
         "°C" -> if (isHeightZero) painterResource(R.drawable.thermometer) else painterResource(R.drawable.thermometer_exterior)
         "%" -> painterResource(R.drawable.humidity)
         "мм.рт.ст." -> painterResource(R.drawable.pressure)
         "м." -> painterResource(R.drawable.sea_level)
-        //"в." -> painterResource(R.drawable.sea_level)
+        "в." -> painterResource(R.drawable.electric_bolt_24dp)
         else -> painterResource(R.drawable.not_available)
     }
 }

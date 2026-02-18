@@ -1,7 +1,6 @@
-package com.edurda77.domain.model
+package com.edurda77.domain.model.newModels
 
 import kotlinx.datetime.LocalDateTime
-
 
 data class ElementHistory(
     val time: LocalDateTime,

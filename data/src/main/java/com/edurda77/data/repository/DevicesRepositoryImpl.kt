@@ -68,4 +68,19 @@ class DevicesRepositoryImpl(
             }
         }
     }
+
+    override suspend fun getDeviceById(
+        accessToken: String,
+        deviceId: String,
+    ): ResultWork<Device, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.get(NEW_BASE_URL + "devices/"+ deviceId) {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(accessToken)
+                }
+                result.call.body<DeviceDto>().toDevice()
+            }
+        }
+    }
 }

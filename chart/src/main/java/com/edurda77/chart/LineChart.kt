@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edurda77.domain.model.DataPoint
-import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.newModels.DataPoint
+import com.edurda77.domain.model.newModels.ElementHistory
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import kotlin.time.Clock

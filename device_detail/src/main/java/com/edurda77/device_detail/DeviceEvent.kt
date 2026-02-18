@@ -1,7 +1,8 @@
 package com.edurda77.device_detail
 
-import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
+import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.Param
 import kotlinx.datetime.LocalDateTime
 
 
@@ -10,7 +11,7 @@ sealed class DeviceEvent {
     class OnSetToDate(val dateTime: LocalDateTime) : DeviceEvent()
     class GetHistory(val limit: Int) : DeviceEvent()
     class AddNewNotificationToList(
-        val idParam: Int,
+        val idParam: String,
         val condition: String,
         val value: Int
     ) : DeviceEvent()
@@ -28,7 +29,7 @@ sealed class DeviceEvent {
 
     data object ChangeStatusNotifications : DeviceEvent()
     data object UpdateNotifications : DeviceEvent()
-    class UpdateSelectedGroups(val groupDevicesOld: GroupDevicesOld) : DeviceEvent()
+    class UpdateSelectedGroups(val groupDevices: GroupDevice) : DeviceEvent()
     class UpdateParam(val param: Param) : DeviceEvent()
     class UpdateDevice(val name: String, val key: String, val frequency: String) : DeviceEvent()
     data object DeleteDevice : DeviceEvent()

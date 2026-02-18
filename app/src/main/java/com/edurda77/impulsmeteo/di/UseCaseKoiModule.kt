@@ -41,9 +41,9 @@ import org.koin.dsl.module
 
 val useCaseKoiModule = module {
     factoryOf(::AuthCheckUseCase) { bind<AuthCheckUseCase>() }
-    single<LoginUseCase> { LoginUseCase(get(), get()) }
-    single<ReadLocalAuthorizationUseCase> { ReadLocalAuthorizationUseCase(get()) }
-    single<SaveLocalAuthorizationUseCase> { SaveLocalAuthorizationUseCase(get()) }
+    factoryOf(::LoginUseCase) { bind<LoginUseCase>() }
+    factoryOf(::ReadLocalAuthorizationUseCase) { bind<ReadLocalAuthorizationUseCase>() }
+    factoryOf(::SaveLocalAuthorizationUseCase) { bind<SaveLocalAuthorizationUseCase>() }
     factoryOf(::LoggedUserUseCase) { bind<LoggedUserUseCase>() }
     factoryOf(::TokenManager) { bind<TokenManager>() }
     single<LocalTokenUseCase> { LocalTokenUseCase(get()) }
@@ -63,7 +63,7 @@ val useCaseKoiModule = module {
     factoryOf(::DeleteUnitUseCase) { bind <DeleteUnitUseCase>() }
     factoryOf(::UpdateDevicesGroupUseCase) { bind <UpdateDevicesGroupUseCase>() }
     factoryOf(::UpdateUnitUseCase) { bind <UpdateUnitUseCase>() }
-    single<DeviceByIdUseCase> { DeviceByIdUseCase(get(), get()) }
+    factoryOf(::DeviceByIdUseCase) { bind <DeviceByIdUseCase>() }
     single<WebSocketUseCaseOld> { WebSocketUseCaseOld(get(), get()) }
     factoryOf(::WebSocketUseCase) { bind <WebSocketUseCase>() }
     factoryOf(::CloseWebsocketUseCase) { bind <CloseWebsocketUseCase>() }

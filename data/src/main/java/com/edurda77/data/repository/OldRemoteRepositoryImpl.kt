@@ -38,12 +38,12 @@ import com.edurda77.data.remote.update_user.UpdateUserWithPasswordDto
 import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.ElementHistory
+import com.edurda77.domain.model.newModels.ElementHistory
 import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
 import com.edurda77.domain.model.NotificationsOld
-import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.model.PermissionsOld
 import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.UnitMeteoOld
@@ -598,7 +598,7 @@ class OldRemoteRepositoryImpl(
 
     override suspend fun updateParam(
         token: String,
-        param: Param
+        param: ParamOld
     ): ResultWork<Unit, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {

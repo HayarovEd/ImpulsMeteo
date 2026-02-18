@@ -1,8 +1,6 @@
 package com.edurda77.devices_list
 
 
-import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.utils.convertToMapGroupedDevices2
@@ -14,7 +12,6 @@ data class DevicesState(
     val isLoading: Boolean = false,
     val query: String = "",
     val numberSelectedGroup: Int = 0,
-    val devices: Map<GroupDevicesOld, List<DeviceOld>> = emptyMap(),
     val isShowSearch: Boolean = false,
     val selectedGroups: List<GroupDevice> = emptyList(),
     val groups: List<GroupDevice> = emptyList(),

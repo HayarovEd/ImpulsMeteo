@@ -29,7 +29,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,10 +40,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.NotificationDeviceOld
-import com.edurda77.domain.model.NotificationsOld
-import com.edurda77.domain.model.Param
-import com.edurda77.domain.utils.NEGATIVE_ID
+import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.newModels.NotificationDevice
+import com.edurda77.domain.model.newModels.NotificationParam
+import com.edurda77.domain.model.newModels.Param
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -57,9 +56,9 @@ import com.edurda77.resources.uikit.asUiImageParam
 fun NotificationsContent(
     modifier: Modifier = Modifier,
     onClickChangeVisibleBottomSheet: () -> Unit,
-    notificationsOld: NotificationsOld?,
+    notifications: NotificationDevice?,
     params: List<Param>,
-    onAddNotificationToListClick: (Int, String, Int) -> Unit,
+    onAddNotificationToListClick: (String, String, Int) -> Unit,
     onDeleteNotificationFromListClick: (Int) -> Unit,
     onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onChangeStatusClick: () -> Unit,
@@ -68,7 +67,7 @@ fun NotificationsContent(
     val expandedUpdateNotificationDialog = remember { mutableStateOf(false) }
     val expandedParameters = remember { mutableStateOf(false) }
     val parameter = remember { mutableStateOf("") }
-    val parameterId = remember { mutableIntStateOf(NEGATIVE_ID) }
+    val parameterId = remember { mutableStateOf("") }
     val conditions = listOf("<=", ">=")
     val currentCondition = remember { mutableStateOf(conditions.first()) }
     val value = remember { mutableStateOf("") }
@@ -115,7 +114,7 @@ fun NotificationsContent(
             )
             Spacer(modifier = modifier.width(5.dp))
             Switch(
-                checked = notificationsOld?.deviceStatus == true,
+                checked = notifications?.value == true,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White
                 ),
@@ -159,7 +158,7 @@ fun NotificationsContent(
                                 )
                             }, onClick = {
                                 parameter.value = param.label
-                                parameterId.intValue = param.id
+                                parameterId.value = param.id
                                 expandedParameters.value = false
                             })
                     }
@@ -237,7 +236,7 @@ fun NotificationsContent(
             shape = MaterialTheme.shapes.medium,
             onClick = {
                 onAddNotificationToListClick(
-                    parameterId.intValue,
+                    parameterId.value,
                     currentCondition.value,
                     value.value.toIntOrNull() ?: 0
                 )
@@ -250,23 +249,23 @@ fun NotificationsContent(
             )
         }
         Spacer(modifier = modifier.height(10.dp))
-        LazyColumn(
-            modifier = modifier
-                .fillMaxWidth(),
-        ) {
-            if (notificationsOld?.notifications != null) {
-                itemsIndexed(notificationsOld.notifications) { index, notification ->
-                    val intIcon = params.firstOrNull { it.id == notification.idParam }?.idUnit ?: 1
-                    val description =
-                        params.firstOrNull { it.id == notification.idParam }?.name ?: ""
-                    val valueNotification = params.firstOrNull { it.id == notification.idParam }?.value ?: ""
+        notifications?.let { nf->
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxWidth(),
+            ) {
+                itemsIndexed(nf.notificationParam) { index, notificationParam ->
+                    val currentNf = params.firstOrNull { it.id == notificationParam.paramId }
+                    val intIcon = currentNf?.measurementUnit
+                    val description = currentNf?.name
+                    val valueNotification = currentNf?.value
                     if (expandedUpdateNotificationDialog.value) {
                         UiDialog(
                             onCloseDialog = {
                                 expandedUpdateNotificationDialog.value = false
                             },
                             content = {
-                                UpdateNotificationDialog(
+                               /* UpdateNotificationDialog(
                                     onCloseClick = {
                                         expandedUpdateNotificationDialog.value = false
                                     },
@@ -281,8 +280,8 @@ fun NotificationsContent(
                                         )
                                     },
                                     params = params,
-                                    notificationDeviceOld = notification
-                                )
+                                    notificationDeviceOld = notificationParam
+                                )*/
                             }
                         )
                     }
@@ -303,7 +302,7 @@ fun NotificationsContent(
                         )
                         Text(
                             modifier = Modifier,
-                            text = "$description ${notification.condition} $valueNotification",
+                            text = "$description ${notificationParam.condition} $valueNotification",
                             color = Color.White,
                             style = Typography.labelSmall,
                         )
@@ -366,15 +365,18 @@ private fun NotificationsContentView() {
     val params = remember {
         (0..5).map {
             Param(
-                id = it,
-                idUnit = it,
+                id = "$it",
                 name = "Param $it",
                 label = "label",
                 value = it + 5.0,
                 color = "#50e3c2",
                 classIcon = "wi wi-thermometer",
                 isHidden = false,
-                idDevice = 1
+                measurementUnit = MeasurementUnit(
+                    abbreviation = "°C",
+                    id = "6",
+                    name = "temp"
+                )
             )
         }
     }
@@ -386,15 +388,21 @@ private fun NotificationsContentView() {
             onChangeStatusClick = {},
             onAddNotificationToListClick = { _, _, _ -> },
             onDeleteNotificationFromListClick = {},
-            notificationsOld = NotificationsOld(
-                deviceStatus = true,
-                notifications = listOf(
-                    NotificationDeviceOld(
-                        condition = "nt1",
-                        idParam = 1,
+            notifications = NotificationDevice(
+               deviceId = "0",
+                id = "1",
+                notificationParam = (1..3).map {
+                    NotificationParam(
+                        condition = "<",
+                        id = "$it",
+                        isSend = true,
+                        paramId = "1",
+                        userId = "1",
                         value = 3
                     )
-                )
+                },
+                userId = "1",
+                value = true
             ),
             params = params
         )
@@ -409,15 +417,18 @@ private fun NotificationsContentView2() {
     val params = remember {
         (0..5).map {
             Param(
-                id = it,
-                idUnit = it,
+                id = "$it",
                 name = "Param $it",
                 label = "label",
                 value = it + 5.0,
                 color = "#50e3c2",
                 classIcon = "wi wi-thermometer",
                 isHidden = false,
-                idDevice = 1
+                measurementUnit = MeasurementUnit(
+                    abbreviation = "°C",
+                    id = "6",
+                    name = "temp"
+                )
             )
         }
     }
@@ -429,15 +440,21 @@ private fun NotificationsContentView2() {
             onChangeStatusClick = {},
             onAddNotificationToListClick = { _, _, _ -> },
             onDeleteNotificationFromListClick = {},
-            notificationsOld = NotificationsOld(
-                deviceStatus = true,
-                notifications = listOf(
-                    NotificationDeviceOld(
-                        condition = "nt1",
-                        idParam = 1,
+            notifications = NotificationDevice(
+                deviceId = "0",
+                id = "1",
+                notificationParam = (1..3).map {
+                    NotificationParam(
+                        condition = "<",
+                        id = "$it",
+                        isSend = true,
+                        paramId = "1",
+                        userId = "1",
                         value = 3
                     )
-                )
+                },
+                userId = "1",
+                value = true
             ),
             params = params
         )

@@ -11,7 +11,7 @@ data class SingleDevice(
     val updatedAt: String?,
     val frequency: Int,
     val groups: List<GroupDevicesOld>,
-    val params: List<Param>,
+    val params: List<ParamOld>,
     val notificationsOld: NotificationsOld,
     val isFavorite: Boolean = false
 )
