@@ -24,7 +24,7 @@ data class DeviceState (
     val fromDate: LocalDateTime = Clock.System.now()
         .minus(DateTimePeriod(months = 1), TimeZone.currentSystemDefault())
         .toLocalDateTime(TimeZone.currentSystemDefault()),
-    val historyStates: List<List<History>> = emptyList(),
+    val histories: Map<String, List<History>> = emptyMap(),
     val isLoadingHistory: Boolean = false,
     val authUser: AuthUser? = null,
 )

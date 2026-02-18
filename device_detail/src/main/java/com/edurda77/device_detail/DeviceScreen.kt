@@ -168,7 +168,7 @@ fun DeviceScreen(
                     limits = limits,
                     historyParams = device.params,
                     isLoadingHistory = state.value.isLoadingHistory,
-                    histories = state.value.historyStates,
+                    histories = state.value.histories,
                     units = state.value.units,
                     openFilter = {
                         isFilterOpen.value = it
@@ -257,7 +257,7 @@ fun DeviceScreen(
                     historyParams = state.value.device?.params ?: emptyList(),
                     screenWidth = windowSize.width,
                     isLoadingHistory = state.value.isLoadingHistory,
-                    histories = state.value.historyStates,
+                    histories = state.value.histories,
                     units = state.value.units,
                     openFromDateDialog = {
                         expandedFromDateDialog.value = true

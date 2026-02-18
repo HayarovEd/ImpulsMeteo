@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -117,7 +116,7 @@ fun LandscapeScreen(
     onDeleteDevice: () -> Unit,
     units: List<MeasurementUnit>,
     isLoadingHistory: Boolean,
-    histories: List<List<History>>,
+    histories: Map<String, List<History>>,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }
@@ -530,17 +529,19 @@ fun LandscapeScreen(
                                         .fillMaxWidth(),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    itemsIndexed(histories.take(6)) { index, history ->
-                                        if (histories.isNotEmpty()) {
+                                    items(histories.keys.toList()) { nameParam ->
+                                        val infos = histories[nameParam]
+                                        if (!infos.isNullOrEmpty()) {
                                             Column(
                                                 modifier = modifier
                                                     .fillMaxWidth()
                                             ) {
-                                                if (histories.isNotEmpty()) {
-                                                    val param = historyParams[index]
+                                                val param =
+                                                    historyParams.firstOrNull { it.name == nameParam }
+                                                param?.let { pr->
                                                     Text(
                                                         modifier = modifier,
-                                                        text = "${param.label}(${param.measurementUnit.asUiTextParam()})",
+                                                        text = "${pr.label}(${pr.measurementUnit.asUiTextParam()})",
                                                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                                                         style = Typography.titleLarge,
                                                     )
@@ -549,7 +550,7 @@ fun LandscapeScreen(
                                                             .fillMaxWidth()
                                                             .height(300.dp)
                                                             .padding(5.dp),
-                                                        infos = history,
+                                                        infos = infos,
                                                         unit = param.measurementUnit.asUiTextParam(),
                                                         chartColor = MaterialTheme.colorScheme.outlineVariant,
                                                         textColor = MaterialTheme.colorScheme.onBackground,
@@ -680,7 +681,7 @@ private fun LandscapeScreenView() {
             showBottomSheet = false,
             historyParams = params,
             isLoadingHistory = false,
-            histories = emptyList(),
+            histories = emptyMap(),
             units = units,
             user = AuthUser(
                 createdAt = "12-03-2025",
@@ -818,7 +819,7 @@ private fun LandscapeScreenView2() {
                     .toLocalDateTime(TimeZone.currentSystemDefault()),
             ),
             units = units,
-            histories = emptyList(),
+            histories = emptyMap(),
             onDeleteDevice = {},
             onClickClearSensors = {}
         )

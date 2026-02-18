@@ -21,7 +21,6 @@ import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.WebSocketUseCaseOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
-import com.edurda77.domain.utils.convertToStringDateTime
 import com.edurda77.domain.utils.convertToStringDateTimeForHistory
 import com.edurda77.resources.model.NavigationRoute
 import com.edurda77.resources.uikit.asUiText
@@ -524,7 +523,7 @@ class DeviceViewModel(
     private fun loadHistory(limit: Int) {
         _state.value.copy(
             isLoadingHistory = true,
-            historyStates = emptyList(),
+            histories = emptyMap(),
         )
             .updateState()
         viewModelScope.launch {
@@ -553,7 +552,7 @@ class DeviceViewModel(
                 is ResultWork.Success -> {
                     _state.value.copy(
                         isLoadingHistory = false,
-                        //TODO
+                        histories = result.data
                     )
                         .updateState()
                 }
