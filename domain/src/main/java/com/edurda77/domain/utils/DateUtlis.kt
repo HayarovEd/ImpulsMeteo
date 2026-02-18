@@ -16,6 +16,18 @@ private val localDateTimeFormat = LocalDateTime.Format {
     hour(); char(':'); minute(); char(':'); second()
 }
 
+private val localDateTimeHistoryFormat = LocalDateTime.Format {
+    date(LocalDate.Formats.ISO)
+    char('T')
+    hour()
+    char(':')
+    minute()
+    char(':')
+    second()
+    chars(".0Z")
+}
+
+
 @OptIn(ExperimentalTime::class)
 fun convertToLocalDateTimeOld(stringDate: String): LocalDateTime {
     return try {
@@ -37,6 +49,13 @@ fun convertToStringDateTime(localDateTime: LocalDateTime): String {
         localDateTimeFormat
     )
 }
+
+fun convertToStringDateTimeForHistory(localDateTime: LocalDateTime): String {
+    return localDateTime.format(
+        localDateTimeHistoryFormat
+    )
+}
+
 
 fun formatDateTimeChart(
     localDateTime: LocalDateTime

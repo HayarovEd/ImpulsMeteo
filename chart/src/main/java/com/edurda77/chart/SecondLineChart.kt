@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.History
 import com.edurda77.domain.utils.calculateInterval
 import com.edurda77.domain.utils.formatDateTimeChart
 import com.edurda77.domain.utils.formatted
@@ -50,7 +50,7 @@ private const val COUNT_STEPS = 5
 @Composable
 fun SecondLineChart(
     modifier: Modifier = Modifier,
-    infos: List<ElementHistory>,
+    infos: List<History>,
     unit: String,
     chartColor: Color,
     textColor: Color,
@@ -254,7 +254,7 @@ private fun SecondLineChartPreview() {
     ImpulsMeteoTheme {
         val coinHistoryRandomized = remember {
             (1..100).map {
-                ElementHistory(
+                History(
                     value = (Random.nextFloat() - 0.5) * 20.0,
                     time = Clock.System.now()
                         .plus(1 * it, DateTimeUnit.MINUTE, TimeZone.currentSystemDefault())

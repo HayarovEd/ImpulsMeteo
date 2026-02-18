@@ -1,0 +1,15 @@
+package com.edurda77.domain.repository
+
+import com.edurda77.domain.model.newModels.History
+import com.edurda77.domain.utils.DataError
+import com.edurda77.domain.utils.ResultWork
+
+interface ParamsRepository {
+    suspend fun getHistoryDeviceById(
+        accessToken: String,
+        deviceId: String,
+        fromDate: String,
+        toDate: String,
+        limit: Int
+    ): ResultWork<Map<String, List<History>>, DataError>
+}

@@ -38,7 +38,7 @@ import com.edurda77.data.remote.update_user.UpdateUserWithPasswordDto
 import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.History
 import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
@@ -639,7 +639,7 @@ class OldRemoteRepositoryImpl(
         fromDate: String,
         toDate: String,
         limit: Int,
-    ): ResultWork<List<List<ElementHistory>>, DataError> {
+    ): ResultWork<List<List<History>>, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
                 val responseDevices =

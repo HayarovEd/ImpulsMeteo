@@ -20,7 +20,7 @@ import com.edurda77.data.remote.user.UsersDtoOld
 import com.edurda77.domain.model.AuthOld
 import com.edurda77.domain.model.DeviceOld
 import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.History
 import com.edurda77.domain.model.FavoriteOld
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.LoggedUser
@@ -269,10 +269,10 @@ fun ParamOld.convertToParamDto(): ParamDto {
 }
 
 
-fun ResponseHistory.convertToElementsHistory(): List<List<ElementHistory>> {
+fun ResponseHistory.convertToElementsHistory(): List<List<History>> {
     return this.elementsHistory.map { baseHistory ->
         baseHistory.map {
-            ElementHistory(
+            History(
                 time = convertToLocalDateTimeOld(it.time),
                 value = it.value
             )

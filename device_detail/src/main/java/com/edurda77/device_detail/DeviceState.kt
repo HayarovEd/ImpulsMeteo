@@ -3,7 +3,7 @@ package com.edurda77.device_detail
 
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.History
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.resources.uikit.UiText
@@ -24,7 +24,7 @@ data class DeviceState (
     val fromDate: LocalDateTime = Clock.System.now()
         .minus(DateTimePeriod(months = 1), TimeZone.currentSystemDefault())
         .toLocalDateTime(TimeZone.currentSystemDefault()),
-    val historyStates: List<List<ElementHistory>> = emptyList(),
+    val historyStates: List<List<History>> = emptyList(),
     val isLoadingHistory: Boolean = false,
     val authUser: AuthUser? = null,
 )

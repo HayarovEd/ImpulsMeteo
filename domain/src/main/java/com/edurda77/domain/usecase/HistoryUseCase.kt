@@ -1,36 +1,31 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.newModels.ElementHistory
-import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.model.newModels.History
+import com.edurda77.domain.repository.ParamsRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class HistoryUseCase(
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val paramsRepository: ParamsRepository,
+    private val tokenManager: TokenManager,
 ) {
     suspend operator fun invoke(
-        token: String,
-        id: Int,
+        id: String,
         fromDate: String,
         toDate: String,
         limit: Int,
-    ): ResultWork<List<List<ElementHistory>>, DataError> {
-
-        return when (val result = oldRemoteRepository.getHistoryDeviceById(
-            id = id,
-            fromDate = fromDate,
-            limit = limit,
-            toDate = toDate,
-            token = token,
-        )) {
-            is ResultWork.Error -> {
-                ResultWork.Error(result.error)
-            }
-
-            is ResultWork.Success -> {
-                ResultWork.Success(result.data)
-            }
-        }
+    ): ResultWork<Map<String, List<History>>, DataError> {
+        return tokenManager.validateFactory(
+            data = {
+                paramsRepository.getHistoryDeviceById(
+                    accessToken = it,
+                    deviceId = id,
+                    fromDate = fromDate,
+                    toDate = toDate,
+                    limit = limit
+                )
+            },
+        )
     }
 }

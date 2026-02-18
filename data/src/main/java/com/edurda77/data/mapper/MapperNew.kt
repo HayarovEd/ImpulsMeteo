@@ -5,9 +5,9 @@ import com.edurda77.data.remote.newDtos.device.DeviceDto
 import com.edurda77.data.remote.newDtos.device.DeviceWsDto
 import com.edurda77.data.remote.newDtos.favorite.FavoriteDto
 import com.edurda77.data.remote.newDtos.group.GroupDeviceDto
+import com.edurda77.data.remote.newDtos.measurement.MeasurementUnitDto
 import com.edurda77.data.remote.newDtos.notification.NotificationDeviceDto
 import com.edurda77.data.remote.newDtos.notification.NotificationsDeviceDtos
-import com.edurda77.data.remote.newDtos.measurement.MeasurementUnitDto
 import com.edurda77.data.remote.newDtos.param.ParamDto
 import com.edurda77.data.remote.newDtos.permission.PermissionDto
 import com.edurda77.data.remote.newDtos.user.DeviceUserRequest

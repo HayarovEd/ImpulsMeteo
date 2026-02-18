@@ -63,7 +63,7 @@ import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.History
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.domain.model.newModels.NotificationDevice
@@ -120,7 +120,7 @@ fun PortraitScreen(
     showBottomSheet: Boolean,
     historyParams: List<Param>,
     isLoadingHistory: Boolean,
-    histories: List<List<ElementHistory>>,
+    histories: List<List<History>>,
     screenWidth: Dp,
     units: List<MeasurementUnit>,
 ) {
@@ -380,11 +380,11 @@ fun PortraitScreen(
                         Box(
                             modifier = modifier
                                 .clip(shape = RoundedCornerShape(100.dp))
-                                .background(if (device?.status == true) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
+                                .background(if (device.status) MaterialTheme.colorScheme.outlineVariant else MaterialTheme.colorScheme.error)
                                 .padding(10.dp),
                         ) {
                             Icon(
-                                painter = if (device?.status == true) painterResource(R.drawable.checkmark) else painterResource(
+                                painter = if (device.status) painterResource(R.drawable.checkmark) else painterResource(
                                     R.drawable.cross
                                 ),
                                 contentDescription = "",

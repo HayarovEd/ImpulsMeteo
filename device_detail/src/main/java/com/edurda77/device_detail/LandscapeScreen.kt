@@ -58,7 +58,7 @@ import androidx.compose.ui.unit.dp
 import com.edurda77.chart.SecondLineChart
 import com.edurda77.domain.model.newModels.AuthUser
 import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.ElementHistory
+import com.edurda77.domain.model.newModels.History
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.MeasurementUnit
 import com.edurda77.domain.model.newModels.NotificationDevice
@@ -117,7 +117,7 @@ fun LandscapeScreen(
     onDeleteDevice: () -> Unit,
     units: List<MeasurementUnit>,
     isLoadingHistory: Boolean,
-    histories: List<List<ElementHistory>>,
+    histories: List<List<History>>,
 ) {
     val localDensity = LocalDensity.current
     val offsetXDropDownMenu = remember { mutableStateOf(0.dp) }

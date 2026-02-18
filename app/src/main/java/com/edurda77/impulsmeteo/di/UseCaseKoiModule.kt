@@ -74,5 +74,5 @@ val useCaseKoiModule = module {
     factoryOf(::DevicesUseCase) { bind <DevicesUseCase>() }
     single<RemoveFavoriteUseCase> { RemoveFavoriteUseCase(get()) }
     single<DeleteDeviceUseCase> { DeleteDeviceUseCase(get(), get()) }
-    single<HistoryUseCase> { HistoryUseCase(get()) }
+    factoryOf(::HistoryUseCase) { bind <HistoryUseCase>() }
 }

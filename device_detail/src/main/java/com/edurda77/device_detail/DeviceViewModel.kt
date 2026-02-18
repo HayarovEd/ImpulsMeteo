@@ -21,8 +21,11 @@ import com.edurda77.domain.usecase.UpdateParamUseCase
 import com.edurda77.domain.usecase.WebSocketUseCaseOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
+import com.edurda77.domain.utils.convertToStringDateTime
+import com.edurda77.domain.utils.convertToStringDateTimeForHistory
 import com.edurda77.resources.model.NavigationRoute
 import com.edurda77.resources.uikit.asUiText
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -381,6 +384,8 @@ class DeviceViewModel(
                     )
                         .updateState()
                     loadDevice()
+                    loadGroupsAndUnits()
+                    loadHistory(limit = 100)
                 }
             }
         }
@@ -403,18 +408,12 @@ class DeviceViewModel(
                     loggedUser = result.data
                 )
                     .updateState()
-                viewModelScope.launch {
-                    loadDevice()
-                }
-                viewModelScope.launch {
-                    loadGroups()
-                    loadUnits()
-                }
+
                 viewModelScope.launch {
                     loadUpdateData()
                 }
                 viewModelScope.launch {
-                    loadHistory(limit = 100)
+
                 }
             }
         }*/
@@ -446,40 +445,51 @@ class DeviceViewModel(
         }
     }
 
-    private suspend fun loadGroups() {
-        /*when (val result = devicesGroupsUseCase.invoke(state.value.token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
+    private fun loadGroupsAndUnits () {
+        viewModelScope.launch {
+            val resultGroupsDiff = async{ devicesGroupsUseCase.invoke() }
+            val resultUnitsDiff = async { unitsUseCase.invoke() }
+            when (val result = resultGroupsDiff.await()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
+                }
 
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    groups = result.data
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        groups = result.data
+                    )
+                        .updateState()
+                }
             }
-        }*/
-    }
+            when (val result = resultUnitsDiff.await()) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
+                }
 
-    private suspend fun loadUnits() {
-        /*when (val result = unitsUseCase.invoke(state.value.token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    message = result.error.asUiText()
-                )
-                    .updateState()
+                is ResultWork.Success -> {
+                    _state.value.copy(
+                        units = result.data
+                    )
+                        .updateState()
+                }
             }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    units = result.data
-                )
-                    .updateState()
-            }
-        }*/
+        }
     }
 
     private suspend fun loadUpdateData() {
@@ -517,31 +527,38 @@ class DeviceViewModel(
             historyStates = emptyList(),
         )
             .updateState()
-        /*viewModelScope.launch {
+        viewModelScope.launch {
             when (val result = historyUseCase.invoke(
-                token = state.value.token,
-                id = state.value.deviceId,
-                fromDate = convertToStringDateTime(state.value.fromDate),
-                toDate = convertToStringDateTime(state.value.toDate),
+                id = deviceId,
+                fromDate = convertToStringDateTimeForHistory(state.value.fromDate),
+                toDate = convertToStringDateTimeForHistory(state.value.toDate),
                 limit = limit
             )) {
                 is ResultWork.Error -> {
                     _state.value.copy(
                         isLoadingHistory = false,
-                        message = result.error.asUiText()
                     )
                         .updateState()
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                        _state.value.copy(
+                            isLoading = false,
+                        )
+                            .updateState()
+                    }
                 }
 
                 is ResultWork.Success -> {
                     _state.value.copy(
                         isLoadingHistory = false,
-                        historyStates = result.data
+                        //TODO
                     )
                         .updateState()
                 }
             }
-        }*/
+        }
     }
 
     private fun clearSensors() {
