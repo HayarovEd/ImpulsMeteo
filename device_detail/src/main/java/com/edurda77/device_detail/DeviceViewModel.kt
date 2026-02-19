@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
 
 class DeviceViewModel(
     private val deviceByIdUseCase: DeviceByIdUseCase,
@@ -69,8 +68,6 @@ class DeviceViewModel(
     private val _eventFlow = Channel<UiDeviceEvents>()
     val eventFlow = _eventFlow.receiveAsFlow()
 
-    private val mutex = Mutex()
-
     fun onEvent(event: DeviceEvent) {
         when (event) {
             is DeviceEvent.OnSetFromDate -> {
@@ -91,42 +88,41 @@ class DeviceViewModel(
                 loadHistory(event.limit)
             }
 
-            DeviceEvent.ChangeStatusNotifications -> {
-                /*viewModelScope.launch {
-                    if (state.value.device != null) {
-                        _state.value.copy(
-                            device = state.value.device?.copy(
-                                notificationsOld = state.value.device!!.notificationsOld.copy(
-                                    deviceStatus = !state.value.device!!.notificationsOld.deviceStatus
-                                )
-                            )
-                        )
-                            .updateState()
-                    }
-                }*/
-            }
-
-            DeviceEvent.UpdateNotifications -> {
-                /*if (state.value.device != null) {
+            is DeviceEvent.UpdateNotifications -> {
+                state.value.authUser?.let { user ->
                     viewModelScope.launch {
                         when (val result = updateNotificationsDeviceUseCase.invoke(
-                            token = state.value.token,
-                            id = state.value.deviceId,
-                            notificationsOld = state.value.device!!.notificationsOld
+                            notificationsParam = event.notificationsParam.map { it.copy(userId = user.id) },
+                            value = event.value,
+                            deviceId = deviceId,
+                            userId = user.id
                         )) {
                             is ResultWork.Error -> {
-                                _state.value.copy(
-                                    message = result.error.asUiText()
-                                )
-                                    .updateState()
+                                if (result.error is DataError.TokenError) {
+                                    _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                                } else {
+                                    _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                                    _state.value.copy(
+                                        isLoading = false,
+                                    )
+                                        .updateState()
+                                }
                             }
 
                             is ResultWork.Success -> {
-                                loadDevice()
+                                state.value.device?.let { device ->
+                                    _state.value.copy(
+                                        device = device.copy(
+                                            notificationDevice = result.data
+                                        )
+                                    )
+                                        .updateState()
+                                }
                             }
                         }
                     }
-                }*/
+                }
+
             }
 
             is DeviceEvent.UpdateSelectedGroups -> {
@@ -367,8 +363,11 @@ class DeviceViewModel(
                 }
 
                 is ResultWork.Success -> {
+                    val notificationDevice = state.value.authUser?.let { user ->
+                        user.devices.firstOrNull { it.id == deviceId }?.notificationDevice
+                    }
                     _state.value.copy(
-                        device = result.data,
+                        device = result.data.copy(notificationDevice = notificationDevice),
                         isLoading = false
                     )
                         .updateState()

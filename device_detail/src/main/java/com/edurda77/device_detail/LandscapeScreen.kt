@@ -100,8 +100,10 @@ fun LandscapeScreen(
     onClickChangeVisibleLimit: () -> Unit,
     onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
-    onUpdateNotificationClick: () -> Unit,
-    onChangeStatusClick: () -> Unit,
+    onUpdateNotificationClick: (
+        notificationsParam: List<NotificationParam>,
+        value: Boolean,
+    ) -> Unit,
     onClickChangeFavorite: () -> Unit,
     onUpdateClick: (Param) -> Unit,
     onClickClearSensors: () -> Unit,
@@ -287,28 +289,8 @@ fun LandscapeScreen(
                 ) {
                     NotificationsContent(
                         onClickChangeVisibleBottomSheet = onClickChangeVisibleBottomSheet,
-                     /*   onAddNotificationToListClick = { idParam, condition, value ->
-                            onAddNotificationToListClick(
-                                idParam,
-                                condition,
-                                value
-                            )
-                        },
-                        onDeleteNotificationFromListClick = {
-                            onDeleteNotificationFromListClick(it)
-                        },*/
                         notifications = device.notificationDevice,
                         params = device.params,
-                       /* onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
-                            onUpdateNotificationInListClick(
-                                index,
-                                id,
-                                idParam,
-                                condition,
-                                value
-                            )
-                        },*/
-                        onChangeStatusClick = onChangeStatusClick,
                         onUpdateNotificationClick = onUpdateNotificationClick
                     )
                 }
@@ -533,7 +515,7 @@ fun LandscapeScreen(
                                             ) {
                                                 val param =
                                                     historyParams.firstOrNull { it.name == nameParam }
-                                                param?.let { pr->
+                                                param?.let { pr ->
                                                     Text(
                                                         modifier = modifier,
                                                         text = "${pr.label}(${pr.measurementUnit.asUiTextParam()})",
@@ -652,7 +634,7 @@ private fun LandscapeScreenView() {
                             isSend = true,
                             paramId = "1",
                             userId = "1",
-                            value = 3
+                            value = 3.0
                         )
                     },
                     userId = "1",
@@ -663,8 +645,7 @@ private fun LandscapeScreenView() {
             limits = listOf(0, 1, 2, 3),
             expandedLimits = false,
             onClickChangeVisibleBottomSheet = {},
-            onChangeStatusClick = {},
-            onUpdateNotificationClick = {},
+            onUpdateNotificationClick = {_,_ ->},
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
             sheetState = rememberModalBottomSheetState(),
@@ -771,7 +752,7 @@ private fun LandscapeScreenView2() {
                             isSend = true,
                             paramId = "1",
                             userId = "1",
-                            value = 3
+                            value = 3.0
                         )
                     },
                     userId = "1",
@@ -782,8 +763,7 @@ private fun LandscapeScreenView2() {
             limits = listOf(0, 1, 2, 3),
             expandedLimits = false,
             onClickChangeVisibleBottomSheet = {},
-            onChangeStatusClick = {},
-            onUpdateNotificationClick = {},
+            onUpdateNotificationClick = {_,_->},
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
             sheetState = rememberModalBottomSheetState(),

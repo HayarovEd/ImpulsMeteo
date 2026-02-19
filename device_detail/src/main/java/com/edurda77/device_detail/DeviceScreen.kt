@@ -18,7 +18,6 @@ import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiDialog
 import com.edurda77.resources.utils.ObserveAsEvents
-import kotlinx.coroutines.flow.collectLatest
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import org.koin.androidx.compose.koinViewModel
@@ -144,8 +143,8 @@ fun DeviceScreen(
             }
         )
     }
-    state.value.device?.let { device->
-        state.value.authUser?.let { user->
+    state.value.device?.let { device ->
+        state.value.authUser?.let { user ->
             val enabledEdit = user.permissions.map { it.name }.contains(DEVICES_EDIT_LABEL)
             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 LandscapeScreen(
@@ -184,11 +183,13 @@ fun DeviceScreen(
                     onClickChangeVisibleBottomSheet = {
                         showBottomSheet.value = !showBottomSheet.value
                     },
-                    onChangeStatusClick = {
-                        onEvent(DeviceEvent.ChangeStatusNotifications)
-                    },
-                    onUpdateNotificationClick = {
-                        onEvent(DeviceEvent.UpdateNotifications)
+                    onUpdateNotificationClick = { notificationsParam, isNotification ->
+                        onEvent(
+                            DeviceEvent.UpdateNotifications(
+                                notificationsParam = notificationsParam,
+                                value = isNotification
+                            )
+                        )
                         showBottomSheet.value = !showBottomSheet.value
                     },
                     onClickExpandedUpdateDialog = {
@@ -245,11 +246,13 @@ fun DeviceScreen(
                     onClickChangeVisibleBottomSheet = {
                         showBottomSheet.value = !showBottomSheet.value
                     },
-                    onChangeStatusClick = {
-                        onEvent(DeviceEvent.ChangeStatusNotifications)
-                    },
-                    onUpdateNotificationClick = {
-                        onEvent(DeviceEvent.UpdateNotifications)
+                    onUpdateNotificationClick = { notificationsParam, isNotification ->
+                        onEvent(
+                            DeviceEvent.UpdateNotifications(
+                                notificationsParam = notificationsParam,
+                                value = isNotification
+                            )
+                        )
                         showBottomSheet.value = !showBottomSheet.value
                     },
                     onClickExpandedUpdateDialog = {

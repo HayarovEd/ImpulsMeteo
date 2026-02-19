@@ -7,5 +7,5 @@ data class NotificationParam(
     val isSend: Boolean,
     val paramId: String,
     val userId: String,
-    val value: Int
+    val value: Double
 )

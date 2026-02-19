@@ -17,5 +17,5 @@ data class NotificationsDeviceDtos(
     @SerialName("user_id")
     val userId: String,
     @SerialName("value")
-    val value: Int
+    val value: Double
 )

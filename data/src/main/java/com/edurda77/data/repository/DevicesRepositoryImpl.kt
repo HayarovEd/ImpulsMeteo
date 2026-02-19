@@ -3,10 +3,15 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toDevice
 import com.edurda77.data.mapper.toGroupDeviceDto
+import com.edurda77.data.mapper.toNotificationDevice
+import com.edurda77.data.mapper.toNotificationsDeviceDtos
 import com.edurda77.data.remote.newDtos.device.DeviceCreateRequest
 import com.edurda77.data.remote.newDtos.device.DeviceDto
+import com.edurda77.data.remote.newDtos.notification.NotificationDeviceDto
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.newModels.NotificationDevice
+import com.edurda77.domain.model.newModels.NotificationParam
 import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -75,11 +80,40 @@ class DevicesRepositoryImpl(
     ): ResultWork<Device, DataError> {
         return withContext(Dispatchers.IO) {
             handleResponse {
-                val result = httpClient.get(NEW_BASE_URL + "devices/"+ deviceId) {
+                val result = httpClient.get(NEW_BASE_URL + "devices/" + deviceId) {
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
                 result.call.body<DeviceDto>().toDevice()
+            }
+        }
+    }
+
+    override suspend fun updateNotificationOfDevice(
+        accessToken: String,
+        notificationsParam: List<NotificationParam>,
+        value: Boolean,
+        deviceId: String,
+        userId: String,
+    ): ResultWork<NotificationDevice, DataError> {
+        return withContext(Dispatchers.IO) {
+            val a = NotificationDeviceDto(
+                deviceId = deviceId,
+                notificationsDeviceDtos = notificationsParam.map { it.toNotificationsDeviceDtos() },
+                value = value,
+                userId = userId,
+                id = ""
+            )
+            handleResponse {
+                val result =
+                    httpClient.post(NEW_BASE_URL + "devices/" + deviceId + "/notifications") {
+                        contentType(ContentType.Application.Json)
+                        bearerAuth(accessToken)
+                        setBody(
+                            a
+                        )
+                    }
+                result.call.body<NotificationDeviceDto>().toNotificationDevice()
             }
         }
     }

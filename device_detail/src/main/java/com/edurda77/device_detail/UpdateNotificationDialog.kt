@@ -179,7 +179,7 @@ fun UpdateNotificationDialog(
                     onConfirmClick(
                         notificationParam.copy(
                             condition = condition,
-                            value = value.toIntOrNull() ?: 0
+                            value = value.toDoubleOrNull() ?: 0.0
                         )
                     )
                 }
@@ -206,7 +206,7 @@ private fun UpdateNotificationDialogView() {
             notificationParam = NotificationParam(
                 condition = "nt1",
                 paramId = "1",
-                value = 3,
+                value = 3.0,
                 id = "",
                 isSend = false,
                 userId = ""
@@ -228,7 +228,7 @@ private fun UpdateNotificationDialogView2() {
             notificationParam = NotificationParam(
                 condition = "nt1",
                 paramId = "1",
-                value = 3,
+                value = 3.0,
                 id = "",
                 isSend = false,
                 userId = ""

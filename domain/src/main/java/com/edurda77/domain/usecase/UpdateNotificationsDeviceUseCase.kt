@@ -1,24 +1,33 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.NotificationsOld
-import com.edurda77.domain.repository.OldRemoteRepository
+import com.edurda77.domain.model.newModels.NotificationDevice
+import com.edurda77.domain.model.newModels.NotificationParam
+import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
 
 class UpdateNotificationsDeviceUseCase(
-    private val oldRemoteRepository: OldRemoteRepository,
+    private val devicesRepository: DevicesRepository,
+    private val tokenManager: TokenManager,
 ) {
     suspend operator fun invoke(
-        token: String,
-        id: Int,
-        notificationsOld: NotificationsOld,
-    ): ResultWork<Unit, DataError> {
+        notificationsParam: List<NotificationParam>,
+        value: Boolean,
+        deviceId: String,
+        userId: String,
+    ): ResultWork<NotificationDevice, DataError> {
 
-        return oldRemoteRepository.updateNotificationsDevice(
-            id = id,
-            token = token,
-            notificationsOld = notificationsOld
+        return tokenManager.validateFactory(
+            data = {
+                devicesRepository.updateNotificationOfDevice(
+                    accessToken = it,
+                    notificationsParam = notificationsParam,
+                    value = value,
+                    deviceId = deviceId,
+                    userId = userId
+                )
+            }
         )
     }
 }

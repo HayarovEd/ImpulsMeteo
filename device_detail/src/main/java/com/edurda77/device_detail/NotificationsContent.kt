@@ -61,11 +61,10 @@ fun NotificationsContent(
     onClickChangeVisibleBottomSheet: () -> Unit,
     notifications: NotificationDevice?,
     params: List<Param>,
-//onAddNotificationToListClick: (String, String, Int) -> Unit,
-    //  onDeleteNotificationFromListClick: (Int) -> Unit,
-    //   onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
-    onChangeStatusClick: () -> Unit,
-    onUpdateNotificationClick: () -> Unit,
+    onUpdateNotificationClick: (
+        notificationsParam: List<NotificationParam>,
+        value: Boolean,
+    ) -> Unit,
 ) {
     var expandedUpdateNotificationDialog by remember { mutableStateOf(false) }
     var expandedParameters by remember { mutableStateOf(false) }
@@ -74,6 +73,7 @@ fun NotificationsContent(
     val conditions = listOf("<=", ">=")
     var currentCondition by remember { mutableStateOf(conditions.first()) }
     var value by remember { mutableStateOf("") }
+    var isNotification by remember { mutableStateOf(notifications?.value ?: false) }
     var notificationDevice by retain {
         mutableStateOf(
             notifications ?: NotificationDevice(
@@ -117,7 +117,9 @@ fun NotificationsContent(
             modifier = modifier
                 .fillMaxWidth()
                 .clickable(
-                    onClick = onChangeStatusClick
+                    onClick = {
+                        isNotification = !isNotification
+                    }
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -129,11 +131,13 @@ fun NotificationsContent(
             )
             Spacer(modifier = modifier.width(5.dp))
             Switch(
-                checked = notifications?.value == true,
+                checked = isNotification,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White
                 ),
-                onCheckedChange = { onChangeStatusClick() }
+                onCheckedChange = {
+                    isNotification = !isNotification
+                }
             )
         }
         Spacer(modifier = modifier.height(10.dp))
@@ -252,18 +256,13 @@ fun NotificationsContent(
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = MaterialTheme.shapes.medium,
             onClick = {
-                /*onAddNotificationToListClick(
-                    parameterId.value,
-                    currentCondition.value,
-                    value.value.toIntOrNull() ?: 0
-                )*/
                 if (notificationDevice.notificationParam.map { it.paramId }.contains(parameterId)) {
                     notificationDevice = notificationDevice.copy(
                         notificationParam = notificationDevice.notificationParam.map {
                             if (it.paramId == parameterId) NotificationParam(
                                 condition = currentCondition,
                                 paramId = parameterId,
-                                value = value.toIntOrNull() ?: 0,
+                                value = value.toDoubleOrNull() ?: 0.0,
                                 id = "",
                                 isSend = false,
                                 userId = ""
@@ -275,7 +274,7 @@ fun NotificationsContent(
                         notificationParam = notificationDevice.notificationParam + NotificationParam(
                             condition = currentCondition,
                             paramId = parameterId,
-                            value = value.toIntOrNull() ?: 0,
+                            value = value.toDoubleOrNull() ?: 0.0,
                             id = "",
                             isSend = false,
                             userId = ""
@@ -307,21 +306,21 @@ fun NotificationsContent(
                             expandedUpdateNotificationDialog = false
                         },
                         content = {
-                             UpdateNotificationDialog(
-                                 onCloseClick = {
-                                     expandedUpdateNotificationDialog = false
-                                 },
-                                 onConfirmClick = { notification ->
-                                     expandedUpdateNotificationDialog = false
-                                     notificationDevice = notificationDevice.copy(
-                                         notificationParam = notificationDevice.notificationParam.map {
-                                             if (it.paramId == parameterId) notification else it
-                                         }
-                                     )
-                                 },
-                                 notificationParam = notificationParam,
-                                 description = description
-                             )
+                            UpdateNotificationDialog(
+                                onCloseClick = {
+                                    expandedUpdateNotificationDialog = false
+                                },
+                                onConfirmClick = { notification ->
+                                    expandedUpdateNotificationDialog = false
+                                    notificationDevice = notificationDevice.copy(
+                                        notificationParam = notificationDevice.notificationParam.map {
+                                            if (it.paramId == parameterId) notification else it
+                                        }
+                                    )
+                                },
+                                notificationParam = notificationParam,
+                                description = description
+                            )
                         }
                     )
                 }
@@ -387,7 +386,12 @@ fun NotificationsContent(
             Button(
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 shape = MaterialTheme.shapes.medium,
-                onClick = onUpdateNotificationClick
+                onClick = {
+                    onUpdateNotificationClick(
+                        notificationDevice.notificationParam,
+                        isNotification
+                    )
+                }
             ) {
                 Text(
                     color = MaterialTheme.colorScheme.background,
@@ -424,12 +428,8 @@ private fun NotificationsContentView() {
     }
     ImpulsMeteoTheme {
         NotificationsContent(
-            onUpdateNotificationClick = {},
-            //onUpdateNotificationInListClick = { _, _, _, _, _ -> },
+            onUpdateNotificationClick = { _, _ -> },
             onClickChangeVisibleBottomSheet = {},
-            onChangeStatusClick = {},
-            /*  onAddNotificationToListClick = { _, _, _ -> },
-              onDeleteNotificationFromListClick = {},*/
             notifications = NotificationDevice(
                 deviceId = "0",
                 id = "1",
@@ -440,7 +440,7 @@ private fun NotificationsContentView() {
                         isSend = true,
                         paramId = "1",
                         userId = "1",
-                        value = 3
+                        value = 3.0
                     )
                 },
                 userId = "1",
@@ -476,12 +476,8 @@ private fun NotificationsContentView2() {
     }
     ImpulsMeteoTheme {
         NotificationsContent(
-            onUpdateNotificationClick = {},
-            //  onUpdateNotificationInListClick = { _, _, _, _, _ -> },
+            onUpdateNotificationClick = { _, _ -> },
             onClickChangeVisibleBottomSheet = {},
-            onChangeStatusClick = {},
-            /*  onAddNotificationToListClick = { _, _, _ -> },
-              onDeleteNotificationFromListClick = {},*/
             notifications = NotificationDevice(
                 deviceId = "0",
                 id = "1",
@@ -492,7 +488,7 @@ private fun NotificationsContentView2() {
                         isSend = true,
                         paramId = "1",
                         userId = "1",
-                        value = 3
+                        value = 3.0
                     )
                 },
                 userId = "1",

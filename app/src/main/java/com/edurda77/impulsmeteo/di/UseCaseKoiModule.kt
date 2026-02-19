@@ -67,7 +67,7 @@ val useCaseKoiModule = module {
     single<WebSocketUseCaseOld> { WebSocketUseCaseOld(get(), get()) }
     factoryOf(::WebSocketUseCase) { bind <WebSocketUseCase>() }
     factoryOf(::CloseWebsocketUseCase) { bind <CloseWebsocketUseCase>() }
-    single<UpdateNotificationsDeviceUseCase> { UpdateNotificationsDeviceUseCase(get()) }
+    factoryOf(::UpdateNotificationsDeviceUseCase) { bind <UpdateNotificationsDeviceUseCase>() }
     single<UpdateDeviceUseCase> { UpdateDeviceUseCase(get()) }
     single<UpdateParamUseCase> { UpdateParamUseCase(get()) }
     factoryOf(::UpdateFavoriteUseCase) { bind <UpdateFavoriteUseCase>() }

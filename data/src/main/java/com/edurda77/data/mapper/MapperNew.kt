@@ -61,6 +61,18 @@ fun NotificationDeviceDto.toNotificationDevice(): NotificationDevice {
     )
 }
 
+
+fun NotificationParam.toNotificationsDeviceDtos(): NotificationsDeviceDtos {
+    return NotificationsDeviceDtos(
+        condition = this.condition,
+        isSend = this.isSend,
+        paramId = this.paramId,
+        userId = this.userId,
+        value = this.value,
+        id = ""
+    )
+}
+
 fun FavoriteDto.toFavorite(): Favorite {
     return Favorite(
         createdAt = this.createdAt,
