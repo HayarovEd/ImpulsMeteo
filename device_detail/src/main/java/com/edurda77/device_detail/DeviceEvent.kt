@@ -1,31 +1,14 @@
 package com.edurda77.device_detail
 
-import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.model.newModels.GroupDevice
 import com.edurda77.domain.model.newModels.Param
 import kotlinx.datetime.LocalDateTime
 
 
 sealed class DeviceEvent {
-    class OnSetFromDate(val dateTime: LocalDateTime) : DeviceEvent()
-    class OnSetToDate(val dateTime: LocalDateTime) : DeviceEvent()
-    class GetHistory(val limit: Int) : DeviceEvent()
-    class AddNewNotificationToList(
-        val idParam: String,
-        val condition: String,
-        val value: Int
-    ) : DeviceEvent()
-    class DeleteNotificationFromList(
-        val index: Int,
-    ) : DeviceEvent()
-
-    class UpdateNotificationInList(
-        val index: Int,
-        val id: Int,
-        val idParam: Int,
-        val condition: String,
-        val value: Int
-    ) : DeviceEvent()
+    class OnSetFromDate(val dateTime: LocalDateTime) : DeviceEvent()//
+    class OnSetToDate(val dateTime: LocalDateTime) : DeviceEvent()//
+    class GetHistory(val limit: Int) : DeviceEvent()//
 
     data object ChangeStatusNotifications : DeviceEvent()
     data object UpdateNotifications : DeviceEvent()

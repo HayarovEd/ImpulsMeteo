@@ -87,10 +87,8 @@ fun LandscapeScreen(
     dateFrom: String,
     dateTo: String,
     user: AuthUser,
-    isOpenFilter: Boolean,
     openFromDateDialog: () -> Unit,
     openToDateDialog: () -> Unit,
-    openFilter: (Boolean) -> Unit,
     isLoading: Boolean,
     device: Device,
     currentLimit: Int,
@@ -102,9 +100,6 @@ fun LandscapeScreen(
     onClickChangeVisibleLimit: () -> Unit,
     onClickRequestHistory: (Int) -> Unit,
     onClickLimit: (Int) -> Unit,
-    onAddNotificationToListClick: (String, String, Int) -> Unit,
-    onDeleteNotificationFromListClick: (Int) -> Unit,
-    onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onUpdateNotificationClick: () -> Unit,
     onChangeStatusClick: () -> Unit,
     onClickChangeFavorite: () -> Unit,
@@ -292,7 +287,7 @@ fun LandscapeScreen(
                 ) {
                     NotificationsContent(
                         onClickChangeVisibleBottomSheet = onClickChangeVisibleBottomSheet,
-                        onAddNotificationToListClick = { idParam, condition, value ->
+                     /*   onAddNotificationToListClick = { idParam, condition, value ->
                             onAddNotificationToListClick(
                                 idParam,
                                 condition,
@@ -301,10 +296,10 @@ fun LandscapeScreen(
                         },
                         onDeleteNotificationFromListClick = {
                             onDeleteNotificationFromListClick(it)
-                        },
+                        },*/
                         notifications = device.notificationDevice,
                         params = device.params,
-                        onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
+                       /* onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
                             onUpdateNotificationInListClick(
                                 index,
                                 id,
@@ -312,7 +307,7 @@ fun LandscapeScreen(
                                 condition,
                                 value
                             )
-                        },
+                        },*/
                         onChangeStatusClick = onChangeStatusClick,
                         onUpdateNotificationClick = onUpdateNotificationClick
                     )
@@ -620,7 +615,6 @@ private fun LandscapeScreenView() {
             onUpdateClick = {},
             onClickChangeFavorite = {},
             onClickRequestHistory = {},
-            openFilter = {},
             onClickLimit = {},
             onBackClick = {},
             snackBarState = snackBarState,
@@ -628,7 +622,6 @@ private fun LandscapeScreenView() {
             dateTo = "21.04.2025",
             isLoading = false,
             isEnableEdit = true,
-            isOpenFilter = false,
             openFromDateDialog = {},
             openToDateDialog = {},
             device = Device(
@@ -670,13 +663,10 @@ private fun LandscapeScreenView() {
             limits = listOf(0, 1, 2, 3),
             expandedLimits = false,
             onClickChangeVisibleBottomSheet = {},
-            onUpdateNotificationInListClick = { _, _, _, _, _ -> },
             onChangeStatusClick = {},
             onUpdateNotificationClick = {},
-            onDeleteNotificationFromListClick = {},
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
-            onAddNotificationToListClick = { _, _, _ -> },
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,
@@ -744,7 +734,6 @@ private fun LandscapeScreenView2() {
             onUpdateClick = {},
             onClickChangeFavorite = {},
             onClickRequestHistory = {},
-            openFilter = {},
             onClickLimit = {},
             onBackClick = {},
             snackBarState = snackBarState,
@@ -752,7 +741,6 @@ private fun LandscapeScreenView2() {
             dateTo = "21.04.2025",
             isLoading = false,
             isEnableEdit = true,
-            isOpenFilter = false,
             openFromDateDialog = {},
             openToDateDialog = {},
             device = Device(
@@ -794,13 +782,10 @@ private fun LandscapeScreenView2() {
             limits = listOf(0, 1, 2, 3),
             expandedLimits = false,
             onClickChangeVisibleBottomSheet = {},
-            onUpdateNotificationInListClick = { _, _, _, _, _ -> },
             onChangeStatusClick = {},
             onUpdateNotificationClick = {},
-            onDeleteNotificationFromListClick = {},
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
-            onAddNotificationToListClick = { _, _, _ -> },
             sheetState = rememberModalBottomSheetState(),
             showBottomSheet = false,
             historyParams = params,

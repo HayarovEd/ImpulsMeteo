@@ -91,73 +91,6 @@ class DeviceViewModel(
                 loadHistory(event.limit)
             }
 
-            is DeviceEvent.AddNewNotificationToList -> {
-                /*viewModelScope.launch {
-                    val updateList =
-                        state.value.device?.notificationsOld?.notifications?.toMutableList()
-                    updateList?.add(
-                        NotificationDeviceOld(
-                            condition = event.condition,
-                            idParam = event.idParam,
-                            value = event.value
-                        )
-                    )
-                    if (state.value.device != null) {
-                        _state.value.copy(
-                            device = state.value.device?.copy(
-                                notificationsOld = state.value.device!!.notificationsOld.copy(
-                                    notifications = updateList ?: emptyList()
-                                )
-                            )
-                        )
-                            .updateState()
-                    }
-                }*/
-            }
-
-            is DeviceEvent.DeleteNotificationFromList -> {
-                /*viewModelScope.launch {
-                    val updateList =
-                        state.value.device?.notificationsOld?.notifications?.toMutableList()
-                    updateList?.removeAt(event.index)
-                    if (state.value.device != null) {
-                        _state.value.copy(
-                            device = state.value.device?.copy(
-                                notificationsOld = state.value.device!!.notificationsOld.copy(
-                                    notifications = updateList ?: emptyList()
-                                )
-                            )
-                        )
-                            .updateState()
-                    }
-                }*/
-            }
-
-            is DeviceEvent.UpdateNotificationInList -> {
-                /*viewModelScope.launch {
-                    val updateList =
-                        state.value.device?.notificationsOld?.notifications?.toMutableList()
-                    if (state.value.device != null) {
-                        updateList?.set(
-                            event.index, NotificationDeviceOld(
-                                id = event.id,
-                                condition = event.condition,
-                                idParam = event.idParam,
-                                value = event.value
-                            )
-                        )
-                        _state.value.copy(
-                            device = state.value.device?.copy(
-                                notificationsOld = state.value.device!!.notificationsOld.copy(
-                                    notifications = updateList ?: emptyList()
-                                )
-                            )
-                        )
-                            .updateState()
-                    }
-                }*/
-            }
-
             DeviceEvent.ChangeStatusNotifications -> {
                 /*viewModelScope.launch {
                     if (state.value.device != null) {
@@ -444,9 +377,9 @@ class DeviceViewModel(
         }
     }
 
-    private fun loadGroupsAndUnits () {
+    private fun loadGroupsAndUnits() {
         viewModelScope.launch {
-            val resultGroupsDiff = async{ devicesGroupsUseCase.invoke() }
+            val resultGroupsDiff = async { devicesGroupsUseCase.invoke() }
             val resultUnitsDiff = async { unitsUseCase.invoke() }
             when (val result = resultGroupsDiff.await()) {
                 is ResultWork.Error -> {
@@ -493,31 +426,31 @@ class DeviceViewModel(
 
     private suspend fun loadUpdateData() {
 
-      /*  webSocketUseCaseOld.invoke(
-            token = state.value.token,
-            ids = listOf(state.value.deviceId)
-        ).collect { collector ->
-            when (collector) {
-                is ResultWork.Error -> {
-                    _state.value.copy(
-                        message = collector.error.asUiText()
-                    )
-                        .updateState()
-                }
+        /*  webSocketUseCaseOld.invoke(
+              token = state.value.token,
+              ids = listOf(state.value.deviceId)
+          ).collect { collector ->
+              when (collector) {
+                  is ResultWork.Error -> {
+                      _state.value.copy(
+                          message = collector.error.asUiText()
+                      )
+                          .updateState()
+                  }
 
-                is ResultWork.Success -> {
-                    if (state.value.device != null && state.value.device!!.id == collector.data.id) {
-                        _state.value.copy(
-                            device = updateDevice(
-                                device = state.value.device!!,
-                                newDeviceOld = collector.data
-                            )
-                        )
-                            .updateState()
-                    }
-                }
-            }
-        }*/
+                  is ResultWork.Success -> {
+                      if (state.value.device != null && state.value.device!!.id == collector.data.id) {
+                          _state.value.copy(
+                              device = updateDevice(
+                                  device = state.value.device!!,
+                                  newDeviceOld = collector.data
+                              )
+                          )
+                              .updateState()
+                      }
+                  }
+              }
+          }*/
     }
 
     private fun loadHistory(limit: Int) {

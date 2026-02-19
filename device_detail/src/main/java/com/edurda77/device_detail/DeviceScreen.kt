@@ -38,7 +38,6 @@ fun DeviceScreen(
     val expandedLimits = remember { mutableStateOf(false) }
     val showBottomSheet = remember { mutableStateOf(false) }
     val expandedUpdateDialog = remember { mutableStateOf(false) }
-    val isFilterOpen = remember { mutableStateOf(false) }
     val limits = listOf(100, 500, 1000, 1500)
     val currentLimit = remember { mutableIntStateOf(limits[0]) }
     val windowSize = LocalWindowInfo.current.containerDpSize
@@ -48,15 +47,13 @@ fun DeviceScreen(
     val snackBarState = remember { SnackbarHostState() }
 
     ObserveAsEvents(viewModel.eventFlow) { event ->
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                UiDeviceEvents.LoginNavigationEvent -> onBackClick()
-                is UiDeviceEvents.OnError -> snackBarState.showSnackbar(
-                    event.message.asString(
-                        context
-                    )
+        when (event) {
+            UiDeviceEvents.LoginNavigationEvent -> onBackClick()
+            is UiDeviceEvents.OnError -> snackBarState.showSnackbar(
+                event.message.asString(
+                    context
                 )
-            }
+            )
         }
     }
 
@@ -159,7 +156,6 @@ fun DeviceScreen(
                     onBackClick = onBackClick,
                     dateFrom = state.value.fromDate.date.toString(),
                     dateTo = state.value.toDate.date.toString(),
-                    isOpenFilter = isFilterOpen.value,
                     currentLimit = currentLimit.intValue,
                     expandedLimits = expandedLimits.value,
                     sheetState = sheetState,
@@ -170,9 +166,6 @@ fun DeviceScreen(
                     isLoadingHistory = state.value.isLoadingHistory,
                     histories = state.value.histories,
                     units = state.value.units,
-                    openFilter = {
-                        isFilterOpen.value = it
-                    },
                     openFromDateDialog = {
                         expandedFromDateDialog.value = true
                     },
@@ -190,31 +183,6 @@ fun DeviceScreen(
                     },
                     onClickChangeVisibleBottomSheet = {
                         showBottomSheet.value = !showBottomSheet.value
-                    },
-                    onAddNotificationToListClick = { idParam, condition, value ->
-                        onEvent(
-                            DeviceEvent.AddNewNotificationToList(
-                                idParam = idParam,
-                                condition = condition,
-                                value = value
-                            )
-                        )
-                    },
-                    onDeleteNotificationFromListClick = {
-                        onEvent(
-                            DeviceEvent.DeleteNotificationFromList(it)
-                        )
-                    },
-                    onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
-                        onEvent(
-                            DeviceEvent.UpdateNotificationInList(
-                                index = index,
-                                id = id,
-                                idParam = idParam,
-                                condition = condition,
-                                value = value
-                            )
-                        )
                     },
                     onChangeStatusClick = {
                         onEvent(DeviceEvent.ChangeStatusNotifications)
@@ -276,31 +244,6 @@ fun DeviceScreen(
                     },
                     onClickChangeVisibleBottomSheet = {
                         showBottomSheet.value = !showBottomSheet.value
-                    },
-                    onAddNotificationToListClick = { idParam, condition, value ->
-                        onEvent(
-                            DeviceEvent.AddNewNotificationToList(
-                                idParam = idParam,
-                                condition = condition,
-                                value = value
-                            )
-                        )
-                    },
-                    onDeleteNotificationFromListClick = {
-                        onEvent(
-                            DeviceEvent.DeleteNotificationFromList(it)
-                        )
-                    },
-                    onUpdateNotificationInListClick = { index, id, idParam, condition, value ->
-                        onEvent(
-                            DeviceEvent.UpdateNotificationInList(
-                                index = index,
-                                id = id,
-                                idParam = idParam,
-                                condition = condition,
-                                value = value
-                            )
-                        )
                     },
                     onChangeStatusClick = {
                         onEvent(DeviceEvent.ChangeStatusNotifications)

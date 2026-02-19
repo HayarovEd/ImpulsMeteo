@@ -29,8 +29,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,19 +61,31 @@ fun NotificationsContent(
     onClickChangeVisibleBottomSheet: () -> Unit,
     notifications: NotificationDevice?,
     params: List<Param>,
-    onAddNotificationToListClick: (String, String, Int) -> Unit,
-    onDeleteNotificationFromListClick: (Int) -> Unit,
-    onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
+//onAddNotificationToListClick: (String, String, Int) -> Unit,
+    //  onDeleteNotificationFromListClick: (Int) -> Unit,
+    //   onUpdateNotificationInListClick: (Int, Int, Int, String, Int) -> Unit,
     onChangeStatusClick: () -> Unit,
     onUpdateNotificationClick: () -> Unit,
 ) {
-    val expandedUpdateNotificationDialog = remember { mutableStateOf(false) }
-    val expandedParameters = remember { mutableStateOf(false) }
-    val parameter = remember { mutableStateOf("") }
-    val parameterId = remember { mutableStateOf("") }
+    var expandedUpdateNotificationDialog by remember { mutableStateOf(false) }
+    var expandedParameters by remember { mutableStateOf(false) }
+    var parameter by remember { mutableStateOf("") }
+    var parameterId by remember { mutableStateOf("") }
     val conditions = listOf("<=", ">=")
-    val currentCondition = remember { mutableStateOf(conditions.first()) }
-    val value = remember { mutableStateOf("") }
+    var currentCondition by remember { mutableStateOf(conditions.first()) }
+    var value by remember { mutableStateOf("") }
+    var notificationDevice by retain {
+        mutableStateOf(
+            notifications ?: NotificationDevice(
+                id = "",
+                deviceId = "",
+                notificationParam = emptyList(),
+                userId = "",
+                value = false
+            )
+        )
+    }
+
 
     Column(
         modifier = modifier
@@ -130,23 +145,23 @@ fun NotificationsContent(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 UiTextField(
-                    content = parameter.value,
+                    content = parameter,
                     label = stringResource(R.string.parameter),
                     onClickContent = {},
                     readOnly = true,
                     trailingIcon = ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24),
                     onClickTrailingIcon = {
-                        expandedParameters.value = true
+                        expandedParameters = true
                     }
                 )
                 DropdownMenu(
                     modifier = modifier,
                     //offset = DpOffset(x = offsetXDropDownMenu.value, y = 0.dp),
                     containerColor = MaterialTheme.colorScheme.background,
-                    expanded = expandedParameters.value,
-                    onDismissRequest = { expandedParameters.value = false }
+                    expanded = expandedParameters,
+                    onDismissRequest = { expandedParameters = false }
                 ) {
                     params.forEach { param ->
                         DropdownMenuItem(
@@ -157,9 +172,9 @@ fun NotificationsContent(
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             }, onClick = {
-                                parameter.value = param.label
-                                parameterId.value = param.id
-                                expandedParameters.value = false
+                                parameter = param.label
+                                parameterId = param.id
+                                expandedParameters = false
                             })
                     }
                 }
@@ -186,15 +201,16 @@ fun NotificationsContent(
             Button(
                 shape = RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (currentCondition.value==conditions.first()) MaterialTheme.colorScheme.primary else Color.Transparent,
-                    contentColor = if (currentCondition.value==conditions.first()) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
+                    containerColor = if (currentCondition == conditions.first()) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    contentColor = if (currentCondition == conditions.first()) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
                 ),
                 onClick = {
-                    currentCondition.value = conditions.first()
+                    currentCondition = conditions.first()
                 },
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (currentCondition.value!=conditions.first()) MaterialTheme.colorScheme.primary else Color.Transparent)
+                    color = if (currentCondition != conditions.first()) MaterialTheme.colorScheme.primary else Color.Transparent
+                )
             ) {
                 Text(
                     text = conditions.first(),
@@ -204,15 +220,16 @@ fun NotificationsContent(
             Button(
                 shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (currentCondition.value==conditions.last()) MaterialTheme.colorScheme.primary else Color.Transparent,
-                    contentColor = if (currentCondition.value==conditions.last()) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
+                    containerColor = if (currentCondition == conditions.last()) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    contentColor = if (currentCondition == conditions.last()) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.primary
                 ),
                 onClick = {
-                    currentCondition.value = conditions.last()
+                    currentCondition = conditions.last()
                 },
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (currentCondition.value!=conditions.last()) MaterialTheme.colorScheme.primary else Color.Transparent)
+                    color = if (currentCondition != conditions.last()) MaterialTheme.colorScheme.primary else Color.Transparent
+                )
             ) {
                 Text(
                     text = conditions.last(),
@@ -222,11 +239,11 @@ fun NotificationsContent(
         }
         Spacer(modifier = modifier.height(10.dp))
         UiTextField(
-            content = value.value,
+            content = value,
             label = stringResource(R.string.value),
             isOnlyDigit = true,
             onClickContent = {
-                value.value = it
+                value = it
             }
         )
         Spacer(modifier = modifier.height(10.dp))
@@ -235,11 +252,36 @@ fun NotificationsContent(
             contentPadding = PaddingValues(vertical = 8.dp),
             shape = MaterialTheme.shapes.medium,
             onClick = {
-                onAddNotificationToListClick(
+                /*onAddNotificationToListClick(
                     parameterId.value,
                     currentCondition.value,
                     value.value.toIntOrNull() ?: 0
-                )
+                )*/
+                if (notificationDevice.notificationParam.map { it.paramId }.contains(parameterId)) {
+                    notificationDevice = notificationDevice.copy(
+                        notificationParam = notificationDevice.notificationParam.map {
+                            if (it.paramId == parameterId) NotificationParam(
+                                condition = currentCondition,
+                                paramId = parameterId,
+                                value = value.toIntOrNull() ?: 0,
+                                id = "",
+                                isSend = false,
+                                userId = ""
+                            ) else it
+                        }
+                    )
+                } else {
+                    notificationDevice = notificationDevice.copy(
+                        notificationParam = notificationDevice.notificationParam + NotificationParam(
+                            condition = currentCondition,
+                            paramId = parameterId,
+                            value = value.toIntOrNull() ?: 0,
+                            id = "",
+                            isSend = false,
+                            userId = ""
+                        )
+                    )
+                }
             }
         ) {
             Text(
@@ -249,71 +291,71 @@ fun NotificationsContent(
             )
         }
         Spacer(modifier = modifier.height(10.dp))
-        notifications?.let { nf->
-            LazyColumn(
-                modifier = modifier
-                    .fillMaxWidth(),
-            ) {
-                itemsIndexed(nf.notificationParam) { index, notificationParam ->
-                    val currentNf = params.firstOrNull { it.id == notificationParam.paramId }
-                    val intIcon = currentNf?.measurementUnit
-                    val description = currentNf?.name
-                    val valueNotification = currentNf?.value
-                    if (expandedUpdateNotificationDialog.value) {
-                        UiDialog(
-                            onCloseDialog = {
-                                expandedUpdateNotificationDialog.value = false
-                            },
-                            content = {
-                               /* UpdateNotificationDialog(
-                                    onCloseClick = {
-                                        expandedUpdateNotificationDialog.value = false
-                                    },
-                                    onConfirmClick = { id, idParam, condition, value ->
-                                        expandedUpdateNotificationDialog.value = false
-                                        onUpdateNotificationInListClick(
-                                            index,
-                                            id,
-                                            idParam,
-                                            condition,
-                                            value
-                                        )
-                                    },
-                                    params = params,
-                                    notificationDeviceOld = notificationParam
-                                )*/
-                            }
-                        )
-                    }
-                    Row(
-                        modifier = modifier
-                            .clip(shape = MaterialTheme.shapes.medium)
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.outlineVariant)
-                            .clickable {
-                                expandedUpdateNotificationDialog.value = true
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Image(
-                            modifier = modifier.size(24.dp),
-                            painter = intIcon.asUiImageParam(),
-                            contentDescription = ""
-                        )
-                        Text(
-                            modifier = Modifier,
-                            text = "$description ${notificationParam.condition} $valueNotification",
-                            color = Color.White,
-                            style = Typography.labelSmall,
-                        )
-                        Spacer(modifier = modifier.weight(1f))
-                        UiIconButton(
-                            icon = ImageVector.vectorResource(R.drawable.baseline_delete_24),
-                            onClick = {
-                                onDeleteNotificationFromListClick(index)
-                            }
-                        )
-                    }
+        LazyColumn(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            itemsIndexed(notificationDevice.notificationParam) { index, notificationParam ->
+                val currentNf = params.firstOrNull { it.id == notificationParam.paramId }
+                val intIcon = currentNf?.measurementUnit
+                val description = currentNf?.name
+                val valueNotification = notificationParam.value
+                if (expandedUpdateNotificationDialog) {
+                    UiDialog(
+                        onCloseDialog = {
+                            expandedUpdateNotificationDialog = false
+                        },
+                        content = {
+                             UpdateNotificationDialog(
+                                 onCloseClick = {
+                                     expandedUpdateNotificationDialog = false
+                                 },
+                                 onConfirmClick = { notification ->
+                                     expandedUpdateNotificationDialog = false
+                                     notificationDevice = notificationDevice.copy(
+                                         notificationParam = notificationDevice.notificationParam.map {
+                                             if (it.paramId == parameterId) notification else it
+                                         }
+                                     )
+                                 },
+                                 notificationParam = notificationParam,
+                                 description = description
+                             )
+                        }
+                    )
+                }
+                Row(
+                    modifier = modifier
+                        .clip(shape = MaterialTheme.shapes.medium)
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.outlineVariant)
+                        .clickable {
+                            expandedUpdateNotificationDialog = true
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        modifier = modifier.size(24.dp),
+                        painter = intIcon.asUiImageParam(),
+                        contentDescription = ""
+                    )
+                    Text(
+                        modifier = Modifier,
+                        text = "$description ${notificationParam.condition} $valueNotification",
+                        color = Color.White,
+                        style = Typography.labelSmall,
+                    )
+                    Spacer(modifier = modifier.weight(1f))
+                    UiIconButton(
+                        icon = ImageVector.vectorResource(R.drawable.baseline_delete_24),
+                        onClick = {
+                            //onDeleteNotificationFromListClick(index)
+                            notificationDevice = notificationDevice.copy(
+                                notificationParam = notificationDevice.notificationParam - notificationDevice.notificationParam[index]
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -383,13 +425,13 @@ private fun NotificationsContentView() {
     ImpulsMeteoTheme {
         NotificationsContent(
             onUpdateNotificationClick = {},
-            onUpdateNotificationInListClick = { _, _, _, _, _ -> },
+            //onUpdateNotificationInListClick = { _, _, _, _, _ -> },
             onClickChangeVisibleBottomSheet = {},
             onChangeStatusClick = {},
-            onAddNotificationToListClick = { _, _, _ -> },
-            onDeleteNotificationFromListClick = {},
+            /*  onAddNotificationToListClick = { _, _, _ -> },
+              onDeleteNotificationFromListClick = {},*/
             notifications = NotificationDevice(
-               deviceId = "0",
+                deviceId = "0",
                 id = "1",
                 notificationParam = (1..3).map {
                     NotificationParam(
@@ -435,11 +477,11 @@ private fun NotificationsContentView2() {
     ImpulsMeteoTheme {
         NotificationsContent(
             onUpdateNotificationClick = {},
-            onUpdateNotificationInListClick = { _, _, _, _, _ -> },
+            //  onUpdateNotificationInListClick = { _, _, _, _, _ -> },
             onClickChangeVisibleBottomSheet = {},
             onChangeStatusClick = {},
-            onAddNotificationToListClick = { _, _, _ -> },
-            onDeleteNotificationFromListClick = {},
+            /*  onAddNotificationToListClick = { _, _, _ -> },
+              onDeleteNotificationFromListClick = {},*/
             notifications = NotificationDevice(
                 deviceId = "0",
                 id = "1",

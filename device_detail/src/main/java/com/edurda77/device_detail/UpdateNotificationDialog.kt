@@ -21,9 +21,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,9 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.NotificationDeviceOld
-import com.edurda77.domain.model.ParamOld
-import com.edurda77.domain.utils.NEGATIVE_ID
+import com.edurda77.domain.model.newModels.NotificationParam
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -45,17 +44,13 @@ import com.edurda77.resources.uikit.UiTextField
 fun UpdateNotificationDialog(
     modifier: Modifier = Modifier,
     onCloseClick: () -> Unit,
-    notificationDeviceOld: NotificationDeviceOld,
-    onConfirmClick: (Int, Int, String, Int) -> Unit,
-    params: List<ParamOld>,
+    notificationParam: NotificationParam,
+    onConfirmClick: (NotificationParam) -> Unit,
+    description: String?
 ) {
-    val condition = remember { mutableStateOf(notificationDeviceOld.condition) }
-    val value = remember { mutableStateOf(notificationDeviceOld.value.toString()) }
-    val parameterId = remember { mutableIntStateOf(NEGATIVE_ID) }
-    val parameter =
-        remember { mutableStateOf(params.first { it.id == notificationDeviceOld.idParam }.label) }
-    val expandedParameters = remember { mutableStateOf(false) }
-    val expandedConditions = remember { mutableStateOf(false) }
+    var condition by remember { mutableStateOf(notificationParam.condition) }
+    var value by remember { mutableStateOf(notificationParam.value.toString()) }
+    var expandedConditions by remember { mutableStateOf(false) }
     val conditions = listOf("<=", ">=")
 
     Column(
@@ -71,7 +66,7 @@ fun UpdateNotificationDialog(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = modifier.weight(1.5f)
+                modifier = modifier.weight(1.5f),
             ) {
                 Text(
                     modifier = modifier,
@@ -80,42 +75,12 @@ fun UpdateNotificationDialog(
                     style = Typography.bodyLarge,
                 )
                 Spacer(modifier = modifier.height(3.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        modifier = modifier.basicMarquee(),
-                        text = parameter.value,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = Typography.bodyLarge,
-                    )
-                    DropdownMenu(
-                        modifier = modifier,
-                        containerColor = MaterialTheme.colorScheme.background,
-                        expanded = expandedParameters.value,
-                        onDismissRequest = { expandedParameters.value = false }
-                    ) {
-                        params.forEach { param ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = param.label,
-                                        style = Typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }, onClick = {
-                                    parameter.value = param.label
-                                    parameterId.intValue = param.id
-                                })
-                        }
-                    }
-                    UiIconButton(
-                        icon = ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        onClick = {
-                            expandedParameters.value = true
-                        }
-                    )
-                }
+                Text(
+                    modifier = modifier.basicMarquee(),
+                    text = description?:"",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = Typography.bodyLarge,
+                )
             }
             Column(
                 modifier = modifier.weight(1f)
@@ -130,15 +95,15 @@ fun UpdateNotificationDialog(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         modifier = modifier,
-                        text = condition.value,
+                        text = condition,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         style = Typography.bodyLarge,
                     )
                     DropdownMenu(
                         modifier = modifier,
                         containerColor = MaterialTheme.colorScheme.background,
-                        expanded = expandedConditions.value,
-                        onDismissRequest = { expandedConditions.value = false }
+                        expanded = expandedConditions,
+                        onDismissRequest = { expandedConditions = false }
                     ) {
                         conditions.forEach { cnd ->
                             DropdownMenuItem(
@@ -149,7 +114,7 @@ fun UpdateNotificationDialog(
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 }, onClick = {
-                                    condition.value = cnd
+                                    condition = cnd
                                 })
                         }
                     }
@@ -157,7 +122,7 @@ fun UpdateNotificationDialog(
                         icon = ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24),
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         onClick = {
-                            expandedConditions.value = true
+                            expandedConditions = true
                         }
                     )
                 }
@@ -173,11 +138,11 @@ fun UpdateNotificationDialog(
                 )
                 Spacer(modifier = modifier.height(3.dp))
                 UiTextField(
-                    content = value.value,
+                    content = value,
                     label = "",
                     isOnlyDigit = true,
                     onClickContent = {
-                        value.value = it
+                        value = it
                     }
                 )
             }
@@ -212,10 +177,10 @@ fun UpdateNotificationDialog(
                 shape = MaterialTheme.shapes.medium,
                 onClick = {
                     onConfirmClick(
-                        notificationDeviceOld.id ?: NEGATIVE_ID,
-                        parameterId.intValue,
-                        condition.value,
-                        value.value.toIntOrNull() ?: 0
+                        notificationParam.copy(
+                            condition = condition,
+                            value = value.toIntOrNull() ?: 0
+                        )
                     )
                 }
             ) {
@@ -235,31 +200,19 @@ fun UpdateNotificationDialog(
 )
 @Composable
 private fun UpdateNotificationDialogView() {
-    val params = remember {
-        (0..5).map {
-            ParamOld(
-                id = it,
-                idUnit = it,
-                name = "Param $it",
-                label = "label",
-                value = it + 5.0,
-                color = "#50e3c2",
-                classIcon = "wi wi-thermometer",
-                isHidden = false,
-                idDevice = 1
-            )
-        }
-    }
     ImpulsMeteoTheme {
         UpdateNotificationDialog(
             onCloseClick = {},
-            notificationDeviceOld = NotificationDeviceOld(
+            notificationParam = NotificationParam(
                 condition = "nt1",
-                idParam = 1,
-                value = 3
+                paramId = "1",
+                value = 3,
+                id = "",
+                isSend = false,
+                userId = ""
             ),
-            onConfirmClick = { _, _, _, _ -> },
-            params = params
+            description = "key 1",
+            onConfirmClick = {},
         )
     }
 }
@@ -269,31 +222,19 @@ private fun UpdateNotificationDialogView() {
 )
 @Composable
 private fun UpdateNotificationDialogView2() {
-    val params = remember {
-        (0..5).map {
-            ParamOld(
-                id = it,
-                idUnit = it,
-                name = "Param $it",
-                label = "label",
-                value = it + 5.0,
-                color = "#50e3c2",
-                classIcon = "wi wi-thermometer",
-                isHidden = false,
-                idDevice = 1
-            )
-        }
-    }
     ImpulsMeteoTheme {
         UpdateNotificationDialog(
             onCloseClick = {},
-            notificationDeviceOld = NotificationDeviceOld(
+            notificationParam = NotificationParam(
                 condition = "nt1",
-                idParam = 1,
-                value = 3
+                paramId = "1",
+                value = 3,
+                id = "",
+                isSend = false,
+                userId = ""
             ),
-            onConfirmClick = { _, _, _, _ -> },
-            params = params
+            description = "key 1",
+            onConfirmClick = {},
         )
     }
 }
