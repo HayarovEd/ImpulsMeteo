@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.usecase.ClearHistoryDeviceUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
@@ -47,6 +48,7 @@ class DeviceViewModel(
     private val webSocketUseCaseOld: WebSocketUseCaseOld,
     private val historyUseCase: HistoryUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
+    private val clearHistoryDeviceUseCase: ClearHistoryDeviceUseCase,
 ) : ViewModel() {
     private val deviceId = savedStateHandle.toRoute<NavigationRoute.Device>().id
     private var _state = MutableStateFlow(DeviceState())
@@ -168,14 +170,12 @@ class DeviceViewModel(
             }
 
             DeviceEvent.BackStartGroups -> {
-                /* if (state.value.device != null) {
-                     _state.value.copy(
-                         device = state.value.device!!.copy(
-                             groups = _startGroups.value
-                         )
-                     )
-                         .updateState()
-                 }*/
+                state.value.device?.let { device ->
+                    _state.value.copy(
+                        selectedGroups = device.groups,
+                    )
+                        .updateState()
+                }
             }
 
             is DeviceEvent.UpdateParam -> {
@@ -431,51 +431,26 @@ class DeviceViewModel(
 
     private fun clearSensors() {
         state.value.device?.let { device ->
-            _state.value.copy(
-                isLoading = true,
-            )
-                .updateState()
-
-            var count = 0
-            /*viewModelScope.launch {
-                device.params.forEach { param ->
-                    when (val result = deleteParamUseCase(
-                        token = state.value.token,
-                        id = param.id
-                    )) {
-                        is ResultWork.Error -> {
-                            _state.value.copy(
-                                message = result.error.asUiText()
-                            )
-                                .updateState()
-                            mutex.withLock {
-                                count++
-                            }
-                        }
-
-                        is ResultWork.Success -> {
-                            mutex.withLock {
-                                count++
-                            }
-                            if (count == device.params.size) {
-                                viewModelScope.launch {
-                                    loadDevice()
-                                }
-                                viewModelScope.launch {
-                                    loadGroups()
-                                    loadUnits()
-                                }
-                                viewModelScope.launch {
-                                    loadUpdateData()
-                                }
-                                viewModelScope.launch {
-                                    loadHistory(limit = 100)
-                                }
-                            }
+            viewModelScope.launch {
+                when (val result = clearHistoryDeviceUseCase.invoke(
+                    ids = device.params.map { it.id }
+                )) {
+                    is ResultWork.Error -> {
+                        if (result.error is DataError.TokenError) {
+                            _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                        } else {
+                            _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
                         }
                     }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            histories = emptyMap()
+                        )
+                            .updateState()
+                    }
                 }
-            }*/
+            }
         }
     }
 

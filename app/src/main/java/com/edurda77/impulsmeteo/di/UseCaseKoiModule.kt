@@ -5,6 +5,7 @@ import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.AuthCheckUseCase
+import com.edurda77.domain.usecase.ClearHistoryDeviceUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase
@@ -71,4 +72,6 @@ val useCaseKoiModule = module {
     single<RemoveFavoriteUseCase> { RemoveFavoriteUseCase(get()) }
     single<DeleteDeviceUseCase> { DeleteDeviceUseCase(get(), get()) }
     factoryOf(::HistoryUseCase) { bind <HistoryUseCase>() }
+    factoryOf(::ClearHistoryDeviceUseCase) { bind <ClearHistoryDeviceUseCase>() }
+
 }

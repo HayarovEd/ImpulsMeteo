@@ -15,4 +15,5 @@ interface ParamsRepository {
     ): ResultWork<Map<String, List<History>>, DataError>
 
     suspend fun updateParam(accessToken: String, param: Param): ResultWork<Param, DataError>
+    suspend fun clearHistory(accessToken: String, ids: List<String>): ResultWork<Unit, DataError>
 }

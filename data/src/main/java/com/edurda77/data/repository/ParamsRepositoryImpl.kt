@@ -17,6 +17,7 @@ import com.edurda77.domain.utils.convertToLocalDateTime
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.patch
@@ -98,6 +99,24 @@ class ParamsRepositoryImpl(
                         )
                     }
                 result.call.body<ParamDto>().toParam()
+            }
+        }
+    }
+
+    override suspend fun clearHistory(
+        accessToken: String,
+        ids: List<String>,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                    httpClient.delete (NEW_BASE_URL + "device-params/params") {
+                        contentType(ContentType.Application.Json)
+                        bearerAuth(accessToken)
+                        setBody(
+                           ids
+                        )
+                    }
+                Unit
             }
         }
     }
