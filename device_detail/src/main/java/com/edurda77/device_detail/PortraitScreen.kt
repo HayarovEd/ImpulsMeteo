@@ -393,17 +393,17 @@ fun PortraitScreen(
                                 name = param.label,
                                 hexColor = param.color,
                                 content = {
-                                    /* UpdateParamDialog(
-                                         param = param,
-                                         units = units,
-                                         onCloseClick = {
-                                             expandedDialog.value = false
-                                         },
-                                         onUpdateClick = { param ->
-                                             expandedDialog.value = false
-                                             onUpdateClick(param)
-                                         }
-                                     )*/
+                                    UpdateParamDialog(
+                                        param = param,
+                                        units = units,
+                                        onCloseClick = {
+                                            expandedDialog.value = false
+                                        },
+                                        onUpdateClick = { param ->
+                                            expandedDialog.value = false
+                                            onUpdateClick(param)
+                                        }
+                                    )
                                 },
                                 expandedDialog = expandedDialog.value,
                                 onCloseClick = {
@@ -656,7 +656,7 @@ private fun PortraitScreenView() {
             limits = listOf(0, 1, 2, 3),
             expandedLimits = false,
             onClickChangeVisibleBottomSheet = {},
-            onUpdateNotificationClick = {_,_->},
+            onUpdateNotificationClick = { _, _ -> },
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
             sheetState = rememberModalBottomSheetState(),
@@ -772,7 +772,7 @@ private fun DirectoriesScreenView2() {
             limits = listOf(0, 1, 2, 3),
             expandedLimits = false,
             onClickChangeVisibleBottomSheet = {},
-            onUpdateNotificationClick = {_,_->},
+            onUpdateNotificationClick = { _, _ -> },
             onClickChangeVisibleLimit = {},
             onClickExpandedUpdateDialog = {},
             sheetState = rememberModalBottomSheetState(),

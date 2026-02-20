@@ -23,8 +23,10 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,8 +35,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.ParamOld
-import com.edurda77.domain.model.UnitMeteoOld
+import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.newModels.Param
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
@@ -43,16 +45,16 @@ import com.edurda77.resources.uikit.UiTextField
 @Composable
 fun UpdateParamDialog(
     modifier: Modifier = Modifier,
-    param: ParamOld,
-    units: List<UnitMeteoOld>,
+    param: Param,
+    units: List<MeasurementUnit>,
     onCloseClick: () -> Unit,
-    onUpdateClick: (ParamOld) -> Unit,
+    onUpdateClick: (Param) -> Unit,
 ) {
-    val label = remember { mutableStateOf(param.label) }
-    val selectedUnit =
-        remember { mutableStateOf(units.firstOrNull { it.id == param.idUnit }?.name ?: "") }
-    val isHidden = remember { mutableStateOf(param.isHidden) }
-    val expandedUnitsMenu = remember { mutableStateOf(false) }
+    var label by remember { mutableStateOf(param.label) }
+    var selectedUnit by
+    remember { mutableStateOf(units.firstOrNull { it.id == param.measurementUnit.id }) }
+    var isHidden by remember { mutableStateOf(param.isHidden) }
+    var expandedUnitsMenu by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -68,38 +70,38 @@ fun UpdateParamDialog(
         )
         Spacer(modifier = modifier.height(5.dp))
         UiTextField(
-            content = label.value,
+            content = label,
             label = stringResource(id = R.string.title),
             onClickContent = {
-                label.value = it
+                label = it
             }
         )
         Spacer(modifier = modifier.height(5.dp))
         UiTextField(
-            content = selectedUnit.value,
+            content = selectedUnit?.name ?: "",
             label = stringResource(id = R.string.units_lower_case),
             onClickContent = {},
-            trailingIcon = if (expandedUnitsMenu.value) ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24)
+            trailingIcon = if (expandedUnitsMenu) ImageVector.vectorResource(id = R.drawable.baseline_arrow_drop_down_24)
             else ImageVector.vectorResource(
                 id = R.drawable.baseline_arrow_drop_up_24
             ),
             readOnly = true,
             onClickTrailingIcon = {
-                expandedUnitsMenu.value = true
+                expandedUnitsMenu = true
             },
             maxLines = 1
         )
         DropdownMenu(
-            expanded = expandedUnitsMenu.value,
+            expanded = expandedUnitsMenu,
             onDismissRequest = {
-                expandedUnitsMenu.value = false
+                expandedUnitsMenu = false
             }) {
             units.forEach {
                 DropdownMenuItem(
                     text = {
                         Text(
                             modifier = modifier
-                                .background(if (units.firstOrNull { it.name == selectedUnit.value } != null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
+                                .background(if (selectedUnit != null) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
                                 .padding(4.dp),
                             text = it.name,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -107,7 +109,7 @@ fun UpdateParamDialog(
                         )
                     },
                     onClick = {
-                        selectedUnit.value = it.name
+                        selectedUnit = it
                     },
                 )
             }
@@ -117,12 +119,12 @@ fun UpdateParamDialog(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Switch(
-                checked = isHidden.value,
+                checked = isHidden,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White
                 ),
                 onCheckedChange = {
-                    isHidden.value = !isHidden.value
+                    isHidden = !isHidden
                 }
             )
             Spacer(modifier = modifier.width(5.dp))
@@ -161,16 +163,18 @@ fun UpdateParamDialog(
             Button(
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 shape = MaterialTheme.shapes.medium,
-                enabled = selectedUnit.value.isNotBlank(),
+                enabled = selectedUnit != null,
                 onClick = {
-                    onCloseClick()
-                    onUpdateClick(
-                        param.copy(
-                            label = label.value,
-                            isHidden = isHidden.value,
-                            idUnit = units.firstOrNull { it.name == selectedUnit.value }?.id ?: 0
+                    selectedUnit?.let { su ->
+                        onCloseClick()
+                        onUpdateClick(
+                            param.copy(
+                                label = label,
+                                isHidden = isHidden,
+                                measurementUnit = su
+                            )
                         )
-                    )
+                    }
                 }
             ) {
                 Text(
@@ -188,25 +192,26 @@ fun UpdateParamDialog(
 )
 @Composable
 private fun UpdateParamDialogView1() {
-    val units = remember { (0..5).map {
-        UnitMeteoOld(
-            id = it,
-            name = "Param $it",
-            short = "prm$it"
-        )
-    } }
+    val units = remember {
+        (0..5).map {
+            MeasurementUnit(
+                id = "$it",
+                name = "Param $it",
+                abbreviation = "prm$it"
+            )
+        }
+    }
     ImpulsMeteoTheme {
         UpdateParamDialog(
-            param = ParamOld(
-                id = 0,
-                idUnit = 0,
+            param = Param(
+                id = "0",
                 name = "Param 0",
                 label = "label",
-                value = 0+5.0,
+                value = 0 + 5.0,
                 color = "#50e3c2",
                 classIcon = "wi wi-thermometer",
                 isHidden = false,
-                idDevice = 1
+                measurementUnit = units.first()
             ),
             units = units,
             onUpdateClick = {},
@@ -220,25 +225,26 @@ private fun UpdateParamDialogView1() {
 )
 @Composable
 private fun UpdateParamDialog2() {
-    val units = remember { (0..5).map {
-        UnitMeteoOld(
-            id = it,
-            name = "Param $it",
-            short = "prm$it"
-        )
-    } }
+    val units = remember {
+        (0..5).map {
+            MeasurementUnit(
+                id = "$it",
+                name = "Param $it",
+                abbreviation = "prm$it"
+            )
+        }
+    }
     ImpulsMeteoTheme {
         UpdateParamDialog(
-            param = ParamOld(
-                id = 0,
-                idUnit = 0,
+            param = Param(
+                id = "0",
                 name = "Param 0",
                 label = "label",
-                value = 0+5.0,
+                value = 0 + 5.0,
                 color = "#50e3c2",
                 classIcon = "wi wi-thermometer",
                 isHidden = true,
-                idDevice = 1
+                measurementUnit = units.last()
             ),
             units = units,
             onUpdateClick = {},

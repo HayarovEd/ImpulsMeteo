@@ -1,6 +1,7 @@
 package com.edurda77.domain.repository
 
 import com.edurda77.domain.model.newModels.History
+import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 
@@ -12,4 +13,6 @@ interface ParamsRepository {
         toDate: String,
         limit: Int
     ): ResultWork<Map<String, List<History>>, DataError>
+
+    suspend fun updateParam(accessToken: String, param: Param): ResultWork<Param, DataError>
 }

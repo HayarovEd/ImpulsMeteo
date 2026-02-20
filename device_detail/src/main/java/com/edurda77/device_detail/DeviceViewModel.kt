@@ -5,13 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.newModels.Device
+import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
-import com.edurda77.domain.usecase.DeleteParamUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.HistoryUseCase
-import com.edurda77.domain.usecase.LocalTokenUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
@@ -38,8 +36,7 @@ import kotlinx.coroutines.launch
 class DeviceViewModel(
     private val deviceByIdUseCase: DeviceByIdUseCase,
     private val loggedUserUseCase: LoggedUserUseCase,
-    private val localTokenUseCase: LocalTokenUseCase,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val updateNotificationsDeviceUseCase: UpdateNotificationsDeviceUseCase,
     private val devicesGroupsUseCase: DevicesGroupsUseCase,
     private val updateDeviceUseCase: UpdateDeviceUseCase,
@@ -50,7 +47,6 @@ class DeviceViewModel(
     private val webSocketUseCaseOld: WebSocketUseCaseOld,
     private val historyUseCase: HistoryUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
-    private val deleteParamUseCase: DeleteParamUseCase,
 ) : ViewModel() {
     private val deviceId = savedStateHandle.toRoute<NavigationRoute.Device>().id
     private var _state = MutableStateFlow(DeviceState())
@@ -185,25 +181,7 @@ class DeviceViewModel(
             }
 
             is DeviceEvent.UpdateParam -> {
-                /*if (state.value.device != null) {
-                    viewModelScope.launch {
-                        when (val result = updateParamUseCase.invoke(
-                            token = state.value.token,
-                            param = event.param
-                        )) {
-                            is ResultWork.Error -> {
-                                _state.value.copy(
-                                    message = result.error.asUiText()
-                                )
-                                    .updateState()
-                            }
-
-                            is ResultWork.Success -> {
-                                loadDevice()
-                            }
-                        }
-                    }
-                }*/
+                updateParam(event.param)
             }
 
             is DeviceEvent.WorkWithFavorite -> {
@@ -500,6 +478,36 @@ class DeviceViewModel(
                 }
             }*/
         }
+    }
+
+    private fun updateParam(param: Param) {
+        state.value.device?.let { device ->
+            viewModelScope.launch {
+                when (val result = updateParamUseCase.invoke(
+                    param = param
+                )) {
+                    is ResultWork.Error -> {
+                        if (result.error is DataError.TokenError) {
+                            _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                        } else {
+                            _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                        }
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            device = device.copy(
+                                params = device.params.map { prm ->
+                                    if (prm.id == result.data.id) result.data else prm
+                                }
+                            ),
+                        )
+                            .updateState()
+                    }
+                }
+            }
+        }
+
     }
 
 

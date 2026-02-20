@@ -58,7 +58,7 @@ fun Int.asUiTextParam(): String {
 
 @Composable
 fun MeasurementUnit.asUiTextParam(): String {
-    return when (this.abbreviation) {
+    return when (this.name) {
         "°C" -> stringResource(R.string.unit_temperature)
         "%" -> stringResource(R.string.unit_humidity)
         "мм.рт.ст." -> stringResource(R.string.unit_pressure)

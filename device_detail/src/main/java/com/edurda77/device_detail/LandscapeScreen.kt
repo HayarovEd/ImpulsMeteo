@@ -383,7 +383,7 @@ fun LandscapeScreen(
                                 name = param.label,
                                 hexColor = param.color,
                                 content = {
-                                    /* UpdateParamDialog(
+                                     UpdateParamDialog(
                                          param = param,
                                          units = units,
                                          onCloseClick = {
@@ -393,7 +393,7 @@ fun LandscapeScreen(
                                              expandedDialog.value = false
                                              onUpdateClick(param)
                                          }
-                                     )*/
+                                     )
                                 },
                                 expandedDialog = expandedDialog.value,
                                 onCloseClick = {

@@ -96,6 +96,20 @@ fun ParamDto.toParam(): Param {
     )
 }
 
+fun Param.toParamDto(): ParamDto {
+    return ParamDto(
+        id = id,
+        classIcon = classIcon,
+        color = color,
+        isHidden = isHidden,
+        label = label,
+        name = name,
+        value = value,
+        measurementUnitDto = measurementUnit.toMeasurementUnitDto()
+    )
+}
+
+
 fun MeasurementUnitDto.toMeasurementUnit(): MeasurementUnit {
     return MeasurementUnit(
         id = id,

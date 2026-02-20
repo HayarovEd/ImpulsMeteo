@@ -97,20 +97,19 @@ class DevicesRepositoryImpl(
         userId: String,
     ): ResultWork<NotificationDevice, DataError> {
         return withContext(Dispatchers.IO) {
-            val a = NotificationDeviceDto(
-                deviceId = deviceId,
-                notificationsDeviceDtos = notificationsParam.map { it.toNotificationsDeviceDtos() },
-                value = value,
-                userId = userId,
-                id = ""
-            )
             handleResponse {
                 val result =
                     httpClient.post(NEW_BASE_URL + "devices/" + deviceId + "/notifications") {
                         contentType(ContentType.Application.Json)
                         bearerAuth(accessToken)
                         setBody(
-                            a
+                            NotificationDeviceDto(
+                                deviceId = deviceId,
+                                notificationsDeviceDtos = notificationsParam.map { it.toNotificationsDeviceDtos() },
+                                value = value,
+                                userId = userId,
+                                id = ""
+                            )
                         )
                     }
                 result.call.body<NotificationDeviceDto>().toNotificationDevice()
