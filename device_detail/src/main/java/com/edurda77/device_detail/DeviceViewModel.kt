@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.GroupDevicesOld
+import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeleteParamUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
@@ -206,49 +207,7 @@ class DeviceViewModel(
             }
 
             is DeviceEvent.WorkWithFavorite -> {
-                /*viewModelScope.launch {
-                    state.value.device?.let { device ->
-                        if (device.isFavorite) {
-                            when (val result = removeFavoriteUseCase.invoke(
-                                deviceId = device.id,
-                                token = state.value.token
-                            )) {
-                                is ResultWork.Error -> {
-                                    _state.value.copy(
-                                        message = result.error.asUiText(),
-                                    )
-                                        .updateState()
-                                }
-
-                                is ResultWork.Success -> {
-                                    _state.value.copy(
-                                        device = device.copy(isFavorite = false),
-                                    )
-                                        .updateState()
-                                }
-                            }
-                        } else {
-                           *//* when (val result = updateFavoriteUseCase.invoke(
-                                deviceId = device.id,
-                                token = state.value.token
-                            )) {
-                                is ResultWork.Error -> {
-                                    _state.value.copy(
-                                        message = result.error.asUiText(),
-                                    )
-                                        .updateState()
-                                }
-
-                                is ResultWork.Success -> {
-                                    _state.value.copy(
-                                        device = device.copy(isFavorite = true),
-                                    )
-                                        .updateState()
-                                }
-                            }*//*
-                        }
-                    }
-                }*/
+                updateFavorite()
             }
 
             DeviceEvent.DeleteDevice -> {
@@ -320,31 +279,32 @@ class DeviceViewModel(
     }
 
 
-    private suspend fun loadLoggedUserData() {
+    private fun updateFavorite() {
+        viewModelScope.launch {
+            state.value.authUser?.let { user ->
+                when (val result =
+                    updateFavoriteUseCase.invoke(
+                        deviceId = deviceId,
+                        favorites = user.favorites
+                    )
+                ) {
+                    is ResultWork.Error -> {
+                        if (result.error is DataError.TokenError) {
+                            _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                        } else {
+                            _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                        }
+                    }
 
-        /*when (val result = loggedUserUseCase.invoke(token)) {
-            is ResultWork.Error -> {
-                _state.value.copy(
-                    isLoading = false,
-                    message = result.error.asUiText()
-                )
-                    .updateState()
-            }
-
-            is ResultWork.Success -> {
-                _state.value.copy(
-                    loggedUser = result.data
-                )
-                    .updateState()
-
-                viewModelScope.launch {
-                    loadUpdateData()
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            authUser = user.copy(favorites = result.data)
+                        )
+                            .updateState()
+                    }
                 }
-                viewModelScope.launch {
-
-                }
             }
-        }*/
+        }
     }
 
     private fun loadDevice() {
