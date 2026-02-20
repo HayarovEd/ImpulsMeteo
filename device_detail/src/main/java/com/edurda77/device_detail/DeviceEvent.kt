@@ -14,8 +14,8 @@ sealed class DeviceEvent {
         val notificationsParam: List<NotificationParam>,
         val value: Boolean,
     ) : DeviceEvent()//
-    class UpdateSelectedGroups(val groupDevices: GroupDevice) : DeviceEvent()
-    class UpdateParam(val param: Param) : DeviceEvent()
+    class UpdateSelectedGroups(val groupDevices: GroupDevice) : DeviceEvent()//
+    class UpdateParam(val param: Param) : DeviceEvent()//
     class UpdateDevice(val name: String, val key: String, val frequency: String) : DeviceEvent()
     data object DeleteDevice : DeviceEvent()
     data object BackStartGroups : DeviceEvent()

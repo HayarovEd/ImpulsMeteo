@@ -22,9 +22,10 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,13 +51,9 @@ fun UpdateDeviceDialog(
     onUpdateGroups: (GroupDevice) -> Unit,
     selectedGroups: List<GroupDevice>,
 ) {
-    val currentName = remember { mutableStateOf(label) }
-    val currentKey = remember { mutableStateOf(key) }
-    val currentFrequency = remember { mutableStateOf(frequency.toString()) }
-    val selectedGroupsText = remember { mutableStateOf("") }
-    LaunchedEffect(selectedGroups.size) {
-        selectedGroupsText.value = selectedGroups.joinToString { it.name }
-    }
+    var currentName by remember { mutableStateOf(label) }
+    var currentKey by remember { mutableStateOf(key) }
+    var currentFrequency by remember { mutableStateOf(frequency.toString()) }
 
     Column(
         modifier = modifier
@@ -72,26 +69,26 @@ fun UpdateDeviceDialog(
         )
         Spacer(modifier = modifier.height(5.dp))
         UiTextField(
-            content = currentName.value,
+            content = currentName,
             label = stringResource(id = R.string.name),
             onClickContent = {
-                currentName.value = it
+                currentName = it
             }
         )
         Spacer(modifier = modifier.height(5.dp))
         UiTextField(
-            content = currentKey.value,
+            content = currentKey,
             label = stringResource(id = R.string.key),
             onClickContent = {
-                currentKey.value = it
+                currentKey = it
             }
         )
         Spacer(modifier = modifier.height(5.dp))
         UiTextField(
-            content = currentFrequency.value,
+            content = currentFrequency,
             label = stringResource(id = R.string.update_frequency),
             onClickContent = {
-                currentFrequency.value = it
+                currentFrequency = it
             },
             isOnlyDigit = true
         )
@@ -162,9 +159,9 @@ fun UpdateDeviceDialog(
                 onClick = {
                     onCloseClick()
                     onUpdateClick(
-                        currentName.value,
-                        currentKey.value,
-                        currentFrequency.value,
+                        currentName,
+                        currentKey,
+                        currentFrequency,
                     )
                 }
             ) {

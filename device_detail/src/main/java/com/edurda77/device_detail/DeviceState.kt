@@ -27,6 +27,7 @@ data class DeviceState (
     val histories: Map<String, List<History>> = emptyMap(),
     val isLoadingHistory: Boolean = false,
     val authUser: AuthUser? = null,
+    val selectedGroups: List<GroupDevice> = emptyList(),
 )
 
 

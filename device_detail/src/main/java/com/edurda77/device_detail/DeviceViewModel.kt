@@ -123,20 +123,18 @@ class DeviceViewModel(
             }
 
             is DeviceEvent.UpdateSelectedGroups -> {
-                /* if (state.value.device != null) {
-                     val updatedGroups = state.value.device!!.groups.toMutableList()
-                     if (updatedGroups.contains(event.groupDevicesOld)) {
-                         updatedGroups.remove(event.groupDevicesOld)
-                     } else {
-                         updatedGroups.add(event.groupDevicesOld)
-                     }
-                     _state.value.copy(
-                         device = state.value.device!!.copy(
-                             groups = updatedGroups
-                         )
-                     )
-                         .updateState()
-                 }*/
+                val selectedGroups = state.value.selectedGroups
+                if (selectedGroups.contains(event.groupDevices)) {
+                    _state.value.copy(
+                        selectedGroups = selectedGroups - event.groupDevices
+                    )
+                        .updateState()
+                } else {
+                    _state.value.copy(
+                        selectedGroups = selectedGroups + event.groupDevices
+                    )
+                        .updateState()
+                }
             }
 
             is DeviceEvent.UpdateDevice -> {
@@ -306,6 +304,7 @@ class DeviceViewModel(
                     }
                     _state.value.copy(
                         device = result.data.copy(notificationDevice = notificationDevice),
+                        selectedGroups = result.data.groups,
                         isLoading = false
                     )
                         .updateState()

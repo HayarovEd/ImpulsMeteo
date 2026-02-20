@@ -137,7 +137,7 @@ fun DeviceScreen(
                         onUpdateGroups = {
                             onEvent(DeviceEvent.UpdateSelectedGroups(it))
                         },
-                        selectedGroups = device.groups
+                        selectedGroups = state.value.selectedGroups
                     )
                 }
             }
