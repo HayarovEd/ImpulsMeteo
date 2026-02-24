@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DeviceWsDto(
     @SerialName("host")
-    val host: String,
+    val host: String?,
     @SerialName("id")
     val id: String,
     @SerialName("key")
@@ -29,4 +29,6 @@ data class DeviceWsDto(
     val groupsDevice: List<GroupDeviceDto>,
     @SerialName("params_device")
     val params: List<ParamDto>,
+    @SerialName("cameras_device")
+    val cameras: List<CameraDto>,
 )

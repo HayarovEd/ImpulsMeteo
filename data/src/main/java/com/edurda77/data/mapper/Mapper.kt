@@ -148,7 +148,7 @@ fun DeviceDto.toDevice(): Device {
 
 fun DeviceWsDto.convertToDevice(): Device {
     return Device(
-        host = this.host,
+        host = this.host?:"",
         id = this.id,
         key = this.key,
         name = this.name,

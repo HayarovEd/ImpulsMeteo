@@ -48,55 +48,62 @@ class WebSocketRepositoryImpl(
                 .filterIsInstance<Frame.Text>()
                 .collect {
                     val message = it.readText()
+                    val json = Json {
+                        ignoreUnknownKeys = true
+                        coerceInputValues = true
+                        encodeDefaults = true
+                        explicitNulls = false
+                    }
                     when {
                         message.contains("DEVICE_CREATED") -> {
-                            val result = Json.decodeFromString<WsContentDto<DeviceWsDto>>(message)
+                            val result = json.decodeFromString<WsContentDto<DeviceWsDto>>(message)
                             emit(ResultWork.Success(WebSocketMessage.DeviceCreate(result.content.convertToDevice())))
                         }
 
                         message.contains("DEVICE_UPDATED") -> {
-                            val result = Json.decodeFromString<WsContentDto<DeviceWsDto>>(message)
+                            val result = json.decodeFromString<WsContentDto<DeviceWsDto>>(message)
                             emit(ResultWork.Success(WebSocketMessage.DeviceUpdate(result.content.convertToDevice())))
                         }
 
                         message.contains("DEVICE_DELETED") -> {
-                            val result = Json.decodeFromString<WsContentDto<String>>(message)
+                            val result = json.decodeFromString<WsContentDto<String>>(message)
                             emit(ResultWork.Success(WebSocketMessage.DeviceDelete(result.content)))
                         }
 
                         message.contains("USER_CREATED") -> {
-                            val result = Json.decodeFromString<WsContentDto<UserDto>>(message)
+                            val result = json.decodeFromString<WsContentDto<UserDto>>(message)
                             emit(ResultWork.Success(WebSocketMessage.UserCreate(result.content.toUser())))
                         }
 
                         message.contains("USER_UPDATED") -> {
-                            val result = Json.decodeFromString<WsContentDto<UserDto>>(message)
+                            val result = json.decodeFromString<WsContentDto<UserDto>>(message)
                             emit(ResultWork.Success(WebSocketMessage.UserUpdate(result.content.toUser())))
                         }
 
                         message.contains("USER_DELETED") -> {
-                            val result = Json.decodeFromString<WsContentDto<String>>(message)
+                            val result = json.decodeFromString<WsContentDto<String>>(message)
                             emit(ResultWork.Success(WebSocketMessage.UserDelete(result.content)))
                         }
 
                         message.contains("FAVORITE_UPDATED") -> {
                             val result =
-                                Json.decodeFromString<WsContentDto<List<FavoriteDto>>>(message)
+                                json.decodeFromString<WsContentDto<List<FavoriteDto>>>(message)
                             emit(ResultWork.Success(WebSocketMessage.FavoriteUpdate(result.content.map { it.toFavorite() })))
                         }
 
                         message.contains("PARAM_DATA_UPDATE") -> {
-                            val result = Json.decodeFromString<WsContentDto<DeviceWsDto>>(message)
+                            val result = json.decodeFromString<WsContentDto<DeviceWsDto>>(message)
                             emit(ResultWork.Success(WebSocketMessage.ParamDataUpdate(result.content.convertToDevice())))
                         }
 
                         message.contains("PARAM_DATA_UPDATE") -> {
-                            val result = Json.decodeFromString<WsContentDto<ParamDto>>(message)
+                            val result = json.decodeFromString<WsContentDto<ParamDto>>(message)
                             emit(ResultWork.Success(WebSocketMessage.ParamUpdate(result.content.toParam())))
                         }
                     }
                 }
-        }.catch {
+        }.catch { e->
+            print(e.message)
             emit(ResultWork.Error(DataError.WebSocketError.NOT_CONNECT))
         }
     }

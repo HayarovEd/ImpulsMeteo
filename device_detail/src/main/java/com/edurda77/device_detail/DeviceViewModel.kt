@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.model.newModels.WebSocketMessage
 import com.edurda77.domain.usecase.ClearHistoryDeviceUseCase
+import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
 import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
@@ -16,6 +18,9 @@ import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateParamUseCase
+import com.edurda77.domain.usecase.WebSocketUseCase
+import com.edurda77.domain.usecase.WsMessageFactory
+import com.edurda77.domain.usecase.WsMessageFactory.updateParamInDevice
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.convertToStringDateTimeForHistory
@@ -41,7 +46,8 @@ class DeviceViewModel(
     private val unitsUseCase: UnitsUseCase,
     private val updateParamUseCase: UpdateParamUseCase,
     private val updateFavoriteUseCase: UpdateFavoriteUseCase,
-   // private val webSocketUseCaseOld: WebSocketUseCaseOld,
+    private val webSocketUseCase: WebSocketUseCase,
+    private val closeWebsocketUseCase: CloseWebsocketUseCase,
     private val historyUseCase: HistoryUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
     private val clearHistoryDeviceUseCase: ClearHistoryDeviceUseCase,
@@ -51,6 +57,7 @@ class DeviceViewModel(
     val state = _state
         .onStart {
             loadUserData()
+            updateFromWs()
         }
         .stateIn(
             viewModelScope,
@@ -407,7 +414,7 @@ class DeviceViewModel(
         name: String,
         updateRate: String,
     ) {
-        updateRate.toIntOrNull()?.let { ur->
+        updateRate.toIntOrNull()?.let { ur ->
             viewModelScope.launch {
                 when (val result = updateDeviceUseCase.invoke(
                     deviceId = deviceId,
@@ -459,16 +466,99 @@ class DeviceViewModel(
     }
 
 
+    private fun updateFromWs() {
+        viewModelScope.launch {
+            webSocketUseCase.invoke().collect { collector ->
+                when (collector) {
+                    is ResultWork.Error -> {}
+                    is ResultWork.Success -> {
+                        when (val successResult = collector.data) {
+
+                            is WebSocketMessage.DeviceUpdate -> {
+                                if (deviceId == successResult.device.id) {
+                                    _state.value.copy(
+                                        device = successResult.device.copy(
+                                            notificationDevice = state.value.device?.notificationDevice
+                                        )
+                                    )
+                                        .updateState()
+                                }
+                            }
+
+                            is WebSocketMessage.FavoriteUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = user.copy(
+                                            favorites = successResult.favorites
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+
+                            is WebSocketMessage.ParamDataUpdate -> {
+                                if (deviceId == successResult.device.id) {
+                                    _state.value.copy(
+                                        device = successResult.device.copy(
+                                            notificationDevice = state.value.device?.notificationDevice
+                                        )
+                                    )
+                                        .updateState()
+                                }
+                            }
+
+                            is WebSocketMessage.ParamUpdate -> {
+                                state.value.device?.let { device ->
+                                    _state.value.copy(
+                                        device = updateParamInDevice(
+                                            device = device,
+                                            newParam = successResult.param
+                                        )
+                                    )
+                                        .updateState()
+                                }
+
+                            }
+
+                            is WebSocketMessage.UserDelete -> {
+                                if (state.value.authUser?.id == successResult.id) {
+                                    viewModelScope.launch {
+                                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                                    }
+                                }
+                            }
+
+                            is WebSocketMessage.UserUpdate -> {
+                                state.value.authUser?.let { user ->
+                                    _state.value.copy(
+                                        authUser = WsMessageFactory.updateAuthUser(
+                                            authUser = user,
+                                            newUser = successResult.user
+                                        ),
+                                    )
+                                        .updateState()
+                                }
+                            }
+
+                            else -> {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     private fun DeviceState.updateState() {
         _state.update {
             this
         }
     }
 
-    /* override fun onCleared() {
-         super.onCleared()
-         viewModelScope.launch {
-             closeWebsocketUseCase.invoke()
-         }
-     }*/
+    override fun onCleared() {
+        super.onCleared()
+        viewModelScope.launch {
+            closeWebsocketUseCase.invoke()
+        }
+    }
 }

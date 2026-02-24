@@ -13,7 +13,6 @@ import com.edurda77.domain.utils.DATABASE
 import com.edurda77.domain.utils.PING_INTERVAL
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
@@ -23,6 +22,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.pingInterval
+import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,7 +69,14 @@ val baseModule = module {
                 })
             }
             install(WebSockets) {
+                val json = Json {
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                    encodeDefaults = true
+                    explicitNulls = false
+                }
                 pingInterval = PING_INTERVAL.toDuration(DurationUnit.MILLISECONDS)
+                contentConverter = KotlinxWebsocketSerializationConverter(json)
             }
         }
     }

@@ -72,6 +72,24 @@ object WsMessageFactory {
         } else devices
     }
 
+    fun updateParamInDevice(
+        device: Device,
+        newParam: Param
+    ): Device {
+        val paramExists = device.params.any { deviceParam -> newParam.id == deviceParam.id }
+        return if (paramExists) {
+            device.copy(
+                params = device.params.map { param ->
+                    if (param.id == newParam.id) {
+                        newParam
+                    } else {
+                        param
+                    }
+                }
+            )
+        } else device
+    }
+
     fun updateUser(
         users: List<UserUi>,
         newUser: UserUi
