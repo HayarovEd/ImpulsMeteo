@@ -16,9 +16,9 @@ sealed class DeviceEvent {
     ) : DeviceEvent()//
     class UpdateSelectedGroups(val groupDevices: GroupDevice) : DeviceEvent()//
     class UpdateParam(val param: Param) : DeviceEvent()//
-    class UpdateDevice(val name: String, val key: String, val frequency: String) : DeviceEvent()
+    class UpdateDevice(val name: String, val key: String, val frequency: String) : DeviceEvent()//
     data object DeleteDevice : DeviceEvent()
     data object BackStartGroups : DeviceEvent()//
     data object WorkWithFavorite : DeviceEvent()//
-    data object ClearDeviceSensorData : DeviceEvent()
+    data object ClearDeviceSensorData : DeviceEvent()//
 }

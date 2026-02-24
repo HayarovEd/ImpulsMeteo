@@ -26,6 +26,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DeviceScreen(
     onBackClick: () -> Unit,
+    onGoToLogin: () -> Unit,
     viewModel: DeviceViewModel = koinViewModel(),
     configuration: Configuration,
 ) {
@@ -47,12 +48,14 @@ fun DeviceScreen(
 
     ObserveAsEvents(viewModel.eventFlow) { event ->
         when (event) {
-            UiDeviceEvents.LoginNavigationEvent -> onBackClick()
+            UiDeviceEvents.LoginNavigationEvent -> onGoToLogin()
             is UiDeviceEvents.OnError -> snackBarState.showSnackbar(
                 event.message.asString(
                     context
                 )
             )
+
+            UiDeviceEvents.BackUpNavigationEvent -> onBackClick()
         }
     }
 

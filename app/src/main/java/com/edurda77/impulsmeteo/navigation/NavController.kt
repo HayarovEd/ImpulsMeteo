@@ -88,6 +88,9 @@ fun NavController(
         composable<NavigationRoute.Device> {
             DeviceScreen(
                 configuration = configuration,
+                onGoToLogin = {
+                    navController.navigate(NavigationRoute.Login)
+                },
                 onBackClick = {
                     navController.navigateUp()
                 }

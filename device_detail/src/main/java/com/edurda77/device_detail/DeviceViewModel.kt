@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.edurda77.domain.model.GroupDevicesOld
 import com.edurda77.domain.model.newModels.Param
 import com.edurda77.domain.usecase.ClearHistoryDeviceUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase
@@ -12,13 +11,11 @@ import com.edurda77.domain.usecase.DeviceByIdUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase
 import com.edurda77.domain.usecase.HistoryUseCase
 import com.edurda77.domain.usecase.LoggedUserUseCase
-import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.UnitsUseCase
 import com.edurda77.domain.usecase.UpdateDeviceUseCase
 import com.edurda77.domain.usecase.UpdateFavoriteUseCase
 import com.edurda77.domain.usecase.UpdateNotificationsDeviceUseCase
 import com.edurda77.domain.usecase.UpdateParamUseCase
-import com.edurda77.domain.usecase.WebSocketUseCaseOld
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 import com.edurda77.domain.utils.convertToStringDateTimeForHistory
@@ -44,8 +41,7 @@ class DeviceViewModel(
     private val unitsUseCase: UnitsUseCase,
     private val updateParamUseCase: UpdateParamUseCase,
     private val updateFavoriteUseCase: UpdateFavoriteUseCase,
-    private val removeFavoriteUseCase: RemoveFavoriteUseCase,
-    private val webSocketUseCaseOld: WebSocketUseCaseOld,
+   // private val webSocketUseCaseOld: WebSocketUseCaseOld,
     private val historyUseCase: HistoryUseCase,
     private val deleteDeviceUseCase: DeleteDeviceUseCase,
     private val clearHistoryDeviceUseCase: ClearHistoryDeviceUseCase,
@@ -61,7 +57,6 @@ class DeviceViewModel(
             SharingStarted.WhileSubscribed(5000L),
             DeviceState()
         )
-    private var _startGroups = MutableStateFlow<List<GroupDevicesOld>>(emptyList())
 
 
     private val _eventFlow = Channel<UiDeviceEvents>()
@@ -140,33 +135,11 @@ class DeviceViewModel(
             }
 
             is DeviceEvent.UpdateDevice -> {
-                /*if (state.value.device != null) {
-                    viewModelScope.launch {
-                        val device = state.value.device!!.copy(
-                            name = event.name,
-                            frequency = event.frequency.toIntOrNull() ?: 0,
-                            key = event.key
-                        )
-                        when (val result = updateDeviceUseCase.invoke(
-                            token = state.value.token,
-                            device = device
-                        )) {
-                            is ResultWork.Error -> {
-                                _state.value.copy(
-                                    message = result.error.asUiText(),
-                                    device = state.value.device!!.copy(
-                                        groups = _startGroups.value
-                                    )
-                                )
-                                    .updateState()
-                            }
-
-                            is ResultWork.Success -> {
-                                loadDevice()
-                            }
-                        }
-                    }
-                }*/
+                updateDevice(
+                    key = event.key,
+                    name = event.name,
+                    updateRate = event.frequency
+                )
             }
 
             DeviceEvent.BackStartGroups -> {
@@ -187,33 +160,7 @@ class DeviceViewModel(
             }
 
             DeviceEvent.DeleteDevice -> {
-                /*viewModelScope.launch {
-                    _state.value.copy(
-                        isLoading = true,
-                    )
-                        .updateState()
-                    when (val result = deleteDeviceUseCase.invoke(
-                        token = state.value.token,
-                        isFavorite = state.value.device?.isFavorite ?: false,
-                        id = state.value.deviceId
-                    )) {
-                        is ResultWork.Error -> {
-                            _state.value.copy(
-                                isLoading = false,
-                                message = result.error.asUiText()
-                            )
-                                .updateState()
-                        }
-
-                        is ResultWork.Success -> {
-                            _state.value.copy(
-                                isLoading = false,
-                            )
-                                .updateState()
-                            _eventFlow.emit(UiDeviceEvents.BackNavigationEvent)
-                        }
-                    }
-                }*/
+                deleteDevice()
             }
 
             DeviceEvent.ClearDeviceSensorData -> {
@@ -360,35 +307,6 @@ class DeviceViewModel(
         }
     }
 
-    private suspend fun loadUpdateData() {
-
-        /*  webSocketUseCaseOld.invoke(
-              token = state.value.token,
-              ids = listOf(state.value.deviceId)
-          ).collect { collector ->
-              when (collector) {
-                  is ResultWork.Error -> {
-                      _state.value.copy(
-                          message = collector.error.asUiText()
-                      )
-                          .updateState()
-                  }
-
-                  is ResultWork.Success -> {
-                      if (state.value.device != null && state.value.device!!.id == collector.data.id) {
-                          _state.value.copy(
-                              device = updateDevice(
-                                  device = state.value.device!!,
-                                  newDeviceOld = collector.data
-                              )
-                          )
-                              .updateState()
-                      }
-                  }
-              }
-          }*/
-    }
-
     private fun loadHistory(limit: Int) {
         _state.value.copy(
             isLoadingHistory = true,
@@ -482,6 +400,62 @@ class DeviceViewModel(
             }
         }
 
+    }
+
+    private fun updateDevice(
+        key: String,
+        name: String,
+        updateRate: String,
+    ) {
+        updateRate.toIntOrNull()?.let { ur->
+            viewModelScope.launch {
+                when (val result = updateDeviceUseCase.invoke(
+                    deviceId = deviceId,
+                    key = key,
+                    name = name,
+                    updateRate = ur,
+                    groups = state.value.selectedGroups
+                )) {
+                    is ResultWork.Error -> {
+                        if (result.error is DataError.TokenError) {
+                            _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                        } else {
+                            _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                        }
+                    }
+
+                    is ResultWork.Success -> {
+                        _state.value.copy(
+                            device = result.data.copy(
+                                notificationDevice = state.value.device?.notificationDevice
+                            )
+                        )
+                            .updateState()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deleteDevice(
+    ) {
+        viewModelScope.launch {
+            when (val result = deleteDeviceUseCase.invoke(
+                deviceId = deviceId,
+            )) {
+                is ResultWork.Error -> {
+                    if (result.error is DataError.TokenError) {
+                        _eventFlow.send(UiDeviceEvents.LoginNavigationEvent)
+                    } else {
+                        _eventFlow.send(UiDeviceEvents.OnError(result.error.asUiText()))
+                    }
+                }
+
+                is ResultWork.Success -> {
+                    _eventFlow.send(UiDeviceEvents.BackUpNavigationEvent)
+                }
+            }
+        }
     }
 
 

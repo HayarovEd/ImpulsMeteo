@@ -25,4 +25,15 @@ interface DevicesRepository {
         deviceId: String,
         userId: String,
     ): ResultWork<NotificationDevice, DataError>
+
+    suspend fun updateDeviceById(
+        accessToken: String,
+        deviceId: String,
+        key: String,
+        name: String,
+        updateRate: Int,
+        groups: List<GroupDevice>
+    ): ResultWork<Device, DataError>
+
+    suspend fun deleteDeviceById(accessToken: String, deviceId: String): ResultWork<Unit, DataError>
 }

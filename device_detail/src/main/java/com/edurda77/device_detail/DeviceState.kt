@@ -33,6 +33,7 @@ data class DeviceState (
 
 sealed interface UiDeviceEvents {
     data object LoginNavigationEvent : UiDeviceEvents
+    data object BackUpNavigationEvent : UiDeviceEvents
     data class OnError(val message: UiText) : UiDeviceEvents
 }
 

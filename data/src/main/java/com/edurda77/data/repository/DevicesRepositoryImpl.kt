@@ -7,6 +7,8 @@ import com.edurda77.data.mapper.toNotificationDevice
 import com.edurda77.data.mapper.toNotificationsDeviceDtos
 import com.edurda77.data.remote.newDtos.device.DeviceCreateRequest
 import com.edurda77.data.remote.newDtos.device.DeviceDto
+import com.edurda77.data.remote.newDtos.device.DeviceUpdateRequest
+import com.edurda77.data.remote.newDtos.device.GroupsDeviceId
 import com.edurda77.data.remote.newDtos.notification.NotificationDeviceDto
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.GroupDevice
@@ -20,7 +22,9 @@ import com.edurda77.domain.utils.STATUS_OFF
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -85,6 +89,49 @@ class DevicesRepositoryImpl(
                     bearerAuth(accessToken)
                 }
                 result.call.body<DeviceDto>().toDevice()
+            }
+        }
+    }
+
+    override suspend fun updateDeviceById(
+        accessToken: String,
+        deviceId: String,
+        key: String,
+        name: String,
+        updateRate: Int,
+        groups: List<GroupDevice>
+    ): ResultWork<Device, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                val result = httpClient.patch (NEW_BASE_URL + "devices/" + deviceId) {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(accessToken)
+                    setBody(
+                        DeviceUpdateRequest(
+                            groupsDeviceId = groups.map { GroupsDeviceId(it.id) },
+                            id = deviceId,
+                            key = key,
+                            name = name,
+                            updateRate = updateRate
+                        )
+                    )
+                }
+                result.call.body<DeviceDto>().toDevice()
+            }
+        }
+    }
+
+    override suspend fun deleteDeviceById(
+        accessToken: String,
+        deviceId: String,
+    ): ResultWork<Unit, DataError> {
+        return withContext(Dispatchers.IO) {
+            handleResponse {
+                httpClient.delete (NEW_BASE_URL + "devices/" + deviceId) {
+                    contentType(ContentType.Application.Json)
+                    bearerAuth(accessToken)
+                }
+                Unit
             }
         }
     }
