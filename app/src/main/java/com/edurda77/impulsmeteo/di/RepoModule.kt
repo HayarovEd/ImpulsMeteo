@@ -5,9 +5,7 @@ import com.edurda77.data.repository.DevicesGroupsRepositoryImpl
 import com.edurda77.data.repository.DevicesRepositoryImpl
 import com.edurda77.data.repository.FavoriteRepositoryImpl
 import com.edurda77.data.repository.JwtRepositoryImpl
-import com.edurda77.data.repository.LocalRepositoryImpl
 import com.edurda77.data.repository.MeasurementUnitRepositoryImpl
-import com.edurda77.data.repository.OldRemoteRepositoryImpl
 import com.edurda77.data.repository.ParamsRepositoryImpl
 import com.edurda77.data.repository.PermissionsRepositoryImpl
 import com.edurda77.data.repository.RemoteRepositoryImpl
@@ -19,9 +17,7 @@ import com.edurda77.domain.repository.DevicesGroupsRepository
 import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.repository.FavoriteRepository
 import com.edurda77.domain.repository.JwtRepository
-import com.edurda77.domain.repository.LocalRepository
 import com.edurda77.domain.repository.MeasurementUnitRepository
-import com.edurda77.domain.repository.OldRemoteRepository
 import com.edurda77.domain.repository.ParamsRepository
 import com.edurda77.domain.repository.PermissionsRepository
 import com.edurda77.domain.repository.RemoteRepository
@@ -33,10 +29,8 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val repoModule = module {
-    single<OldRemoteRepository> { OldRemoteRepositoryImpl(get()) }
     single<WebSocketRepositoryOld> { WebSocketRepositoryOldImpl(get()) }
     singleOf(::DataStoreRepositoryImpl) { bind<DataStoreRepository>() }
-    singleOf(::LocalRepositoryImpl) { bind<LocalRepository>() }
     singleOf(::JwtRepositoryImpl) { bind<JwtRepository>() }
     singleOf(::RemoteRepositoryImpl) { bind<RemoteRepository>() }
     singleOf(::DevicesGroupsRepositoryImpl) { bind<DevicesGroupsRepository>() }

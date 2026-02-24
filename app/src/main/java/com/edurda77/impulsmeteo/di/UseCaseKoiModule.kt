@@ -20,7 +20,6 @@ import com.edurda77.domain.usecase.LoggedUserUseCase
 import com.edurda77.domain.usecase.LoginUseCase
 import com.edurda77.domain.usecase.PermissionsUseCase
 import com.edurda77.domain.usecase.ReadLocalAuthorizationUseCase
-import com.edurda77.domain.usecase.RemoveFavoriteUseCase
 import com.edurda77.domain.usecase.SaveLocalAuthorizationUseCase
 import com.edurda77.domain.usecase.TokenManager
 import com.edurda77.domain.usecase.UnitsUseCase
@@ -33,7 +32,6 @@ import com.edurda77.domain.usecase.UpdateUnitUseCase
 import com.edurda77.domain.usecase.UpdateUserUseCase
 import com.edurda77.domain.usecase.UsersUseCase
 import com.edurda77.domain.usecase.WebSocketUseCase
-import com.edurda77.domain.usecase.WebSocketUseCaseOld
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
@@ -61,7 +59,6 @@ val useCaseKoiModule = module {
     factoryOf(::UpdateDevicesGroupUseCase) { bind <UpdateDevicesGroupUseCase>() }
     factoryOf(::UpdateUnitUseCase) { bind <UpdateUnitUseCase>() }
     factoryOf(::DeviceByIdUseCase) { bind <DeviceByIdUseCase>() }
-    single<WebSocketUseCaseOld> { WebSocketUseCaseOld(get(), get()) }
     factoryOf(::WebSocketUseCase) { bind <WebSocketUseCase>() }
     factoryOf(::CloseWebsocketUseCase) { bind <CloseWebsocketUseCase>() }
     factoryOf(::UpdateNotificationsDeviceUseCase) { bind <UpdateNotificationsDeviceUseCase>() }
@@ -69,7 +66,6 @@ val useCaseKoiModule = module {
     factoryOf(::UpdateFavoriteUseCase) { bind <UpdateFavoriteUseCase>() }
     factoryOf(::UpdateDeviceUseCase) { bind <UpdateDeviceUseCase>() }
     factoryOf(::DevicesUseCase) { bind <DevicesUseCase>() }
-    single<RemoveFavoriteUseCase> { RemoveFavoriteUseCase(get()) }
     factoryOf(::DeleteDeviceUseCase) { bind <DeleteDeviceUseCase>() }
     factoryOf(::HistoryUseCase) { bind <HistoryUseCase>() }
     factoryOf(::ClearHistoryDeviceUseCase) { bind <ClearHistoryDeviceUseCase>() }

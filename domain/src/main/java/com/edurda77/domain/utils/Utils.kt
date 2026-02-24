@@ -1,7 +1,5 @@
 package com.edurda77.domain.utils
 
-import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.SingleDevice
 import com.edurda77.domain.model.newModels.Device
 import com.edurda77.domain.model.newModels.Favorite
 import com.edurda77.domain.model.newModels.GroupDevice
@@ -64,21 +62,6 @@ fun filterGroupedDevices2(
                 searched.sortedByDescending { it.status }
             } else searched
         }
-}
-
-fun updateDevice(
-    device: SingleDevice,
-    newDeviceOld: DeviceOld
-): SingleDevice {
-    return device.copy(
-        name = newDeviceOld.name,
-        key = newDeviceOld.key,
-        status = newDeviceOld.status,
-        video = newDeviceOld.video,
-        updatedAt = newDeviceOld.updatedAt,
-        groups = newDeviceOld.groups,
-        params = newDeviceOld.params
-    )
 }
 
 @Suppress("DefaultLocale")

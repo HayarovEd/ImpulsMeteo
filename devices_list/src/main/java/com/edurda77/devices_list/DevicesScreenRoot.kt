@@ -43,9 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.edurda77.domain.model.DeviceOld
-import com.edurda77.domain.model.GroupDevicesOld
-import com.edurda77.domain.model.ParamOld
 import com.edurda77.domain.utils.DEVICES_CREATE_LABEL
 import com.edurda77.domain.utils.DEVICES_LIST_LABEL
 import com.edurda77.resources.R
@@ -60,7 +57,6 @@ import com.edurda77.resources.uikit.UiIconButton
 import com.edurda77.resources.uikit.UiTextField
 import com.edurda77.resources.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
-import kotlin.random.Random
 
 
 @Composable
