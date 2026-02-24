@@ -1,8 +1,8 @@
 package com.edurda77.device_detail
 
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.NotificationParam
-import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.NotificationParam
+import com.edurda77.domain.model.Param
 import kotlinx.datetime.LocalDateTime
 
 

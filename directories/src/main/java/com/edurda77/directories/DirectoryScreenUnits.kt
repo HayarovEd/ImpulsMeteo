@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.MeasurementUnit
 
 
 @Composable

@@ -1,0 +1,25 @@
+package com.edurda77.data.remote.param
+
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ParamDto(
+    @SerialName("classIcon")
+    val classIcon: String,
+    @SerialName("color")
+    val color: String,
+    @SerialName("id")
+    val id: String,
+    @SerialName("isHidden")
+    val isHidden: Boolean,
+    @SerialName("label")
+    val label: String,
+    @SerialName("measurementUnitDto")
+    val measurementUnitDto: com.edurda77.data.remote.measurement.MeasurementUnitDto,
+    @SerialName("name")
+    val name: String,
+    @SerialName("value")
+    val value: Double
+)

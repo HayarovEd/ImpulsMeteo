@@ -2,8 +2,7 @@ package com.edurda77.data.repository
 
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toPermission
-import com.edurda77.data.remote.newDtos.permission.PermissionDto
-import com.edurda77.domain.model.newModels.Permission
+import com.edurda77.domain.model.Permission
 import com.edurda77.domain.repository.PermissionsRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -30,7 +29,7 @@ class PermissionsRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<List<PermissionDto>>().map { it.toPermission() }
+                result.call.body<List<com.edurda77.data.remote.permission.PermissionDto>>().map { it.toPermission() }
             }
         }
     }

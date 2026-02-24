@@ -2,9 +2,7 @@ package com.edurda77.data.repository
 
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toFavorite
-import com.edurda77.data.remote.newDtos.favorite.FavoriteCreateRequest
-import com.edurda77.data.remote.newDtos.favorite.FavoriteDto
-import com.edurda77.domain.model.newModels.Favorite
+import com.edurda77.domain.model.Favorite
 import com.edurda77.domain.repository.FavoriteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -34,12 +32,12 @@ class FavoriteRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                     setBody(
-                        FavoriteCreateRequest(
+                        com.edurda77.data.remote.favorite.FavoriteCreateRequest(
                             deviceId = deviceId
                         )
                     )
                 }
-                result.call.body<List<FavoriteDto>>().map { it.toFavorite() }
+                result.call.body<List<com.edurda77.data.remote.favorite.FavoriteDto>>().map { it.toFavorite() }
             }
         }
     }

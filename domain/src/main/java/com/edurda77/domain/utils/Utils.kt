@@ -1,8 +1,8 @@
 package com.edurda77.domain.utils
 
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.Favorite
-import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.Favorite
+import com.edurda77.domain.model.GroupDevice
 
 
 fun isValidEmail(email: String): Boolean {

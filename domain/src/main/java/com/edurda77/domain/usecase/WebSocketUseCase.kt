@@ -1,7 +1,7 @@
 package com.edurda77.domain.usecase
 
 
-import com.edurda77.domain.model.newModels.WebSocketMessage
+import com.edurda77.domain.model.WebSocketMessage
 import com.edurda77.domain.repository.WebSocketRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork

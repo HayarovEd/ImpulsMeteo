@@ -3,9 +3,8 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toParam
 import com.edurda77.data.mapper.toParamDto
-import com.edurda77.data.remote.newDtos.param.ParamDto
-import com.edurda77.domain.model.newModels.History
-import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.model.History
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.repository.ParamsRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.FROM_DATE_PARAMETER
@@ -98,7 +97,7 @@ class ParamsRepositoryImpl(
                             param.toParamDto()
                         )
                     }
-                result.call.body<ParamDto>().toParam()
+                result.call.body<com.edurda77.data.remote.param.ParamDto>().toParam()
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.newModels.NotificationDevice
-import com.edurda77.domain.model.newModels.NotificationParam
+import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.NotificationParam
 import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork

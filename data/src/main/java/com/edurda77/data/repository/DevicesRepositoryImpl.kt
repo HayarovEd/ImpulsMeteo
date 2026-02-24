@@ -5,15 +5,10 @@ import com.edurda77.data.mapper.toDevice
 import com.edurda77.data.mapper.toGroupDeviceDto
 import com.edurda77.data.mapper.toNotificationDevice
 import com.edurda77.data.mapper.toNotificationsDeviceDtos
-import com.edurda77.data.remote.newDtos.device.DeviceCreateRequest
-import com.edurda77.data.remote.newDtos.device.DeviceDto
-import com.edurda77.data.remote.newDtos.device.DeviceUpdateRequest
-import com.edurda77.data.remote.newDtos.device.GroupsDeviceId
-import com.edurda77.data.remote.newDtos.notification.NotificationDeviceDto
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.NotificationDevice
-import com.edurda77.domain.model.newModels.NotificationParam
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.NotificationParam
 import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -49,7 +44,7 @@ class DevicesRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                     setBody(
-                        DeviceCreateRequest(
+                        com.edurda77.data.remote.device.DeviceCreateRequest(
                             groupsDevice = groups.map { it.toGroupDeviceDto() },
                             key = key,
                             name = name,
@@ -59,7 +54,7 @@ class DevicesRepositoryImpl(
                         )
                     )
                 }
-                result.call.body<DeviceDto>().toDevice()
+                result.call.body<com.edurda77.data.remote.device.DeviceDto>().toDevice()
             }
         }
     }
@@ -73,7 +68,7 @@ class DevicesRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<List<DeviceDto>>().map { it.toDevice() }
+                result.call.body<List<com.edurda77.data.remote.device.DeviceDto>>().map { it.toDevice() }
             }
         }
     }
@@ -88,7 +83,7 @@ class DevicesRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<DeviceDto>().toDevice()
+                result.call.body<com.edurda77.data.remote.device.DeviceDto>().toDevice()
             }
         }
     }
@@ -107,8 +102,12 @@ class DevicesRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                     setBody(
-                        DeviceUpdateRequest(
-                            groupsDeviceId = groups.map { GroupsDeviceId(it.id) },
+                        com.edurda77.data.remote.device.DeviceUpdateRequest(
+                            groupsDeviceId = groups.map {
+                                com.edurda77.data.remote.device.GroupsDeviceId(
+                                    it.id
+                                )
+                            },
                             id = deviceId,
                             key = key,
                             name = name,
@@ -116,7 +115,7 @@ class DevicesRepositoryImpl(
                         )
                     )
                 }
-                result.call.body<DeviceDto>().toDevice()
+                result.call.body<com.edurda77.data.remote.device.DeviceDto>().toDevice()
             }
         }
     }
@@ -150,7 +149,7 @@ class DevicesRepositoryImpl(
                         contentType(ContentType.Application.Json)
                         bearerAuth(accessToken)
                         setBody(
-                            NotificationDeviceDto(
+                            com.edurda77.data.remote.notification.NotificationDeviceDto(
                                 deviceId = deviceId,
                                 notificationsDeviceDtos = notificationsParam.map { it.toNotificationsDeviceDtos() },
                                 value = value,
@@ -159,7 +158,7 @@ class DevicesRepositoryImpl(
                             )
                         )
                     }
-                result.call.body<NotificationDeviceDto>().toNotificationDevice()
+                result.call.body<com.edurda77.data.remote.notification.NotificationDeviceDto>().toNotificationDevice()
             }
         }
     }

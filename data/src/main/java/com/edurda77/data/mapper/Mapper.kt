@@ -1,36 +1,22 @@
 package com.edurda77.data.mapper
 
-import com.edurda77.data.remote.newDtos.auth.AuthUserDto
-import com.edurda77.data.remote.newDtos.device.DeviceDto
-import com.edurda77.data.remote.newDtos.device.DeviceWsDto
-import com.edurda77.data.remote.newDtos.favorite.FavoriteDto
-import com.edurda77.data.remote.newDtos.group.GroupDeviceDto
-import com.edurda77.data.remote.newDtos.measurement.MeasurementUnitDto
-import com.edurda77.data.remote.newDtos.notification.NotificationDeviceDto
-import com.edurda77.data.remote.newDtos.notification.NotificationsDeviceDtos
-import com.edurda77.data.remote.newDtos.param.ParamDto
-import com.edurda77.data.remote.newDtos.permission.PermissionDto
-import com.edurda77.data.remote.newDtos.user.DeviceUserRequest
-import com.edurda77.data.remote.newDtos.user.PermissionUserRequest
-import com.edurda77.data.remote.newDtos.user.UserDto
-import com.edurda77.data.remote.newDtos.user.UserUpdateRequest
-import com.edurda77.domain.model.newModels.AuthUser
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.Favorite
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.MeasurementUnit
-import com.edurda77.domain.model.newModels.NotificationDevice
-import com.edurda77.domain.model.newModels.NotificationParam
-import com.edurda77.domain.model.newModels.Param
-import com.edurda77.domain.model.newModels.Permission
-import com.edurda77.domain.model.newModels.PermissionUser
-import com.edurda77.domain.model.newModels.User
-import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.domain.model.AuthUser
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.Favorite
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.MeasurementUnit
+import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.NotificationParam
+import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.Permission
+import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserUi
 import com.edurda77.domain.utils.STATUS_ON
 import com.edurda77.domain.utils.convertToLocalDateTime
 
-fun PermissionDto.toPermission(): Permission {
+fun com.edurda77.data.remote.permission.PermissionDto.toPermission(): Permission {
     return Permission(
         description = this.description,
         displayName = this.displayName,
@@ -40,7 +26,7 @@ fun PermissionDto.toPermission(): Permission {
     )
 }
 
-fun NotificationsDeviceDtos.toNotificationsDevice(): NotificationParam {
+fun com.edurda77.data.remote.notification.NotificationsDeviceDtos.toNotificationsDevice(): NotificationParam {
     return NotificationParam(
         condition = this.condition,
         id = this.id,
@@ -51,7 +37,7 @@ fun NotificationsDeviceDtos.toNotificationsDevice(): NotificationParam {
     )
 }
 
-fun NotificationDeviceDto.toNotificationDevice(): NotificationDevice {
+fun com.edurda77.data.remote.notification.NotificationDeviceDto.toNotificationDevice(): NotificationDevice {
     return NotificationDevice(
         deviceId = this.deviceId,
         id = this.id,
@@ -62,8 +48,8 @@ fun NotificationDeviceDto.toNotificationDevice(): NotificationDevice {
 }
 
 
-fun NotificationParam.toNotificationsDeviceDtos(): NotificationsDeviceDtos {
-    return NotificationsDeviceDtos(
+fun NotificationParam.toNotificationsDeviceDtos(): com.edurda77.data.remote.notification.NotificationsDeviceDtos {
+    return com.edurda77.data.remote.notification.NotificationsDeviceDtos(
         condition = this.condition,
         isSend = this.isSend,
         paramId = this.paramId,
@@ -73,7 +59,7 @@ fun NotificationParam.toNotificationsDeviceDtos(): NotificationsDeviceDtos {
     )
 }
 
-fun FavoriteDto.toFavorite(): Favorite {
+fun com.edurda77.data.remote.favorite.FavoriteDto.toFavorite(): Favorite {
     return Favorite(
         createdAt = this.createdAt,
         deviceId = this.deviceId,
@@ -83,7 +69,7 @@ fun FavoriteDto.toFavorite(): Favorite {
     )
 }
 
-fun ParamDto.toParam(): Param {
+fun com.edurda77.data.remote.param.ParamDto.toParam(): Param {
     return Param(
         id = id,
         classIcon = classIcon,
@@ -96,8 +82,8 @@ fun ParamDto.toParam(): Param {
     )
 }
 
-fun Param.toParamDto(): ParamDto {
-    return ParamDto(
+fun Param.toParamDto(): com.edurda77.data.remote.param.ParamDto {
+    return com.edurda77.data.remote.param.ParamDto(
         id = id,
         classIcon = classIcon,
         color = color,
@@ -110,7 +96,7 @@ fun Param.toParamDto(): ParamDto {
 }
 
 
-fun MeasurementUnitDto.toMeasurementUnit(): MeasurementUnit {
+fun com.edurda77.data.remote.measurement.MeasurementUnitDto.toMeasurementUnit(): MeasurementUnit {
     return MeasurementUnit(
         id = id,
         abbreviation = abbreviation,
@@ -118,8 +104,8 @@ fun MeasurementUnitDto.toMeasurementUnit(): MeasurementUnit {
     )
 }
 
-fun MeasurementUnit.toMeasurementUnitDto(): MeasurementUnitDto {
-    return MeasurementUnitDto(
+fun MeasurementUnit.toMeasurementUnitDto(): com.edurda77.data.remote.measurement.MeasurementUnitDto {
+    return com.edurda77.data.remote.measurement.MeasurementUnitDto(
         id = id,
         abbreviation = abbreviation,
         name = name
@@ -127,7 +113,7 @@ fun MeasurementUnit.toMeasurementUnitDto(): MeasurementUnitDto {
 }
 
 
-fun DeviceDto.toDevice(): Device {
+fun com.edurda77.data.remote.device.DeviceDto.toDevice(): Device {
     return Device(
         host = this.host?:"",
         id = this.id,
@@ -146,7 +132,7 @@ fun DeviceDto.toDevice(): Device {
     )
 }
 
-fun DeviceWsDto.convertToDevice(): Device {
+fun com.edurda77.data.remote.device.DeviceWsDto.convertToDevice(): Device {
     return Device(
         host = this.host?:"",
         id = this.id,
@@ -163,22 +149,22 @@ fun DeviceWsDto.convertToDevice(): Device {
     )
 }
 
-fun GroupDeviceDto.toGroupDevice(): GroupDevice {
+fun com.edurda77.data.remote.group.GroupDeviceDto.toGroupDevice(): GroupDevice {
     return GroupDevice(
         id = id,
         name = name
     )
 }
 
-fun GroupDevice.toGroupDeviceDto(): GroupDeviceDto {
-    return GroupDeviceDto(
+fun GroupDevice.toGroupDeviceDto(): com.edurda77.data.remote.group.GroupDeviceDto {
+    return com.edurda77.data.remote.group.GroupDeviceDto(
         id = id,
         name = name
     )
 }
 
 
-fun AuthUserDto.toAuthUser(): AuthUser {
+fun com.edurda77.data.remote.auth.AuthUserDto.toAuthUser(): AuthUser {
     return AuthUser(
         createdAt = this.createdAt,
         devices = this.deviceDtos.map { it.toDevice() },
@@ -193,7 +179,7 @@ fun AuthUserDto.toAuthUser(): AuthUser {
     )
 }
 
-fun UserDto.toUser(): User {
+fun com.edurda77.data.remote.user.UserDto.toUser(): User {
     return User(
         createdAt = this.createdAt,
         devices = this.devices.map { it.toDevice() },
@@ -208,25 +194,25 @@ fun UserDto.toUser(): User {
     )
 }
 
-fun DeviceUser.toDeviceUserRequest(): DeviceUserRequest {
-    return DeviceUserRequest(
+fun DeviceUser.toDeviceUserRequest(): com.edurda77.data.remote.user.DeviceUserRequest {
+    return com.edurda77.data.remote.user.DeviceUserRequest(
         id = id
     )
 }
-fun PermissionUser.toPermissionUserRequest(): PermissionUserRequest {
-    return PermissionUserRequest(
+fun PermissionUser.toPermissionUserRequest(): com.edurda77.data.remote.user.PermissionUserRequest {
+    return com.edurda77.data.remote.user.PermissionUserRequest(
         id = id
     )
 }
 
-fun UserUi.toUserUpdateRequest(): UserUpdateRequest {
-    return UserUpdateRequest(
+fun UserUi.toUserUpdateRequest(): com.edurda77.data.remote.user.UserUpdateRequest {
+    return com.edurda77.data.remote.user.UserUpdateRequest(
         deviceUserRequests = this.devices.map { it.toDeviceUserRequest() },
         email = this.email,
         id = this.id,
         isEnabled = this.isEnabled,
         name = this.name,
         password = password.ifBlank { null },
-        permissionUserRequests = this.permissions.map { it.toPermissionUserRequest()},
+        permissionUserRequests = this.permissions.map { it.toPermissionUserRequest() },
     )
 }

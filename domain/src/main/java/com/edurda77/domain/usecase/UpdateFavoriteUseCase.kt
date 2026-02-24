@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.newModels.Favorite
+import com.edurda77.domain.model.Favorite
 import com.edurda77.domain.repository.FavoriteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork

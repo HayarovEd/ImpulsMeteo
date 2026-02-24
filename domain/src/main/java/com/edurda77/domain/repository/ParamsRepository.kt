@@ -1,7 +1,7 @@
 package com.edurda77.domain.repository
 
-import com.edurda77.domain.model.newModels.History
-import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.model.History
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 

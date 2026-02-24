@@ -5,12 +5,10 @@ import com.edurda77.data.mapper.toDeviceUserRequest
 import com.edurda77.data.mapper.toPermissionUserRequest
 import com.edurda77.data.mapper.toUser
 import com.edurda77.data.mapper.toUserUpdateRequest
-import com.edurda77.data.remote.newDtos.user.UserCreateRequest
-import com.edurda77.data.remote.newDtos.user.UserDto
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.PermissionUser
-import com.edurda77.domain.model.newModels.User
-import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserUi
 import com.edurda77.domain.repository.UsersRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -41,7 +39,7 @@ class UsersRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<List<UserDto>>().map { it.toUser() }
+                result.call.body<List<com.edurda77.data.remote.user.UserDto>>().map { it.toUser() }
             }
         }
     }
@@ -60,7 +58,7 @@ class UsersRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                     setBody(
-                        UserCreateRequest(
+                        com.edurda77.data.remote.user.UserCreateRequest(
                             name = name,
                             email = email,
                             isEnabled = true,
@@ -70,7 +68,7 @@ class UsersRepositoryImpl(
                         )
                     )
                 }
-                result.call.body<UserDto>().toUser()
+                result.call.body<com.edurda77.data.remote.user.UserDto>().toUser()
             }
         }
     }
@@ -88,7 +86,7 @@ class UsersRepositoryImpl(
                         userUi.toUserUpdateRequest()
                     )
                 }
-                result.call.body<UserDto>().toUser()
+                result.call.body<com.edurda77.data.remote.user.UserDto>().toUser()
             }
         }
     }

@@ -2,11 +2,8 @@ package com.edurda77.data.repository
 
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toAuthUser
-import com.edurda77.data.remote.newDtos.auth.AuthUserDto
-import com.edurda77.data.remote.newDtos.auth.RefreshRequest
-import com.edurda77.data.remote.newDtos.auth.TokenDto
 import com.edurda77.domain.model.Token
-import com.edurda77.domain.model.newModels.AuthUser
+import com.edurda77.domain.model.AuthUser
 import com.edurda77.domain.repository.RemoteRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.EMAIL
@@ -42,7 +39,7 @@ class RemoteRepositoryImpl(
                         append(PASSWORD, password)
                     }
                 ).call
-                    .body<TokenDto>()
+                    .body<com.edurda77.data.remote.auth.TokenDto>()
                 Token(
                     accessToken = result.accessToken,
                     refreshToken = result.refreshToken
@@ -61,10 +58,10 @@ class RemoteRepositoryImpl(
                 ) {
                     contentType(ContentType.Application.Json)
                     setBody(
-                        RefreshRequest(refreshToken)
+                        com.edurda77.data.remote.auth.RefreshRequest(refreshToken)
                     )
                 }.call
-                    .body<TokenDto>()
+                    .body<com.edurda77.data.remote.auth.TokenDto>()
                 Token(
                     accessToken = result.accessToken,
                     refreshToken = result.refreshToken
@@ -83,10 +80,10 @@ class RemoteRepositoryImpl(
                 ) {
                     contentType(ContentType.Application.Json)
                     setBody(
-                        RefreshRequest(refreshToken)
+                        com.edurda77.data.remote.auth.RefreshRequest(refreshToken)
                     )
                 }.call
-                    .body<TokenDto>()
+                    .body<com.edurda77.data.remote.auth.TokenDto>()
                 Unit
             }
         }
@@ -101,7 +98,7 @@ class RemoteRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<AuthUserDto>().toAuthUser()
+                result.call.body<com.edurda77.data.remote.auth.AuthUserDto>().toAuthUser()
             }
         }
     }

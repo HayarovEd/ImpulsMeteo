@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.edurda77.domain.model.newModels.Param
-import com.edurda77.domain.model.newModels.WebSocketMessage
+import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.WebSocketMessage
 import com.edurda77.domain.usecase.ClearHistoryDeviceUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteDeviceUseCase

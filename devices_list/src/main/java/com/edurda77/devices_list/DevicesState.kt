@@ -1,8 +1,8 @@
 package com.edurda77.devices_list
 
 
-import com.edurda77.domain.model.newModels.AuthUser
-import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.AuthUser
+import com.edurda77.domain.model.GroupDevice
 import com.edurda77.domain.utils.convertToMapGroupedDevices2
 import com.edurda77.domain.utils.filterGroupedDevices2
 import com.edurda77.download_install.model.LastVersionApp

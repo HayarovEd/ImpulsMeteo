@@ -2,10 +2,10 @@ package com.edurda77.users_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.PermissionUser
-import com.edurda77.domain.model.newModels.UserUi
-import com.edurda77.domain.model.newModels.WebSocketMessage
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.UserUi
+import com.edurda77.domain.model.WebSocketMessage
 import com.edurda77.domain.usecase.AddUserUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DeleteUserUseCase

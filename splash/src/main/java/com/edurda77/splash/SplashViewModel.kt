@@ -2,7 +2,7 @@ package com.edurda77.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.newModels.LocalAuthResult
+import com.edurda77.domain.model.LocalAuthResult
 import com.edurda77.domain.usecase.AuthCheckUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

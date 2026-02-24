@@ -1,23 +1,18 @@
 package com.edurda77.data.remote.permission
 
-
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class PermissionDto(
-    @SerialName("created_at")
-    val createdAt: String,
     @SerialName("description")
     val description: String,
-    @SerialName("display_name")
+    @SerialName("displayName")
     val displayName: String,
     @SerialName("id")
-    val id: Int,
+    val id: String,
     @SerialName("name")
     val name: String,
     @SerialName("parent")
-    val parent: Int,
-    @SerialName("updated_at")
-    val updatedAt: String
+    val parent: Int
 )

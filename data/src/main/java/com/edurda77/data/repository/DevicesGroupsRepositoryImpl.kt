@@ -3,9 +3,7 @@ package com.edurda77.data.repository
 import com.edurda77.data.handler.handleResponse
 import com.edurda77.data.mapper.toGroupDevice
 import com.edurda77.data.mapper.toGroupDeviceDto
-import com.edurda77.data.remote.newDtos.group.GroupDeviceDto
-import com.edurda77.data.remote.newDtos.group.GroupDeviceRequest
-import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.GroupDevice
 import com.edurda77.domain.repository.DevicesGroupsRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
@@ -36,7 +34,7 @@ class DevicesGroupsRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<List<GroupDeviceDto>>().map { it.toGroupDevice() }
+                result.call.body<List<com.edurda77.data.remote.group.GroupDeviceDto>>().map { it.toGroupDevice() }
             }
         }
     }
@@ -51,12 +49,12 @@ class DevicesGroupsRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                     setBody(
-                        GroupDeviceRequest(
+                        com.edurda77.data.remote.group.GroupDeviceRequest(
                             name = name
                         )
                     )
                 }
-                result.call.body<GroupDeviceDto>().toGroupDevice()
+                result.call.body<com.edurda77.data.remote.group.GroupDeviceDto>().toGroupDevice()
             }
         }
     }
@@ -74,7 +72,7 @@ class DevicesGroupsRepositoryImpl(
                         groupDevice.toGroupDeviceDto()
                     )
                 }
-                result.call.body<GroupDeviceDto>().toGroupDevice()
+                result.call.body<com.edurda77.data.remote.group.GroupDeviceDto>().toGroupDevice()
             }
         }
     }

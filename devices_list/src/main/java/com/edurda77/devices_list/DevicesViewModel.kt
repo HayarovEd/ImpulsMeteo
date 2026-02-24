@@ -2,9 +2,9 @@ package com.edurda77.devices_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.WebSocketMessage
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.WebSocketMessage
 import com.edurda77.domain.usecase.AddDeviceUseCase
 import com.edurda77.domain.usecase.CloseWebsocketUseCase
 import com.edurda77.domain.usecase.DevicesGroupsUseCase

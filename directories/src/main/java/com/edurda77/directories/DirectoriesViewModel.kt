@@ -2,8 +2,8 @@ package com.edurda77.directories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.MeasurementUnit
 import com.edurda77.domain.usecase.AddDevicesGroupUseCase
 import com.edurda77.domain.usecase.AddUnitUseCase
 import com.edurda77.domain.usecase.DeleteDevicesGroupUseCase

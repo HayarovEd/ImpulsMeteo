@@ -1,11 +1,11 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.newModels.AuthUser
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.Param
-import com.edurda77.domain.model.newModels.User
-import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.domain.model.AuthUser
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.Param
+import com.edurda77.domain.model.User
+import com.edurda77.domain.model.UserUi
 
 object WsMessageFactory {
 

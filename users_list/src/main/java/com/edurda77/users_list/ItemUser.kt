@@ -40,15 +40,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.PermissionUser
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.PermissionUser
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme
 import com.edurda77.resources.theme.Typography
 import com.edurda77.resources.uikit.ItemAccess
 import com.edurda77.resources.uikit.UiAlertDialog
 import com.edurda77.resources.uikit.UiIconButton
-import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.domain.model.UserUi
 import com.edurda77.resources.uikit.UiDialog
 
 @OptIn(ExperimentalLayoutApi::class)

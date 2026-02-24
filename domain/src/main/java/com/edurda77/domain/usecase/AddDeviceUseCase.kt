@@ -1,7 +1,7 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevice
 import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork

@@ -1,8 +1,8 @@
 package com.edurda77.directories
 
-import com.edurda77.domain.model.newModels.AuthUser
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.AuthUser
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.MeasurementUnit
 import com.edurda77.resources.uikit.UiText
 
 data class DirectoriesState(

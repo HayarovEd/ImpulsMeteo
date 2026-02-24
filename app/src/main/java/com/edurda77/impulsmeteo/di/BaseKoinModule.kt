@@ -6,10 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.room.Room
-import com.edurda77.data.local.MeteoDataBase
 import com.edurda77.domain.utils.APP_PREFERENCES
-import com.edurda77.domain.utils.DATABASE
 import com.edurda77.domain.utils.PING_INTERVAL
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -53,7 +50,7 @@ val baseModule = module {
             }
             install(HttpRequestRetry) {
                 maxRetries = 3
-                retryOnExceptionIf { request, cause ->
+                retryOnExceptionIf { _, cause ->
                     cause is SocketException || cause is SocketTimeoutException
                 }
                 delayMillis { retry ->
@@ -79,13 +76,5 @@ val baseModule = module {
                 contentConverter = KotlinxWebsocketSerializationConverter(json)
             }
         }
-    }
-    single<MeteoDataBase> {
-        Room.databaseBuilder(
-            androidContext(),
-            MeteoDataBase::class.java,
-            DATABASE
-        )
-            .build()
     }
 }

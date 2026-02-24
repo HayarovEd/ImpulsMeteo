@@ -1,6 +1,6 @@
 package com.edurda77.domain.usecase
 
-import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.MeasurementUnit
 import com.edurda77.domain.repository.MeasurementUnitRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork

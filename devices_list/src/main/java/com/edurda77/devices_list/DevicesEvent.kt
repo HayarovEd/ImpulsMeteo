@@ -1,7 +1,7 @@
 package com.edurda77.devices_list
 
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.GroupDevice
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevice
 
 sealed class DevicesEvent {
     data object Refresh : DevicesEvent()

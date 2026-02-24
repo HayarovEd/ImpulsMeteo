@@ -8,7 +8,7 @@ import com.edurda77.data.handler.handleRead
 import com.edurda77.data.handler.handleReadFlow
 import com.edurda77.data.handler.handleWrite
 import com.edurda77.domain.model.Token
-import com.edurda77.domain.model.newModels.LastAuthData
+import com.edurda77.domain.model.LastAuthData
 import com.edurda77.domain.repository.DataStoreRepository
 import com.edurda77.domain.utils.ACCESS_TOKEN_LABEL
 import com.edurda77.domain.utils.DataError

@@ -1,7 +1,7 @@
 package com.edurda77.domain.usecase
 
 
-import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.repository.ParamsRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork

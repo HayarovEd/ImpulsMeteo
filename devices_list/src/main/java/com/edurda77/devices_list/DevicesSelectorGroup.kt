@@ -29,10 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.MeasurementUnit
-import com.edurda77.domain.model.newModels.Param
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.MeasurementUnit
+import com.edurda77.domain.model.Param
 import com.edurda77.domain.utils.FAVORITE
 import com.edurda77.resources.R
 import com.edurda77.resources.theme.ImpulsMeteoTheme

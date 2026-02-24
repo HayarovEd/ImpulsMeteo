@@ -1,8 +1,8 @@
 package com.edurda77.users_list
 
-import com.edurda77.domain.model.newModels.DeviceUser
-import com.edurda77.domain.model.newModels.PermissionUser
-import com.edurda77.domain.model.newModels.UserUi
+import com.edurda77.domain.model.DeviceUser
+import com.edurda77.domain.model.PermissionUser
+import com.edurda77.domain.model.UserUi
 
 
 sealed class UsersEvent {

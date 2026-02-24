@@ -1,11 +1,11 @@
 package com.edurda77.device_detail
 
 
-import com.edurda77.domain.model.newModels.AuthUser
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.History
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.AuthUser
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.History
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.MeasurementUnit
 import com.edurda77.resources.uikit.UiText
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.datetime.LocalDateTime

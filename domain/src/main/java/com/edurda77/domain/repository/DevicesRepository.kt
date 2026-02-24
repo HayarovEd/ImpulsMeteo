@@ -1,9 +1,9 @@
 package com.edurda77.domain.repository
 
-import com.edurda77.domain.model.newModels.Device
-import com.edurda77.domain.model.newModels.GroupDevice
-import com.edurda77.domain.model.newModels.NotificationDevice
-import com.edurda77.domain.model.newModels.NotificationParam
+import com.edurda77.domain.model.Device
+import com.edurda77.domain.model.GroupDevice
+import com.edurda77.domain.model.NotificationDevice
+import com.edurda77.domain.model.NotificationParam
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.ResultWork
 

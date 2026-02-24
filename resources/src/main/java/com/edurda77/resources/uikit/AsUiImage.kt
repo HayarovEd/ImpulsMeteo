@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.edurda77.domain.model.newModels.MeasurementUnit
+import com.edurda77.domain.model.MeasurementUnit
 import com.edurda77.resources.R
 
 /*@Composable
