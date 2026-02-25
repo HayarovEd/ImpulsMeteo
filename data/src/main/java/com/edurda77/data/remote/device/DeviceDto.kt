@@ -18,7 +18,7 @@ data class DeviceDto(
     @SerialName("port")
     val port: Int,
     @SerialName("status")
-    val status: String,
+    val status: Boolean,
     @SerialName("update_rate")
     val updateRate: Int,
     @SerialName("update_at")

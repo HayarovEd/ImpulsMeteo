@@ -121,7 +121,7 @@ fun com.edurda77.data.remote.device.DeviceDto.toDevice(): Device {
         name = this.name,
         notificationDevice = this.notificationDeviceDto?.toNotificationDevice(),
         port = this.port,
-        status = this.status == STATUS_ON,
+        status = this.status,
         updateRate = this.updateRate,
         updatedDate = this.updatedDate?.let {
             convertToLocalDateTime(it)
@@ -140,7 +140,7 @@ fun com.edurda77.data.remote.device.DeviceWsDto.convertToDevice(): Device {
         name = this.name,
         notificationDevice = null,
         port = this.port,
-        status = this.status == STATUS_ON,
+        status = this.status,
         updateRate = this.updateRate,
         updatedDate = convertToLocalDateTime(this.updatedDate),
         videoUrl = this.videoUrl,

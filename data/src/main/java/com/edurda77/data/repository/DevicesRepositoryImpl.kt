@@ -5,6 +5,9 @@ import com.edurda77.data.mapper.toDevice
 import com.edurda77.data.mapper.toGroupDeviceDto
 import com.edurda77.data.mapper.toNotificationDevice
 import com.edurda77.data.mapper.toNotificationsDeviceDtos
+import com.edurda77.data.remote.device.DeviceDto
+import com.edurda77.data.remote.device.GroupsDeviceId
+import com.edurda77.data.remote.notification.NotificationDeviceDto
 import com.edurda77.domain.model.Device
 import com.edurda77.domain.model.GroupDevice
 import com.edurda77.domain.model.NotificationDevice
@@ -13,7 +16,6 @@ import com.edurda77.domain.repository.DevicesRepository
 import com.edurda77.domain.utils.DataError
 import com.edurda77.domain.utils.NEW_BASE_URL
 import com.edurda77.domain.utils.ResultWork
-import com.edurda77.domain.utils.STATUS_OFF
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.bearerAuth
@@ -49,12 +51,12 @@ class DevicesRepositoryImpl(
                             key = key,
                             name = name,
                             updateRate = frequency,
-                            status = STATUS_OFF,
+                            status = false,
                             videoUrl = ""
                         )
                     )
                 }
-                result.call.body<com.edurda77.data.remote.device.DeviceDto>().toDevice()
+                result.call.body<DeviceDto>().toDevice()
             }
         }
     }
@@ -68,7 +70,7 @@ class DevicesRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<List<com.edurda77.data.remote.device.DeviceDto>>().map { it.toDevice() }
+                result.call.body<List<DeviceDto>>().map { it.toDevice() }
             }
         }
     }
@@ -83,7 +85,7 @@ class DevicesRepositoryImpl(
                     contentType(ContentType.Application.Json)
                     bearerAuth(accessToken)
                 }
-                result.call.body<com.edurda77.data.remote.device.DeviceDto>().toDevice()
+                result.call.body<DeviceDto>().toDevice()
             }
         }
     }
@@ -104,7 +106,7 @@ class DevicesRepositoryImpl(
                     setBody(
                         com.edurda77.data.remote.device.DeviceUpdateRequest(
                             groupsDeviceId = groups.map {
-                                com.edurda77.data.remote.device.GroupsDeviceId(
+                                GroupsDeviceId(
                                     it.id
                                 )
                             },
@@ -115,7 +117,7 @@ class DevicesRepositoryImpl(
                         )
                     )
                 }
-                result.call.body<com.edurda77.data.remote.device.DeviceDto>().toDevice()
+                result.call.body<DeviceDto>().toDevice()
             }
         }
     }
@@ -149,7 +151,7 @@ class DevicesRepositoryImpl(
                         contentType(ContentType.Application.Json)
                         bearerAuth(accessToken)
                         setBody(
-                            com.edurda77.data.remote.notification.NotificationDeviceDto(
+                            NotificationDeviceDto(
                                 deviceId = deviceId,
                                 notificationsDeviceDtos = notificationsParam.map { it.toNotificationsDeviceDtos() },
                                 value = value,
@@ -158,7 +160,7 @@ class DevicesRepositoryImpl(
                             )
                         )
                     }
-                result.call.body<com.edurda77.data.remote.notification.NotificationDeviceDto>().toNotificationDevice()
+                result.call.body<NotificationDeviceDto>().toNotificationDevice()
             }
         }
     }

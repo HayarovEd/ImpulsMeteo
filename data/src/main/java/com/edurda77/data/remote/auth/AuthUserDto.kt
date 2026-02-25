@@ -1,6 +1,9 @@
 package com.edurda77.data.remote.auth
 
 
+import com.edurda77.data.remote.device.DeviceDto
+import com.edurda77.data.remote.favorite.FavoriteDto
+import com.edurda77.data.remote.permission.PermissionDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,11 +12,11 @@ data class AuthUserDto(
     @SerialName("created_at")
     val createdAt: String,
     @SerialName("devices")
-    val deviceDtos: List<com.edurda77.data.remote.device.DeviceDto>,
+    val deviceDtos: List<DeviceDto>,
     @SerialName("email")
     val email: String,
     @SerialName("favorites")
-    val favoriteDtos: List<com.edurda77.data.remote.favorite.FavoriteDto>,
+    val favoriteDtos: List<FavoriteDto>,
     @SerialName("id")
     val id: String,
     @SerialName("is_enabled")
@@ -23,7 +26,7 @@ data class AuthUserDto(
     @SerialName("password")
     val password: String?,
     @SerialName("permissions")
-    val permissionDtos: List<com.edurda77.data.remote.permission.PermissionDto>,
+    val permissionDtos: List<PermissionDto>,
     @SerialName("update_at")
     val updateAt: String
 )

@@ -13,7 +13,7 @@ data class DeviceCreateRequest(
     @SerialName("name")
     val name: String,
     @SerialName("status")
-    val status: String,
+    val status: Boolean,
     @SerialName("update_rate")
     val updateRate: Int,
     @SerialName("video_url")
