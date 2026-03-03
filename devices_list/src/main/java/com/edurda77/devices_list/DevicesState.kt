@@ -23,7 +23,7 @@ data class DevicesState(
     val isUpdating: Boolean = false,
     val percentUpdate: Int = 0,
     val release: LastVersionApp? = null,
-    val isSorted: Boolean = false,
+    val isSorted: Boolean = true,
 ) {
     val nonHiddenDevices = devices.mapValues { (_, devices) ->
         devices.map { device ->
