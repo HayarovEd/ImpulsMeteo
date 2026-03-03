@@ -566,10 +566,10 @@ class DeviceViewModel(
                         id = param.id
                     )) {
                         is ResultWork.Error -> {
-                            _state.value.copy(
+                         /*   _state.value.copy(
                                 message = result.error.asUiText()
                             )
-                                .updateState()
+                                .updateState()*/
                             mutex.withLock {
                                 count++
                             }
@@ -597,7 +597,12 @@ class DeviceViewModel(
                         }
                     }
                 }
+                _state.value.copy(
+                    isLoading = false,
+                )
+                    .updateState()
             }
+
         }
     }
 
