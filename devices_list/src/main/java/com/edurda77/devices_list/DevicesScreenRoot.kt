@@ -461,7 +461,7 @@ fun DevicesScreen(
                             if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 2 else 1
                         LazyVerticalGrid(
                             modifier = Modifier
-                                .fillMaxSize(),
+                                .fillMaxWidth(),
                             columns = GridCells.Fixed(cellsCount),
                             verticalArrangement = Arrangement.spacedBy(15.dp),
                             horizontalArrangement = Arrangement.spacedBy(15.dp)

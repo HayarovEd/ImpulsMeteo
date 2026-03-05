@@ -135,7 +135,30 @@ fun ItemDevice(
             }
             val step =
                 if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2
-
+            /*LazyVerticalGrid(
+                columns = GridCells.Fixed(step),
+                modifier = modifier
+                    .heightIn(max = 2000.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(15.dp),
+            ) {
+                items(
+                    items = device.params,
+                    key = { it.id }
+                    ) { param->
+                    UiRowDeviceValue(
+                        modifier = modifier.weight(1f),
+                        image = if (param.idUnit == TEMPERATURE_ID && param.value >= 0.0) param.idUnit.asUiImageParam(
+                            true
+                        ) else param.idUnit.asUiImageParam(),
+                        value = param.value,
+                        unit = param.idUnit.asUiTextParam(),
+                        name = param.label,
+                        hexColor = param.color,
+                    )
+                }
+            }*/
             FlowRow(
                 modifier = modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(15.dp),
