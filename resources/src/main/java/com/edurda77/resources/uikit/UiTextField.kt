@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.colors
 import androidx.compose.runtime.Composable
@@ -45,14 +46,10 @@ fun UiTextField(
     onClickTrailingIcon: () -> Unit = {},
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    BasicTextField(
+    TextField(
         value = content,
         modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.Transparent,
-                shape = MaterialTheme.shapes.medium
-            ),
+            .fillMaxWidth(),
         onValueChange = { text ->
             if (isOnlyDigit) {
                 if (text.all { it.isDigit() }) {
@@ -71,9 +68,33 @@ fun UiTextField(
             keyboardType = keyboardType,
             imeAction = imeAction
         ),
+        label = {
+            Text(
+                text = label,
+                style = Typography.labelSmall
+            )
+        },
+        trailingIcon = {
+            if (trailingIcon != null) {
+                UiIconButton(
+                    icon = trailingIcon,
+                    onClick = onClickTrailingIcon,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        },
+        colors = colors(
+            focusedContainerColor = MaterialTheme.colorScheme.tertiary.copy(),
+            unfocusedContainerColor = MaterialTheme.colorScheme.tertiary.copy(),
+            cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            unfocusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            unfocusedLabelColor = MaterialTheme.colorScheme.outline
+        ),
         keyboardActions = keyboardActions,
         maxLines = maxLines,
-        decorationBox = @Composable { innerTextField ->
+        /*decorationBox = @Composable { innerTextField ->
             TextFieldDefaults.DecorationBox(
                 enabled = enabled,
                 shape = MaterialTheme.shapes.medium,
@@ -97,7 +118,7 @@ fun UiTextField(
                         )
                     }
                 },
-                contentPadding = PaddingValues(vertical = 4.dp, horizontal = 10.dp),
+               // contentPadding = PaddingValues(vertical = 4.dp, horizontal = 10.dp),
                 colors = colors(
                     focusedContainerColor = MaterialTheme.colorScheme.tertiary.copy(),
                     unfocusedContainerColor = MaterialTheme.colorScheme.tertiary.copy(),
@@ -108,7 +129,7 @@ fun UiTextField(
                     unfocusedLabelColor = MaterialTheme.colorScheme.outline
                 )
             )
-        }
+        }*/
     )
 }
 
